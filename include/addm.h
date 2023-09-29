@@ -130,6 +130,7 @@ class aDDM: public DDM {
     public: 
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
+        float k; /**< Float that controls the additive bias for the fixated item. */
 
         bool operator <( const aDDM &rhs ) const { 
             return (d * 17) + (sigma * 31) + (theta * 43) + (bias * 59) + (decay * 73) < 
@@ -146,6 +147,7 @@ class aDDM: public DDM {
          * @param d Drift rate.
          * @param sigma Noise or standard deviation for the normal distribution.
          * @param theta Ranges on [0,1] and indicates level of attentional bias.
+         * @param k Controls additive attentional bias. 
          * @param barrier Positive magnitude of the signal thresholds. 
          * @param nonDecisionTime Amount of time in milliseconds in which only noise 
          * is added to the decision variable. 
@@ -154,7 +156,7 @@ class aDDM: public DDM {
          * @param decay Controls the decay of the barriers over time. 
          */
         aDDM(
-            float d, float sigma, float theta, float barrier=1, 
+            float d, float sigma, float theta, float k=0, float barrier=1, 
             unsigned int nonDecisionTime=0, float bias=0, float decay=0
         );
 
@@ -220,26 +222,6 @@ class aDDM: public DDM {
             float approxStateStep=0.1
         );
 
-#ifndef EXCLUDE_CUDA_CODE
-        /**
-         * @brief Compute the total Negative Log Likelihood (NLL) for a vector of aDDMTrials. Use the
-         * GPU to maximize the number of trials being computed in parallel. 
-         * 
-         * @param trials Vector of aDDMTrials that the model should calculcate the NLL for. 
-         * @param debug Boolean specifying if state variables should be printed for debugging purposes.
-         * @param trialsPerThread Number of trials that each thread should be designated to compute. 
-         * Must be divisible by the total number of trials. 
-         * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis.
-         * @return ProbabilityData containing NLL, sum of likelihoods, and a list of all computed 
-         * likelihoods.
-         */
-        ProbabilityData computeGPUNLL(
-            vector<aDDMTrial> trials, bool debug=false, int trialsPerThread=10, 
-            int timeStep=10, float approxStateStep=0.1
-        );
-#endif 
-
         /**
          * @brief Complete a grid-search based Maximum Likelihood Estimation of all possible parameter 
          * combinations (d, theta, sigma) to determine which parameters are most likely to generate 
@@ -250,6 +232,7 @@ class aDDM: public DDM {
          * @param rangeD Vector of floats representing possible values of d to test for. 
          * @param rangeSigma Vector of floats representing possible values of sigma to test for. 
          * @param rangeTheta Vector of floats representing possible values of theta to test for. 
+         * @param rangeK Vector of floats representing possible values of k to test for. 
          * @param computeMethod Computation method to calculate the NLL for each possible model. 
          * Allowed values are {basic, thread, gpu}. "basic" will compute each trial likelihood 
          * sequentially and compute the NLL as the sum of all negative log likelihoods. "thread" will
@@ -260,17 +243,26 @@ class aDDM: public DDM {
          * to the normzlied posteriors distribution for each model; otherwise, the MLEinfo should 
          * containing a mapping of aDDMs to its corresponding NLL. 
          * @param barrier Positive magnitude of the signal threshold. 
-         * @param nonDecisionTime
-         * @param bias 
-         * @param decay
+         * @param nonDecisionTime Amount of time in milliseconds in which only noise is added to 
+         * the decision variable. 
+         * @param bias Corresponds to the initial RDV. Must be smaller than the barrier. Possible 
+         * input forms are: (1) No input - the standard bias of 0 is assumed for all potential 
+         * DDM models to check. (2) Single input (vector with one element) - i.e. {0.03} - the 
+         * specified input bias is assumed for all potential models. (3) Range of inputs - i.e. 
+         * {-0.12, 0, 0.12} - the input range is processed as another dimension to check and a 
+         * new set of models will be tested with all possible combinations of biases. 
+         * @param decay Corresponds to the decay of the barriers over time. A decay of zero
+         * means that the barriers are constant. Similarly to the `bias` argument, the three 
+         * input forms of no input, a vector with single element, and a vector with a range of 
+         * elements. 
          * @return MLEinfo containing the most optimal model and a mapping of models to floats 
          * determined by the normalizePosteriors argument. 
          */
         static MLEinfo<aDDM> fitModelMLE(
             vector<aDDMTrial> trials, vector<float> rangeD, vector<float> rangeSigma, 
-            vector<float> rangeTheta, string computeMethod="basic", bool normalizePosteriors=false, 
-            float barrier=1, unsigned int nonDecisionTime=0, vector<float> bias={0}, 
-            vector<float> decay={0}
+            vector<float> rangeTheta, vector<float> rangeK={0},string computeMethod="basic", 
+            bool normalizePosteriors=false, float barrier=1, unsigned int nonDecisionTime=0, 
+            vector<float> bias={0}, vector<float> decay={0}
         );
 };
 

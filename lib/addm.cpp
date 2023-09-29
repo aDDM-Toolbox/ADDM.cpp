@@ -36,10 +36,11 @@ aDDMTrial::aDDMTrial(
 }
 
 
-aDDM::aDDM(float d, float sigma, float theta, float barrier, 
+aDDM::aDDM(float d, float sigma, float theta, float k, float barrier, 
     unsigned int nonDecisionTime, float bias, float decay) : 
     DDM(d, sigma, barrier, nonDecisionTime, bias, decay) {
         this->theta = theta;
+        this->k = k; 
 }
 
 void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
@@ -48,6 +49,7 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
     j["d"] = d;
     j["sigma"] = sigma;
     j["theta"] = theta;
+    j["k"] = k; 
     j["barrier"] = barrier;
     j["NDT"] = nonDecisionTime;
     j["bias"] = bias;
@@ -223,10 +225,10 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, bool debug, int timeStep, float
 
         float mean;
         if (fItem == 1) {
-            mean = this->d * (trial.valueLeft - (this->theta * trial.valueRight));
+            mean = this->d * ((trial.valueLeft + this->k) - (this->theta * trial.valueRight));
         }
         else if (fItem == 2) {
-            mean = this->d * ((this->theta * trial.valueLeft) - trial.valueRight);
+            mean = this->d * ((this->theta * trial.valueLeft) - (trial.valueRight + this->k));
         }
         else {
             mean = 0; 
@@ -507,9 +509,9 @@ aDDMTrial aDDM::simulateTrial(
             if (currFixLocation == 0) {
                 mean = 0;
             } else if (currFixLocation == 1) {
-                mean = this->d * (valueLeft - (this->theta * valueRight));
+                mean = this->d * ((valueLeft + this->k) - (this->theta * valueRight));
             } else if (currFixLocation == 2) {
-                mean = this->d * ((this->theta * valueLeft) - valueRight);
+                mean = this->d * ((this->theta * valueLeft) - (valueRight + this->k));
             }
             std::normal_distribution<float> ndist(mean, this->sigma);
             float inc = ndist(gen);
@@ -663,6 +665,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     std::vector<float> rangeD, 
     std::vector<float> rangeSigma, 
     std::vector<float> rangeTheta, 
+    std::vector<float> rangeK,
     std::string computeMethod, 
     bool normalizePosteriors,
     float barrier,
@@ -677,6 +680,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     sort(rangeD.begin(), rangeD.end());
     sort(rangeSigma.begin(), rangeSigma.end());
     sort(rangeTheta.begin(), rangeTheta.end()); 
+    sort(rangeK.begin(), rangeK.end());
     sort(bias.begin(), bias.end());
     sort(decay.begin(), decay.end());
 
@@ -684,10 +688,13 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     for (float d : rangeD) {
         for (float sigma : rangeSigma) {
             for (float theta : rangeTheta) {
-                for (float b : bias) {
-                    for (float dec : decay) {
-                        aDDM addm = aDDM(d, sigma, theta, barrier, nonDecisionTime, b, dec);
-                        potentialModels.push_back(addm);
+                for (float k : rangeK) {
+                    std::cout << " K: " << k << std::endl; 
+                    for (float b : bias) {
+                        for (float dec : decay) {
+                            aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
+                            potentialModels.push_back(addm);
+                        }
                     }
                 }
             }
@@ -729,6 +736,9 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         }
 
         std::cout << "testing d=" << addm.d << " sigma=" << addm.sigma << " theta=" << addm.theta; 
+        if (rangeK.size() > 1) {
+            std::cout << " k=" << addm.k; 
+        }
         if (bias.size() > 1) {
             std::cout << " bias=" << addm.bias; 
         } 

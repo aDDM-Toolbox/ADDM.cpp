@@ -165,26 +165,6 @@ class DDM {
         ProbabilityData computeParallelNLL(
             vector<DDMTrial> trials, bool debug=false, int timeStep=10, float approxStateStep=0.1);
 
-#ifndef EXCLUDE_CUDA_CODE
-        /**
-         * @brief Compute the total Negative Log Likelihood (NLL) for a vector of DDMTrials. Use
-         * the GPU to maximize the number of trials being computed in parallel. 
-         * 
-         * @param trials Vector of DDMTrials that the model should calculate the NLL for. 
-         * @param debug Boolean specifying if state variables should be printed for debugging 
-         * purposes. 
-         * @param trialsPerThread Number of trials that each thread should be designated to 
-         * copmute. Must be divisible by the total number of trials. 
-         * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis. 
-         * @return ProbabilityData containing NLL, sum of likelihoods, and a list  of all computed 
-         * likelihood. 
-         */
-        ProbabilityData computeGPUNLL(
-            vector<DDMTrial> trials, bool debug=false, int trialsPerThread=10, 
-            int timeStep=10, float approxStateStep=0.1);
-#endif 
-
         /**
          * @brief Copmlete a grid-search based Maximum Likelihood Estimation of all possible 
          * paramters combinations (d, sigma) to determine which parameters are most likely to 
@@ -213,7 +193,7 @@ class DDM {
          * {-0.12, 0, 0.12} - the input range is processed as another dimension to check and a 
          * new set of models will be tested with all possible combinations of biases. 
          * @param decay Corresponds to the decay of the barriers over time. A decay of zero
-         * means that the barriers are constant. Similar to the `bias` argument, the three 
+         * means that the barriers are constant. Similarly to the `bias` argument, the three 
          * input forms of no input, a vector with single element, and a vector with a range of 
          * elements. 
          * @return MLEinfo containing the most optimal model and a mapping of models to floats 

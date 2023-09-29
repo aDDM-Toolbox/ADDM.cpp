@@ -30,13 +30,20 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def_readonly("trialLikelihoods", &ProbabilityData::trialLikelihoods);
     py::class_<FixationData>(m, "FixationData")
         .def(py::init<float, vector<int>, vector<int>, fixDists>(), 
-            "Construct a Fixation Data object")
+            Arg("probFixLeftFirst"), 
+            Arg("latencies"), 
+            Arg("transitions"), 
+            Arg("fixations"))
         .def_readonly("probFixLeftFirst", &FixationData::probFixLeftFirst)
         .def_readonly("latencies", &FixationData::latencies)
         .def_readonly("transitions", &FixationData::transitions)
         .def_readonly("fixations", &FixationData::fixations);
     py::class_<DDMTrial>(m, "DDMTrial")
-        .def(py::init<int, int, int, int>(), "Create a DDMTrial")
+        .def(py::init<int, int, int, int>(),
+            Arg("RT"), 
+            Arg("choice"), 
+            Arg("valueLeft"), 
+            Arg("valueRight"))
         .def_readonly("RT", &DDMTrial::RT)
         .def_readonly("choice", &DDMTrial::choice)
         .def_readonly("valueLeft", &DDMTrial::valueLeft)
@@ -110,10 +117,11 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def_static("loadTrialsFromCSV", &aDDMTrial::loadTrialsFromCSV, 
             Arg("filename"));
     py::class_<aDDM, DDM>(m, "aDDM")
-        .def(py::init<float, float, float, float, unsigned int, float, float>(), 
+        .def(py::init<float, float, float, float, float, unsigned int, float, float>(), 
             Arg("d"), 
             Arg("sigma"), 
             Arg("theta"), 
+            Arg("k")=0,
             Arg("barrier")=1, 
             Arg("nonDecisionTime")=0, 
             Arg("bias")=0, 
@@ -146,14 +154,18 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("rangeD"), 
             Arg("rangeSigma"), 
             Arg("rangeTheta"),
+            Arg("rangeK")=vector<float>{0},
             Arg("computeMethod")="basic",
             Arg("normalizePosteriors")=false,
             Arg("barrier")=1, 
             Arg("nonDecisionTime")=0,
             Arg("bias")=vector<float>{0}, 
             Arg("decay")=vector<float>{0});
-    m.def("loadDataFromSingleCSV", &loadDataFromSingleCSV);
-    m.def("loadDataFromCSV", &loadDataFromCSV);
+    m.def("loadDataFromSingleCSV", &loadDataFromSingleCSV, 
+        Arg("filename"));
+    m.def("loadDataFromCSV", &loadDataFromCSV, 
+        Arg("expDataFilename"), 
+        Arg("fixDataFilename"));
     m.def("getEmpiricalDistributions", &getEmpiricalDistributions, 
         Arg("data"), 
         Arg("timeStep")=10, 
