@@ -1,0 +1,19 @@
+# ignore local configurations
+.vscode
+# ignore output binaries
+bin
+# ignore local copy of Doxygen output
+docs
+# sample results from code execution 
+results/*
+# ignore installation object files
+obj
+# ignore output data from pipreqs
+target 
+# python binaries
+__pycache__
+*.so
+example.py
+# macros.h should be dynamically generated
+include/macros.h
+addm_code_and_data
