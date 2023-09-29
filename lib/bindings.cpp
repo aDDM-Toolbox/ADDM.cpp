@@ -43,8 +43,11 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def_readonly("valueRight", &DDMTrial::valueRight)
         .def_readonly("RDVs", &DDMTrial::RDVs)
         .def_readonly("timeStep", &DDMTrial::timeStep)
-        .def_static("writeTrialsToCSV", &DDMTrial::writeTrialsToCSV)
-        .def_static("loadTrialsFromCSV", &DDMTrial::loadTrialsFromCSV);
+        .def_static("writeTrialsToCSV", &DDMTrial::writeTrialsToCSV, 
+            Arg("trials"), 
+            Arg("filename"))
+        .def_static("loadTrialsFromCSV", &DDMTrial::loadTrialsFromCSV, 
+            Arg("filename"));
     py::class_<DDM>(m, "DDM")
         .def(py::init<float, float, float, unsigned int, float, float>(), 
             Arg("d"), 
@@ -59,7 +62,9 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def_readonly("nonDecisionTime", &DDM::nonDecisionTime)
         .def_readonly("bias", &DDM::bias)
         .def_readonly("decay", &DDM::decay)
-        .def("exportTrial", &DDM::exportTrial)
+        .def("exportTrial", &DDM::exportTrial, 
+            Arg("dt"), 
+            Arg("filename"))
         .def("getTrialLikelihood", &DDM::getTrialLikelihood, 
             Arg("trial"), 
             Arg("debug")=false, 
@@ -99,8 +104,11 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def_readonly("fixTime", &aDDMTrial::fixTime)
         .def_readonly("fixRDV", &aDDMTrial::fixRDV)
         .def_readonly("uninterruptedLastFixTime", &aDDMTrial::uninterruptedLastFixTime)
-        .def_static("writeTrialsToCSV", &aDDMTrial::writeTrialsToCSV)
-        .def_static("loadTrialsFromCSV", &aDDMTrial::loadTrialsFromCSV);
+        .def_static("writeTrialsToCSV", &aDDMTrial::writeTrialsToCSV, 
+            Arg("trials"), 
+            Arg("filename"))
+        .def_static("loadTrialsFromCSV", &aDDMTrial::loadTrialsFromCSV, 
+            Arg("filename"));
     py::class_<aDDM, DDM>(m, "aDDM")
         .def(py::init<float, float, float, float, unsigned int, float, float>(), 
             Arg("d"), 
@@ -111,7 +119,9 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("bias")=0, 
             Arg("decay")=0)
         .def_readonly("theta", &aDDM::theta)
-        .def("exportTrial", &aDDM::exportTrial)
+        .def("exportTrial", &aDDM::exportTrial, 
+            Arg("adt"), 
+            Arg("filename"))
         .def("getTrialLikelihood", &aDDM::getTrialLikelihood, 
             Arg("trial"), 
             Arg("debug")=false, 

@@ -127,15 +127,6 @@ class aDDMTrial: public DDMTrial {
  */
 class aDDM: public DDM {
     private:
-#ifndef EXCLUDE_CUDA_CODE
-        void callGetTrialLikelihoodKernel(
-            bool debug, int trialsPerThread, int numBlocks, int threadsPerBlock, 
-            aDDMTrial *trials, double *likelihoods, int numTrials, 
-            float d, float sigma, float theta, float barrier, 
-            int nonDecisionTime, int timeStep, float approxStateStep, float decay);
-#endif 
-
-
     public: 
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
