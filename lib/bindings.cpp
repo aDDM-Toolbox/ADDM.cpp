@@ -132,7 +132,6 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("filename"))
         .def("getTrialLikelihood", &aDDM::getTrialLikelihood, 
             Arg("trial"), 
-            Arg("debug")=false, 
             Arg("timeStep")=10, 
             Arg("approxStateStep")=0.1)
         .def("simulateTrial", &aDDM::simulateTrial, 
@@ -146,7 +145,6 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("seed")=-1)
         .def("computeParallelNLL", &aDDM::computeParallelNLL, 
             Arg("trials"), 
-            Arg("debug")=false, 
             Arg("timeStep")=10, 
             Arg("approxStateStep")=0.1)
         .def_static("fitModelMLE", &aDDM::fitModelMLE, 
@@ -159,6 +157,8 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("normalizePosteriors")=false,
             Arg("barrier")=1, 
             Arg("nonDecisionTime")=0,
+            Arg("timeStep")=10, 
+            Arg("approxStateStep")=0.1,
             Arg("bias")=vector<float>{0}, 
             Arg("decay")=vector<float>{0});
     m.def("loadDataFromSingleCSV", &loadDataFromSingleCSV, 

@@ -131,6 +131,7 @@ class aDDM: public DDM {
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
         float k; /**< Float that controls the additive bias for the fixated item. */
+        map<string, float> optionalParams; 
 
         bool operator <( const aDDM &rhs ) const { 
             return (d * 17) + (sigma * 31) + (theta * 43) + (bias * 59) + (decay * 73) < 
@@ -140,6 +141,8 @@ class aDDM: public DDM {
         bool operator ==( const aDDM &rhs ) const {
             return (rhs.d == d) && (rhs.sigma == sigma) && (rhs.theta == theta);
         }
+
+        float operator[] (string s) { return optionalParams[s]; }
 
         /**
          * @brief Construct a new aDDM object.
@@ -167,6 +170,14 @@ class aDDM: public DDM {
         aDDM() {}
 
         /**
+         * @brief Add a parameter and value pair to an aDDM model. 
+         * 
+         * @param param named parameter to be added.
+         * @param value Parameter value. 
+         */
+        void addParameter(string param, float value) { this->optionalParams.insert({param, value}); }
+
+        /**
          * @brief Export the data pertaining to a single aDDM and aDDMTrial to a JSON file. 
          * 
          * @param adt Trial to export. 
@@ -178,14 +189,21 @@ class aDDM: public DDM {
          * @brief Compute the likelihood of the trial results provided the current parameters.
          * 
          * @param trial aDDMTrial object.
-         * @param debug Boolean sepcifying if state variables should be printed for debugging
-         * purposes.
          * @param timeStep Value in milliseconds used for binning the time axis.
          * @param approxstateStep Used for binning the RDV axis.
          * @return double representing the likelihood for the given trial. 
          */
-        double getTrialLikelihood(aDDMTrial trial, bool debug=false, 
+        double getTrialLikelihood(aDDMTrial trial,
             int timeStep=10, float approxStateStep=0.1);
+
+
+        /**
+         * @brief Alternative Likelihood computation function for users who want a custom model. 
+         * 
+         */
+        double getLikelihoodAlternative(aDDMTrial trial, 
+            int timeStep=10, float approxStateStep=0.1);
+
 
         /**
          * @brief Generate simulated fixations provided item values and empirical fixation data. 
@@ -210,15 +228,14 @@ class aDDM: public DDM {
          * multithreading to maximize the number of blocks of trials that can have their respective 
          * NLLs computed in parallel. 
          * 
-         * @param trials Vector of aDDMTrials that the model should calculcate the NLL for. 
-         * @param debug Boolean specifying if state variables should be printed for debugging purposes.
+         * @param trials Vector of aDDMTrials that the model should calculcate the NLL for. .
          * @param timeStep Value in milliseconds used for binning the time axis. 
          * @param approxStateStep Used for binning the RDV axis.
          * @return ProbabilityData containing NLL, sum of likelihoods, and a list of all computed 
          * likelihoods. 
          */
         ProbabilityData computeParallelNLL(
-            vector<aDDMTrial> trials, bool debug=false, int timeStep=10, 
+            vector<aDDMTrial> trials, int timeStep=10, 
             float approxStateStep=0.1
         );
 
@@ -245,6 +262,8 @@ class aDDM: public DDM {
          * @param barrier Positive magnitude of the signal threshold. 
          * @param nonDecisionTime Amount of time in milliseconds in which only noise is added to 
          * the decision variable. 
+         * @param timeStep
+         * @param approxStateStep
          * @param bias Corresponds to the initial RDV. Must be smaller than the barrier. Possible 
          * input forms are: (1) No input - the standard bias of 0 is assumed for all potential 
          * DDM models to check. (2) Single input (vector with one element) - i.e. {0.03} - the 
@@ -262,7 +281,7 @@ class aDDM: public DDM {
             vector<aDDMTrial> trials, vector<float> rangeD, vector<float> rangeSigma, 
             vector<float> rangeTheta, vector<float> rangeK={0},string computeMethod="basic", 
             bool normalizePosteriors=false, float barrier=1, unsigned int nonDecisionTime=0, 
-            vector<float> bias={0}, vector<float> decay={0}
+            int timeStep=10, float approxStateStep=0.1, vector<float> bias={0}, vector<float> decay={0}
         );
 };
 
