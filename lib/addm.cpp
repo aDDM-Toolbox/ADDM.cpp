@@ -65,7 +65,8 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
 }
 
 
-double aDDM::getTrialLikelihood(aDDMTrial trial, bool debug, int timeStep, float approxStateStep) {
+double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxStateStep) {
+    bool debug = false; 
     if (debug) {
         std::cout << std::setprecision(6) << std::fixed;
     }
@@ -555,16 +556,16 @@ aDDMTrial aDDM::simulateTrial(
 }
 
 
-ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, bool debug, int timeStep, float approxStateStep) {
+ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int timeStep, float approxStateStep) {
     ProbabilityData datasetTotals = ProbabilityData(0, 0);
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
     BS::multi_future<ProbabilityData> futs = pool.parallelize_loop(
         0, trials.size(), 
-        [this, &trials, debug, timeStep, approxStateStep, &trialLikelihoods](const int a, const int b) {
+        [this, &trials, timeStep, approxStateStep, &trialLikelihoods](const int a, const int b) {
             ProbabilityData aux = ProbabilityData(0, 0);
             for (int i = a; i < b; ++i) {
-                double prob = this->getTrialLikelihood(trials[i], debug, timeStep, approxStateStep);
+                double prob = this->getTrialLikelihood(trials[i], timeStep, approxStateStep);
                 trialLikelihoods[i] = prob; 
                 aux.likelihood += prob; 
                 aux.NLL += -log(prob);
@@ -670,6 +671,8 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     bool normalizePosteriors,
     float barrier,
     unsigned int nonDecisionTime,
+    int timeStep, 
+    float approxStateStep,
     std::vector<float> bias, 
     std::vector<float> decay) {
 
@@ -689,7 +692,6 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         for (float sigma : rangeSigma) {
             for (float theta : rangeTheta) {
                 for (float k : rangeK) {
-                    std::cout << " K: " << k << std::endl; 
                     for (float b : bias) {
                         for (float dec : decay) {
                             aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
@@ -703,10 +705,10 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
                 
     std::function<ProbabilityData(aDDM)> NLLcomputer; 
     if (computeMethod == "basic") {
-        NLLcomputer = [trials](aDDM addm) -> ProbabilityData {
+        NLLcomputer = [trials, timeStep, approxStateStep](aDDM addm) -> ProbabilityData {
             ProbabilityData data = ProbabilityData(); 
             for (aDDMTrial trial : trials) {
-                double prob = addm.getTrialLikelihood(trial); 
+                double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
                 data.likelihood += prob; 
                 data.trialLikelihoods.push_back(prob);
                 data.NLL += -log(prob);
@@ -715,16 +717,35 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         };
     }
     else if (computeMethod == "thread") {
-        NLLcomputer = [trials](aDDM addm) -> ProbabilityData {
-            return addm.computeParallelNLL(trials);
+        NLLcomputer = [trials, timeStep, approxStateStep](aDDM addm) -> ProbabilityData {
+            return addm.computeParallelNLL(trials, timeStep, approxStateStep);
         };
     }
 
-    double minNLL = __DBL_MAX__; 
     std::map<aDDM, ProbabilityData> allTrialLikelihoods; 
     std::map<aDDM, float> posteriors; 
     double numModels = rangeD.size() * rangeSigma.size() * rangeTheta.size() * bias.size() * decay.size();
 
+    /**
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     * MLE IS PERFORMED HERE! 
+     * Feel free to disregard the posteriors when making modifications
+     * if you do not plan on using them in analyses. 
+     * 
+     * Example code without posterior computation for MLE: 
+     * 
+     * double minNLL = __DBL_MAX__; 
+     * aDDM optimal = aDDM(); 
+     * for (aDDM addm : potentialModels) {
+     *     ProbabilityData aux = NLLcomputer(addm);
+     *     if (aux.NLL < minNLL) {
+     *         minNLL = aux.NLL; 
+     *         optimal = addm; 
+     *     }
+     * }
+     * 
+     */
+    double minNLL = __DBL_MAX__; 
     aDDM optimal = aDDM(); 
     for (aDDM addm : potentialModels) {
         ProbabilityData aux = NLLcomputer(addm);
@@ -734,23 +755,13 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         } else {
             posteriors.insert({addm, aux.NLL});
         }
-
-        std::cout << "testing d=" << addm.d << " sigma=" << addm.sigma << " theta=" << addm.theta; 
-        if (rangeK.size() > 1) {
-            std::cout << " k=" << addm.k; 
-        }
-        if (bias.size() > 1) {
-            std::cout << " bias=" << addm.bias; 
-        } 
-        if (decay.size() > 1) {
-            std::cout << " decay=" << addm.decay; 
-        }
-        std::cout << " NLL=" << aux.NLL << std::endl; 
         if (aux.NLL < minNLL) {
             minNLL = aux.NLL; 
             optimal = addm; 
         }
     }
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     if (normalizePosteriors) {
         for (int tn = 0; tn < trials.size(); tn++) {
             double denominator = 0; 

@@ -66,8 +66,6 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
     }
     expFile.close();
 
-    std::cout << subjectIDs.size() << std::endl; 
-
     for (int subjectID : subjectIDs) {
         data.insert({subjectID, {}});
         std::set<int> trialIDs;
