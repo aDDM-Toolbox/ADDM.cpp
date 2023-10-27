@@ -206,7 +206,7 @@ Output:
 W = 5
 ```
 
-The `aDDM` class also contains a starter method, `getAlternativeLikelihood`, for users who want to define their own likelihood computations using custom variables. A very simple example is provided in the function now, simply returning `1 / this->optionalParams["W"]`. This function should be updated depending on the user's chosen parameters and needs for the calculations. A good starting point could be copying the existing code in `getTrialLikelihood` and modifying it to their needs. Or, for users who know their own likelihood function will be similar to the existing `getTrialLikelihood` function, it may be more worth it to just modify that code instead. An example of a call to `getAlternativeLikelihood` is described below:
+__Alternative Likelihood Calculators__: The `aDDM` class also contains a starter method, `getLikelihoodAlternative`, for users who want to define their own likelihood computations using custom variables. A very simple example is provided in the function now, simply returning `1 / this->optionalParams["W"]`. This function should be updated depending on the user's chosen parameters and needs for the calculations. A good starting point could be copying the existing code in `getTrialLikelihood` to `getLikelihoodAlternative` and modifying it to their needs. Or, for users who know their own likelihood function will be similar to the existing `getTrialLikelihood` function, it may be more worth it to just modify that code instead. An example of a call to `getLikelihoodAlternative` is described below and in `sample/custom.cpp`:
 
 `alternative.cpp`:
 ```cpp
@@ -235,6 +235,33 @@ Output:
 ```
 Likelihood = 0.2
 ```
+
+__Custom Model Fitting__: These two features can be combined to fit models using any number of parameters and a custom likelihood calculator. To do so, follow the below steps and example or see `sample/custom.cpp`: 
+
+1. Fill in `getLikelihoodAlternative` in `alternative.cpp`. It may be useful to start by copying `getTrialLikelihood` and modifying it as needed. 
+```cpp
+double aDDM::getLikelihoodAlternative(aDDMTrial trial, int timeStep, float approxStateStep) {
+    return (this->optionalParams["A"] + this->optionalParams["B"] + this->optionalParams["C"]) / 10;
+}
+```
+2. Define a range for custom parameters. This involves defining a mapping from different parameters (in their string form) to a vector of numbers of potential values. For example, 
+```cpp
+std::map<string, vector<float>> rangeOptional = {
+    {"A", {0.1, 0.2, 0.3, 0.4}}, 
+    {"B", {0.5, 0.6, 0.7}}, 
+    {"C", {0.8, 0.9}}
+};
+```
+3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exists potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
+```cpp
+std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(SIMS);
+MLEinfo info = aDDM::fitModelMLE(
+    trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
+```
+
+Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the users will. See the Python Bindings section below for more details on getting started with Python Bindings. 
+
+*See `addm.h` for complete documentation on model fitting arguments.*
 
 ## Python Bindings ## 
 

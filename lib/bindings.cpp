@@ -127,6 +127,8 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("bias")=0, 
             Arg("decay")=0)
         .def_readonly("theta", &aDDM::theta)
+        .def_readonly("k", &aDDM::k)
+        .def_readonly("optionalParams", &aDDM::optionalParams)
         .def("exportTrial", &aDDM::exportTrial, 
             Arg("adt"), 
             Arg("filename"))
@@ -146,7 +148,8 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
         .def("computeParallelNLL", &aDDM::computeParallelNLL, 
             Arg("trials"), 
             Arg("timeStep")=10, 
-            Arg("approxStateStep")=0.1)
+            Arg("approxStateStep")=0.1,
+            Arg("useAlternative")=false)
         .def_static("fitModelMLE", &aDDM::fitModelMLE, 
             Arg("trials"), 
             Arg("rangeD"), 
@@ -160,7 +163,9 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
             Arg("timeStep")=10, 
             Arg("approxStateStep")=0.1,
             Arg("bias")=vector<float>{0}, 
-            Arg("decay")=vector<float>{0});
+            Arg("decay")=vector<float>{0},
+            Arg("useAlternative")=false, 
+            Arg("rangeOptional")=map<string, vector<float>>{});
     m.def("loadDataFromSingleCSV", &loadDataFromSingleCSV, 
         Arg("filename"));
     m.def("loadDataFromCSV", &loadDataFromCSV, 
