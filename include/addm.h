@@ -228,15 +228,16 @@ class aDDM: public DDM {
          * multithreading to maximize the number of blocks of trials that can have their respective 
          * NLLs computed in parallel. 
          * 
-         * @param trials Vector of aDDMTrials that the model should calculcate the NLL for. .
+         * @param trials Vector of aDDMTrials that the model should calculcate the NLL for.
          * @param timeStep Value in milliseconds used for binning the time axis. 
          * @param approxStateStep Used for binning the RDV axis.
+         * @param useAlternative Boolean specifying if getLikelihoodAlternative should be used.
          * @return ProbabilityData containing NLL, sum of likelihoods, and a list of all computed 
          * likelihoods. 
          */
         ProbabilityData computeParallelNLL(
             vector<aDDMTrial> trials, int timeStep=10, 
-            float approxStateStep=0.1
+            float approxStateStep=0.1, bool useAlternative=false
         );
 
         /**
@@ -262,8 +263,8 @@ class aDDM: public DDM {
          * @param barrier Positive magnitude of the signal threshold. 
          * @param nonDecisionTime Amount of time in milliseconds in which only noise is added to 
          * the decision variable. 
-         * @param timeStep
-         * @param approxStateStep
+         * @param timeStep Value in milliseconds used for binning the time axis. 
+         * @param approxStateStep Used for binning the RDV axis.
          * @param bias Corresponds to the initial RDV. Must be smaller than the barrier. Possible 
          * input forms are: (1) No input - the standard bias of 0 is assumed for all potential 
          * DDM models to check. (2) Single input (vector with one element) - i.e. {0.03} - the 
@@ -274,6 +275,11 @@ class aDDM: public DDM {
          * means that the barriers are constant. Similarly to the `bias` argument, the three 
          * input forms of no input, a vector with single element, and a vector with a range of 
          * elements. 
+         * @param useAlternative Boolean specifying if getLikelihoodAlternative should be used
+         * (instead of getTrialLikelihood).
+         * @param rangeOptional Mapping of strings to potential parameter values for custom user
+         * parameters. Note that if defining custom parameters, useAlternative should be set to 
+         * true and implemented to support likelihood computation with additional parameters. 
          * @return MLEinfo containing the most optimal model and a mapping of models to floats 
          * determined by the normalizePosteriors argument. 
          */
@@ -281,7 +287,8 @@ class aDDM: public DDM {
             vector<aDDMTrial> trials, vector<float> rangeD, vector<float> rangeSigma, 
             vector<float> rangeTheta, vector<float> rangeK={0},string computeMethod="basic", 
             bool normalizePosteriors=false, float barrier=1, unsigned int nonDecisionTime=0, 
-            int timeStep=10, float approxStateStep=0.1, vector<float> bias={0}, vector<float> decay={0}
+            int timeStep=10, float approxStateStep=0.1, vector<float> bias={0}, vector<float> decay={0}, 
+            bool useAlternative=false, map<string, vector<float>>rangeOptional={}
         );
 };
 
