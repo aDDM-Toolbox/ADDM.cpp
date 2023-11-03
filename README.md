@@ -36,7 +36,7 @@ This will install the libaddm.so shared library as well as the corresponding hea
 
 `main.cpp`:
 ```C++
-#include <addm/gpu_toolbox.h>
+#include <addm/cpp_toolbox.h>
 #include <iostream>
 
 int main() {
