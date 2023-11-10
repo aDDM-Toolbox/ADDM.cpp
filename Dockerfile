@@ -11,15 +11,20 @@ RUN wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent
     wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp && \
     apt-get install -y libboost-math-dev libboost-math1.74-dev
 
+WORKDIR /root
+
 # aDDM toolbox installations
-RUN cd ~/  && \
-    git clone https://github.com/aDDM-Toolbox/ADDM.cpp.git && \
+RUN git clone https://github.com/aDDM-Toolbox/ADDM.cpp.git && \
     cd ADDM.cpp/ && \
     make install
+
+WORKDIR /root/ADDM.cpp
 
 # Python dependencies
 # Make sure you're in correct directory with access to file
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
+
+CMD ["/bin/bash"]
 
 # Add examples in README as tests to make sure installation worked?
