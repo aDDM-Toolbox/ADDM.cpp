@@ -8,10 +8,10 @@ const std::string SIMS = "results/addm_simulations.csv";
 // Location to save the computed likelihoods to. 
 const std::string SAVE = "results/addm_mle.csv";
 // Parameter ranges. Change as desired. 
-const std::vector<float> rangeD = {0.0035, 0.005, 0.0065, 0.008};
-const std::vector<float> rangeSigma = {0.06, 0.065, 0.07, 0.075};
-const std::vector<float> rangeTheta = {0.35, 0.5, 0.65, 0.8};
-const std::vector<float> rangeK = {0, 0.5, 1};
+const std::vector<float> rangeD = {0.003, 0.005, 0.007};
+const std::vector<float> rangeSigma = {0.06, 0.07, 0.08};
+const std::vector<float> rangeTheta = {0.4, 0.5, 0.6};
+const std::vector<float> rangeK = {0};
 
 int main() {
     // Load trials from a CSV. 

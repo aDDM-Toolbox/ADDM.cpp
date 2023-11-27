@@ -2,10 +2,35 @@
 
 C++ implementation of the aDDM-Toolbox. 
 
+<!-- Update TOC with `doctoc .`-->
+## Table of Contents ## 
 
-## Requirements ##
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
+- [Getting Started](#getting-started)
+- [Local Requirements](#local-requirements)
+- [Docker Build](#docker-build)
+- [Installation and Usage](#installation-and-usage)
+- [Tutorial](#tutorial)
+- [Modifying the Toolbox](#modifying-the-toolbox)
+  - [Alternative Optimization Algorithms](#alternative-optimization-algorithms)
+  - [Adding Parameters and Alternative Likelihood Calculators](#adding-parameters-and-alternative-likelihood-calculators)
+- [Python Bindings](#python-bindings)
+  - [Optional: Python Syntax Highlighting](#optional-python-syntax-highlighting)
+- [Data Analysis Scripts](#data-analysis-scripts)
+- [Authors](#authors)
+- [Acknowledgements](#acknowledgements)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Getting Started ##
+
+The aDDM Toolbox library for C++ can be cloned on the user's machine or installed on a Docker container. For requirements for a local build of the aDDM Toolbox, see the __Local Requirements__. For instructions on the Docker installation, continue to the __Docker Build__ section. 
+
+## Local Requirements ##
+
+The standard build of the aDDM Toolbox assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
 
 * [BS::thread_pool](https://github.com/bshoshany/thread-pool)
 * [JSON for Modern C++](https://github.com/nlohmann/json)
@@ -20,7 +45,22 @@ $ wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.co
 $ apt-get install libboost-math-dev libboost-math1.74-dev
 ```
 
+Be sure to clone the aDDM Toolbox library from Github if you haven't done so already. 
+
 *Note that the installation directory /usr/include/c++/11 may be modified to support newer versions of C++. In the event of a __Permission Denied__ error, precede the above commands with __sudo__.*
+
+## Docker Build ## 
+
+To install the dependencies and library using Docker, follow the steps below: 
+
+* Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+* Start Docker Desktop. 
+* Pull the Docker image, currently linked at `zenkavi/addm.cpp`. This can be done via terminal using: 
+```shell
+docker pull zenkavi/addm.cpp:0.0.1
+```
+* Go to your local Docker images and select __run__ on `zenkavi/addm.cpp`.
+* Once the build is complete, you can interact with the library using the command line interface!
 
 ## Installation and Usage ## 
 
@@ -59,7 +99,7 @@ theta: 0.5
 
 ## Tutorial ##
 
-In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). We also detail the process below. 
+In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be build using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
 
 `sample/tutorial.cpp`
 ```cpp
@@ -73,13 +113,12 @@ int main() {
     for (const auto& [subjectID, trials] : data) {
         std::cout << subjectID << ": "; 
         // Compute the most optimal parameters to generate 
-        MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0, 0.5}, "thread");
+        MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0}, "thread");
         std::cout << "d: " << info.optimal.d << " "; 
         std::cout << "sigma: " << info.optimal.sigma << " "; 
-        std::cout << "theta: " << info.optimal.theta << " "; 
-        std::cout << "k: " << info.optimal.k << std::endl; 
+        std::cout << "theta: " << info.optimal.theta << std::endl;
     }
-}
+}  
 ```
 
 Let's break this down piece by piece: 
@@ -148,8 +187,18 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
 * `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
 * `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0, 0.5}` - Range to test for additive fixation factor (k). 
+* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
+
+When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
+
+```
+0: d: 0.001 sigma: 0.0925 theta: 0.1
+1: d: 0.001 sigma: 0.09 theta: 0.1
+2: d: 0.001 sigma: 0.0875 theta: 0.1
+3: d: 0.001 sigma: 0.09 theta: 0.1
+⋮
+```
 
 ## Modifying the Toolbox ## 
 
@@ -317,6 +366,17 @@ stubgen -m addm_toolbox_cpp -o .
 ```
 *Note that the `pybind11` shared library file should be built before running `stubgen`.*
 
+## Data Analysis Scripts ##
+
+A set of data analysis and visualization tools are provided in the [analysis](analysis/) directory. Current provided scripts include: 
+
+* DDM Heatmaps for MLE. 
+* aDDM Heatmap for MLE. 
+* Posterior Pair Plots.
+* Time vs RDV for individual trial.
+* Value Differences against Response Time Frequencies. 
+
+See the individual file documentation for usage instructions. 
 
 ## Authors ## 
 
