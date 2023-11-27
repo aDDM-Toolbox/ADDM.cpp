@@ -351,6 +351,44 @@ RT = 850
 choice = 1
 ```
 
+Model fitting for the aDDM is largely analgous to the original C++ code. We provide a Python model of [sample/tutorial.cpp](sample/tutorial.cpp) below: 
+
+`tutorial.py`
+```Python
+import addm_toolbox_cpp
+
+data = addm_toolbox_cpp.loadDataFromCSV(
+    "data/expdata.csv", "data/fixations.csv")
+
+for subject_id, trials in data.items(): 
+    info = addm_toolbox_cpp.aDDM.fitModelMLE(
+        trials, 
+        rangeD=[0.001, 0.002, 0.003], 
+        rangeSigma=[0.0875, 0.09, 0.0925],
+        rangeTheta=[0.1, 0.3, 0.5], 
+        computeMethod="thread"
+    )
+
+    print(f"{subject_id}: " + 
+          f"d: {round(info.optimal.d, 4)} " + 
+          f"sigma: {round(info.optimal.sigma, 4)} " +
+          f"theta: {round(info.optimal.theta, 4)}")
+```
+To run the code: 
+```
+$ python3 tutorial.py
+0: d: 0.001 sigma: 0.0925 theta: 0.1
+1: d: 0.001 sigma: 0.09 theta: 0.1
+2: d: 0.001 sigma: 0.0875 theta: 0.1
+3: d: 0.001 sigma: 0.09 theta: 0.1
+⋮
+```
+
+Note that when executing any Python files using the `addm_toolbox_cpp` module, the compiled shared libary (`.so`) should be either: 
+
+* Placed in the same directory as the Python executable. 
+* Placed in some directory in the `PYTHONPATH` environmental variable. (i.e. `usr/lib/python3.10` for Linux).
+
 ### Optional: Python Syntax Highlighting ###
 
 For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, auto-complete. Although the `addm_toolbox_cpp.pyi` stub is built-in, the file can be dynamically generated using the [mypy stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html) tool. The `mypy` module can be installed using: 
