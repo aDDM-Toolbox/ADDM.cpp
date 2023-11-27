@@ -2,14 +2,17 @@ CXX := g++
 
 SIM_EXECS := addm_simulate
 MLE_EXECS := addm_mle 
-TEST_EXECS := tutorial custom 
+TEST_EXECS := addm_test 
+RUN_EXECS := tutorial custom 
 
 LIB_DIR := lib
 OBJ_DIR := obj
 INC_DIR := include
 BUILD_DIR := bin
 SRC_DIR := sample
+TEST_DIR := tests
 
+# Optional: Change -Ofast to -O3 if noticing inaccuracies for large grid sizes
 CXXFLAGS := -Ofast -march=native -fPIC -std=c++17
 
 SHAREDFLAGS = -I $(INC_DIR) -lpthread
@@ -42,6 +45,11 @@ define compile_target
 	$(CXX) $(addprefix $(OBJ_DIR)/, $1.o) $(CPP_OBJ_FILES) -o $(addprefix $(BUILD_DIR)/, $1)
 endef
 
+define compile_test
+	$(CXX) $(CXXFLAGS) -c $(addprefix $(TEST_DIR)/, $1.cpp) $(LIB) $(INC) -o $(addprefix $(OBJ_DIR)/, $1.o)
+	$(CXX) $(addprefix $(OBJ_DIR)/, $1.o) $(CPP_OBJ_FILES) -o $(addprefix $(BUILD_DIR)/, $1)
+endef
+
 
 sim: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(SIM_EXECS), $(call compile_target, $(source));)
@@ -50,7 +58,10 @@ mle: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(MLE_EXECS), $(call compile_target, $(source));)
 
 test: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
-	$(foreach source, $(TEST_EXECS), $(call compile_target, $(source));)
+	$(foreach source, $(TEST_EXECS), $(call compile_test, $(source));)
+
+run: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
+	$(foreach source, $(RUN_EXECS), $(call compile_target, $(source));)
 
 all: sim mle test
 
