@@ -13,7 +13,7 @@ SRC_DIR := sample
 TEST_DIR := tests
 
 # Optional: Change -Ofast to -O3 if noticing inaccuracies for large grid sizes
-CXXFLAGS := -Ofast -march=native -fPIC -std=c++17
+CXXFLAGS := -O3 -march=native -fPIC -std=c++17
 
 SHAREDFLAGS = -I $(INC_DIR) -lpthread
 LDFLAGS := -shared
