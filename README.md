@@ -9,9 +9,11 @@ C++ implementation of the aDDM-Toolbox.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Getting Started](#getting-started)
-- [Local Requirements](#local-requirements)
-- [Docker Build](#docker-build)
-- [Installation and Usage](#installation-and-usage)
+- [Docker Image](#docker-image)
+- [Local Installation](#local-installation)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Usage](#usage)
 - [Tutorial](#tutorial)
 - [Modifying the Toolbox](#modifying-the-toolbox)
   - [Alternative Optimization Algorithms](#alternative-optimization-algorithms)
@@ -26,17 +28,44 @@ C++ implementation of the aDDM-Toolbox.
 
 ## Getting Started ##
 
-The aDDM Toolbox library for C++ can be cloned on the user's machine or installed on a Docker container. For requirements for a local build of the aDDM Toolbox, see the __Local Requirements__. For instructions on the Docker installation, continue to the __Docker Build__ section. 
+The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling c++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__. For instructions on the Docker installation, continue to the __Docker Image__ section. 
 
-## Local Requirements ##
+## Docker Image ## 
 
-The standard build of the aDDM Toolbox assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
+To pull a Docker Image with ADDM.cpp installed, follow the steps below: 
+
+* Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+* Start Docker Desktop. 
+* Pull the Docker image, currently linked at `rnlcaltech/addm.cpp`. This can be done via terminal using: 
+
+```shell
+docker pull rnlcaltech/addm.cpp:latest
+```
+* You can use the Docker image either through Docker Desktop and selecting __run__ on `rnlcaltech/addm.cpp` in the list of your local Docker or using a CLI with the following command:
+
+```shell
+docker run -it --rm \
+-v $(pwd):/home \
+rnlcaltech/addm.cpp:latest
+```
+
+* If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
+
+``` shell
+docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
+```
+
+## Local Installation ##
+
+### Requirements ###
+
+The standard build of the ADDM.cpp assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
 
 * [BS::thread_pool](https://github.com/bshoshany/thread-pool)
 * [JSON for Modern C++](https://github.com/nlohmann/json)
 * [Boost Math/Statistical Distributions](https://www.boost.org/doc/libs/?view=category_math)
 
-These dependencies can be installed using the following commands: 
+These dependencies can be installed using the following commands. Note that they assume the path `/usr/include/c++/11/` and `apt-get` exist on your system.
 
 ```shell
 $ wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent.com/bshoshany/thread-pool/master/include/BS_thread_pool.hpp
@@ -45,26 +74,13 @@ $ wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.co
 $ apt-get install libboost-math-dev libboost-math1.74-dev
 ```
 
-Be sure to clone the aDDM Toolbox library from Github if you haven't done so already. 
+Be sure to clone the [ADDM.cpp](https://github.com/aDDM-Toolbox/ADDM.cpp) library from Github if you haven't done so already. 
 
 *Note that the installation directory /usr/include/c++/11 may be modified to support newer versions of C++. In the event of a __Permission Denied__ error, precede the above commands with __sudo__.*
 
-## Docker Build ## 
+### Installation ### 
 
-To install the dependencies and library using Docker, follow the steps below: 
-
-* Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-* Start Docker Desktop. 
-* Pull the Docker image, currently linked at `zenkavi/addm.cpp`. This can be done via terminal using: 
-```shell
-docker pull zenkavi/addm.cpp:0.0.1
-```
-* Go to your local Docker images and select __run__ on `zenkavi/addm.cpp`.
-* Once the build is complete, you can interact with the library using the command line interface!
-
-## Installation and Usage ## 
-
-TThe aDDM-Toolbox-CPP library can then be built and installed in one step: 
+TThe ADDM.cpp library can then be built and installed in one step: 
 
 ```shell
 $ make install
@@ -72,7 +88,11 @@ $ make install
 
 *In the event of a __Permission Denied__ error, precede the above command with __sudo__.*
 
-This will install the libaddm.so shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
+This will install the libaddm.so shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. 
+
+### Usage ###
+
+A simple usage example is described below: 
 
 `main.cpp`:
 ```C++
@@ -187,10 +207,10 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
 * `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
 * `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
+* `{0, 0.5}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
-When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
+When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
 
 ```
 0: d: 0.001 sigma: 0.0925 theta: 0.1
@@ -310,11 +330,11 @@ MLEinfo info = aDDM::fitModelMLE(
 
 Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the users will. See the Python Bindings section below for more details on getting started with Python Bindings. 
 
-*See `addm.h` for complete documentation on model fitting arguments.*
+*See [`addm.h`](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/include/addm.h) for complete documentation on model fitting arguments.*
 
 ## Python Bindings ## 
 
-Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in [lib/bindings.cpp](lib/bindings.cpp). Note that [pybind11](https://github.com/pybind/pybind11) and Python version 3.10 (at a minimum) are __strict__ prerequisites for installation and usage of the Python code. These can be installed with 
+Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in [lib/bindings.cpp](lib/bindings.cpp). Note that [pybind11](https://github.com/pybind/pybind11) and Python version 3.10 (at a minimum) are __strict__ prerequisites for installation and usage of the Python code. These are installed in the Docker image. For local installation on a Linux OS they can be installed with 
 
 ```shell
 apt-get install python3.10
