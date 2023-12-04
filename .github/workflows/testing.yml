@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Pull Docker image
+      run: docker pull rnlcaltech/addm.cpp:latest
+    - name: Run docker image
+      run: docker run -it --rm -v $(pwd):/home rnlcaltech/addm.cpp:latest

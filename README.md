@@ -13,8 +13,9 @@ C++ implementation of the aDDM-Toolbox.
 - [Local Installation](#local-installation)
   - [Requirements](#requirements)
   - [Installation](#installation)
-  - [Usage](#usage)
+- [Basic Usage](#basic-usage)
 - [Tutorial](#tutorial)
+- [Testing](#testing)
 - [Modifying the Toolbox](#modifying-the-toolbox)
   - [Alternative Optimization Algorithms](#alternative-optimization-algorithms)
   - [Adding Parameters and Alternative Likelihood Calculators](#adding-parameters-and-alternative-likelihood-calculators)
@@ -90,7 +91,7 @@ $ make install
 
 This will install the libaddm.so shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. 
 
-### Usage ###
+## Basic Usage ##
 
 A simple usage example is described below: 
 
@@ -219,6 +220,17 @@ When building the tutorial with `make run`, an executable will be created at `bi
 3: d: 0.001 sigma: 0.09 theta: 0.1
 ⋮
 ```
+
+## Testing ##
+
+A set of basic correctnesss tests are located in the [tests](tests/) directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
+
+```Shell
+make test
+bin/addm_test
+```
+
+These tests are also configured to automaticcally run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
 
 ## Modifying the Toolbox ## 
 

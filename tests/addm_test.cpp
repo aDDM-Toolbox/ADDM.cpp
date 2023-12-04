@@ -1,4 +1,4 @@
-#include "cpp_toolbox.h"
+#include <addm/cpp_toolbox.h>
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>

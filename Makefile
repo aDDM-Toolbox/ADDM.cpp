@@ -20,8 +20,15 @@ LDFLAGS := -shared
 LIB := -L lib -lpthread
 INC := -I $(INC_DIR)
 
+UNAME_S := $(shell uname -s)
+
 INSTALL_LIB_DIR := /usr/lib
-INSTALL_INC_DIR := /usr/include
+ifeq ($(UNAME_S), Linux)
+	INSTALL_INC_DIR := /usr/include
+endif
+ifeq ($(UNAME_S), Darwin)
+	INSTALL_INC_DIR := /usr/local/include 
+endif 
 
 PY_SUFFIX := $(shell python3-config --extension-suffix)
 PY_INCLUDES := $(shell python3 -m pybind11 --includes)
@@ -46,8 +53,7 @@ define compile_target
 endef
 
 define compile_test
-	$(CXX) $(CXXFLAGS) -c $(addprefix $(TEST_DIR)/, $1.cpp) $(LIB) $(INC) -o $(addprefix $(OBJ_DIR)/, $1.o)
-	$(CXX) $(addprefix $(OBJ_DIR)/, $1.o) $(CPP_OBJ_FILES) -o $(addprefix $(BUILD_DIR)/, $1)
+	$(CXX) $(addprefix $(TEST_DIR)/, $1.cpp) -laddm -o $(addprefix $(BUILD_DIR)/, $1)
 endef
 
 
@@ -57,7 +63,7 @@ sim: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 mle: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(MLE_EXECS), $(call compile_target, $(source));)
 
-test: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
+test: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES) install
 	$(foreach source, $(TEST_EXECS), $(call compile_test, $(source));)
 
 run: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
@@ -68,6 +74,7 @@ all: sim mle test
 
 install: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(CXX) $(LDFLAGS) -o $(INSTALL_LIB_DIR)/libaddm.so $(CPP_OBJ_FILES)
+	@echo Installing for $(UNAME_S) in $(INSTALL_INC_DIR)
 	cp -TRv $(INC_DIR) $(INSTALL_INC_DIR)/addm
 
 
