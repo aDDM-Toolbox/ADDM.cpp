@@ -26,8 +26,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
+          push: false
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/addm.cpp:latest
 
       - name: Build tests
         run: make test
