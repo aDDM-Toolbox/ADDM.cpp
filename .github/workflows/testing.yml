@@ -22,7 +22,7 @@ jobs:
         run: sudo wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp
              
       - name: Install remaining dependencies 
-        run: sudo apt-get install -y libboost-math-dev libboost-math1.74-dev
+        run: sudo apt-get install -y libboost-math-dev libboost-math1.74-dev catch2
 
 
       - name: Install library 
