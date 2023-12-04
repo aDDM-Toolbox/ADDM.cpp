@@ -12,11 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies 
-        run: sudo wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent.com/bshoshany/thread-pool/master/include/BS_thread_pool.hpp && \
-             sudo mkdir /usr/include/c++/11/nlohmann/ && \
-             sudo wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp && \
-             sudo apt-get install -y libboost-math-dev libboost-math1.74-dev
+      - name: Install threads
+        run: sudo wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent.com/bshoshany/thread-pool/master/include/BS_thread_pool.hpp
+        
+      - name: Create json directory
+        run: sudo mkdir /usr/include/c++/11/nlohmann/
+
+      - name: Install JSON
+        run: sudo wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp
+             
+      - name: Install remaining dependencies 
+        run: sudo apt-get install -y libboost-math-dev libboost-math1.74-dev
 
     #   - name: Login to Docker Hub
     #     uses: docker/login-action@v3
