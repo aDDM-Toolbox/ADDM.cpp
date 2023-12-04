@@ -45,7 +45,7 @@ jobs:
     #       tags: ${{ secrets.DOCKERHUB_USERNAME }}/addm.cpp:latest
 
       - name: Build tests
-        run: make test
+        run: sudo make test
 
       - name: Run tests 
         run: bin/addm_test
