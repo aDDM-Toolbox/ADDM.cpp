@@ -89,11 +89,9 @@ $ make install
 
 *In the event of a __Permission Denied__ error, precede the above command with __sudo__.*
 
-This will install the libaddm.so shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. 
-
 ## Basic Usage ##
 
-A simple usage example is described below: 
+Both methods of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
 
 `main.cpp`:
 ```C++
@@ -196,7 +194,7 @@ Iterate through each individual subjectID and its list of aDDMTrials.
 ```cpp
 std::cout << subjectID << ": "; 
 // Compute the most optimal parameters to generate 
-MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0, 0.5}, "thread");
+MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0}, "thread");
 std::cout << "d: " << info.optimal.d << " "; 
 std::cout << "sigma: " << info.optimal.sigma << " "; 
 std::cout << "theta: " << info.optimal.theta << std::endl; 
@@ -208,7 +206,7 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
 * `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
 * `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0, 0.5}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
+* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
 When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
@@ -353,7 +351,7 @@ apt-get install python3.10
 pip3 install pybind11
 ```
 
-Once `pybind11` and Python3.10 are installed, the module can be built with:
+Once `pybind11` and Python 3.10 are installed, the module can be built with:
 
 ```
 make pybind
