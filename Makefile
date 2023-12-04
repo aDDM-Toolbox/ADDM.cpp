@@ -56,6 +56,11 @@ define compile_test
 	$(CXX) $(addprefix $(TEST_DIR)/, $1.cpp) -laddm -o $(addprefix $(BUILD_DIR)/, $1)
 endef
 
+install: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
+	$(CXX) $(LDFLAGS) -o $(INSTALL_LIB_DIR)/libaddm.so $(CPP_OBJ_FILES)
+	@echo Installing for $(UNAME_S) in $(INSTALL_INC_DIR)
+	cp -TRv $(INC_DIR) $(INSTALL_INC_DIR)/addm
+
 
 sim: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(SIM_EXECS), $(call compile_target, $(source));)
@@ -63,19 +68,13 @@ sim: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 mle: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(MLE_EXECS), $(call compile_target, $(source));)
 
-test: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES) install
+test: 
 	$(foreach source, $(TEST_EXECS), $(call compile_test, $(source));)
 
 run: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(RUN_EXECS), $(call compile_target, $(source));)
 
-all: sim mle test
-
-
-install: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
-	$(CXX) $(LDFLAGS) -o $(INSTALL_LIB_DIR)/libaddm.so $(CPP_OBJ_FILES)
-	@echo Installing for $(UNAME_S) in $(INSTALL_INC_DIR)
-	cp -TRv $(INC_DIR) $(INSTALL_INC_DIR)/addm
+all: sim mle run
 
 
 pybind: 
