@@ -1,0 +1,27 @@
+{
+  "name": "addm.cpp",
+  "version": "1.0.0",
+  "description": "C++ implementation of the aDDM.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakegoldm/ADDM.cpp.git"
+  },
+  "author": "Jake Goldman",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/jakegoldm/ADDM.cpp/issues"
+  },
+  "homepage": "https://github.com/jakegoldm/ADDM.cpp#readme",
+  "devDependencies": {
+    "@jothepro/doxygen-awesome-css": "github:jothepro/doxygen-awesome-css#v2.3.1"
+  }
+}
