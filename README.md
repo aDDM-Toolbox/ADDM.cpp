@@ -81,7 +81,7 @@ Be sure to clone the [ADDM.cpp](https://github.com/aDDM-Toolbox/ADDM.cpp) librar
 
 ### Installation ### 
 
-TThe ADDM.cpp library can then be built and installed in one step: 
+The ADDM.cpp library can then be built and installed in one step: 
 
 ```shell
 $ make install
