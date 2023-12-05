@@ -17,3 +17,5 @@ example.py
 # macros.h should be dynamically generated
 include/macros.h
 addm_code_and_data
+# node modules can be dynamically generated
+node_modules

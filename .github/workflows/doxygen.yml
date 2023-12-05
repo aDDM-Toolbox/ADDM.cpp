@@ -22,6 +22,8 @@ jobs:
         with:
           submodules: true  # Fetch any Git submodules (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+      - name: Add submodules for CSS
+        run: npm install
       - name: Doxygen Action
         uses: mattnotmitt/doxygen-action@v1.1.0
         with:
