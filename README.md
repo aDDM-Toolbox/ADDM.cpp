@@ -52,7 +52,7 @@ rnlcaltech/addm.cpp:latest
 
 * If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
 
-``` shell
+```shell
 docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
 ```
 
@@ -94,7 +94,7 @@ $ make install
 Both methods of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
 
 `main.cpp`:
-```C++
+```cpp
 #include <addm/cpp_toolbox.h>
 #include <iostream>
 
@@ -223,7 +223,7 @@ When building the tutorial with `make run`, an executable will be created at `bi
 
 A set of basic correctnesss tests are located in the [tests](tests/) directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
 
-```Shell
+```shell
 make test
 bin/addm_test
 ```
