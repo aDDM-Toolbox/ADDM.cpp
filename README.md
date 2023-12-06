@@ -2,31 +2,6 @@
 
 C++ implementation of the aDDM-Toolbox. 
 
-<!-- Update TOC with `doctoc .`-->
-## Table of Contents ## 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Getting Started](#getting-started)
-- [Docker Image](#docker-image)
-- [Local Installation](#local-installation)
-  - [Requirements](#requirements)
-  - [Installation](#installation)
-- [Basic Usage](#basic-usage)
-- [Tutorial](#tutorial)
-- [Testing](#testing)
-- [Modifying the Toolbox](#modifying-the-toolbox)
-  - [Alternative Optimization Algorithms](#alternative-optimization-algorithms)
-  - [Adding Parameters and Alternative Likelihood Calculators](#adding-parameters-and-alternative-likelihood-calculators)
-- [Python Bindings](#python-bindings)
-  - [Optional: Python Syntax Highlighting](#optional-python-syntax-highlighting)
-- [Data Analysis Scripts](#data-analysis-scripts)
-- [Authors](#authors)
-- [Acknowledgements](#acknowledgements)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Getting Started ##
 
 The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling c++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__. For instructions on the Docker installation, continue to the __Docker Image__ section. 
