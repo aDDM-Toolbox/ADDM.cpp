@@ -1,6 +1,6 @@
 {
   "name": "addm.cpp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "C++ implementation of the aDDM.",
   "main": "index.js",
   "directories": {
