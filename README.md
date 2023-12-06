@@ -2,30 +2,6 @@
 
 C++ implementation of the aDDM-Toolbox. 
 
-<!-- Update TOC with `doctoc .`-->
-## Table of Contents ## 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Getting Started](#getting-started)
-- [Docker Image](#docker-image)
-- [Local Installation](#local-installation)
-  - [Requirements](#requirements)
-  - [Installation](#installation)
-  - [Usage](#usage)
-- [Tutorial](#tutorial)
-- [Modifying the Toolbox](#modifying-the-toolbox)
-  - [Alternative Optimization Algorithms](#alternative-optimization-algorithms)
-  - [Adding Parameters and Alternative Likelihood Calculators](#adding-parameters-and-alternative-likelihood-calculators)
-- [Python Bindings](#python-bindings)
-  - [Optional: Python Syntax Highlighting](#optional-python-syntax-highlighting)
-- [Data Analysis Scripts](#data-analysis-scripts)
-- [Authors](#authors)
-- [Acknowledgements](#acknowledgements)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Getting Started ##
 
 The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling c++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__. For instructions on the Docker installation, continue to the __Docker Image__ section. 
@@ -51,7 +27,7 @@ rnlcaltech/addm.cpp:latest
 
 * If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
 
-``` shell
+```shell
 docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
 ```
 
@@ -80,7 +56,7 @@ Be sure to clone the [ADDM.cpp](https://github.com/aDDM-Toolbox/ADDM.cpp) librar
 
 ### Installation ### 
 
-TThe ADDM.cpp library can then be built and installed in one step: 
+The ADDM.cpp library can then be built and installed in one step: 
 
 ```shell
 $ make install
@@ -88,14 +64,12 @@ $ make install
 
 *In the event of a __Permission Denied__ error, precede the above command with __sudo__.*
 
-This will install the libaddm.so shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. 
+## Basic Usage ##
 
-### Usage ###
-
-A simple usage example is described below: 
+Both methods of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
 
 `main.cpp`:
-```C++
+```cpp
 #include <addm/cpp_toolbox.h>
 #include <iostream>
 
@@ -195,7 +169,7 @@ Iterate through each individual subjectID and its list of aDDMTrials.
 ```cpp
 std::cout << subjectID << ": "; 
 // Compute the most optimal parameters to generate 
-MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0, 0.5}, "thread");
+MLEinfo info = aDDM::fitModelMLE(trials, {0.001, 0.002, 0.003}, {0.0875, 0.09, 0.0925}, {0.1, 0.3, 0.5}, {0}, "thread");
 std::cout << "d: " << info.optimal.d << " "; 
 std::cout << "sigma: " << info.optimal.sigma << " "; 
 std::cout << "theta: " << info.optimal.theta << std::endl; 
@@ -207,7 +181,7 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
 * `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
 * `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0, 0.5}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
+* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
 When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
@@ -219,6 +193,17 @@ When building the tutorial with `make run`, an executable will be created at `bi
 3: d: 0.001 sigma: 0.09 theta: 0.1
 ⋮
 ```
+
+## Testing ##
+
+A set of basic correctnesss tests are located in the [tests](tests/) directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
+
+```shell
+make test
+bin/addm_test
+```
+
+These tests are also configured to automaticcally run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
 
 ## Modifying the Toolbox ## 
 
@@ -341,7 +326,7 @@ apt-get install python3.10
 pip3 install pybind11
 ```
 
-Once `pybind11` and Python3.10 are installed, the module can be built with:
+Once `pybind11` and Python 3.10 are installed, the module can be built with:
 
 ```
 make pybind
