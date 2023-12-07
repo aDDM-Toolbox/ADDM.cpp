@@ -4,11 +4,11 @@ C++ implementation of the aDDM-Toolbox.
 
 ## Getting Started ##
 
-The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling c++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__. For instructions on the Docker installation, continue to the __Docker Image__ section. 
+The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling C++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__ section. For instructions on the Docker installation, continue to the __Docker Image__ section. 
 
 ## Docker Image ## 
 
-To pull a Docker Image with ADDM.cpp installed, follow the steps below: 
+To pull a Docker image with ADDM.cpp installed, follow the steps below: 
 
 * Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 * Start Docker Desktop. 
@@ -25,7 +25,7 @@ docker run -it --rm \
 rnlcaltech/addm.cpp:latest
 ```
 
-* If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
+* If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
 
 ```shell
 docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
@@ -35,7 +35,7 @@ docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
 
 ### Requirements ###
 
-The standard build of the ADDM.cpp assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
+The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
 
 * [BS::thread_pool](https://github.com/bshoshany/thread-pool)
 * [JSON for Modern C++](https://github.com/nlohmann/json)
@@ -66,7 +66,7 @@ $ make install
 
 ## Basic Usage ##
 
-Both methods of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
+Both of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
 
 `main.cpp`:
 ```cpp
@@ -93,7 +93,7 @@ theta: 0.5
 
 ## Tutorial ##
 
-In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be build using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
+In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains sample experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be built using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
 
 `sample/tutorial.cpp`
 ```cpp
@@ -184,7 +184,7 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
-When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
+When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjects report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
 
 ```
 0: d: 0.001 sigma: 0.0925 theta: 0.1
@@ -203,7 +203,7 @@ make test
 bin/addm_test
 ```
 
-These tests are also configured to automaticcally run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
+These tests are also configured to automatically run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
 
 ## Modifying the Toolbox ## 
 
@@ -232,9 +232,9 @@ for (aDDM addm : potentialModels) {
 ```
 
 Key Variables: 
-* `potentialModels`: Vector of all possible aDDM models and is created by iterating through the entire parameter grid-space. 
+* `potentialModels`: Vector of all possible aDDM models, created by iterating through the entire parameter grid-space. 
 * `posteriors`: Mapping from individual aDDM models to their NLL or marginalized posteriors, depending on input conditions. If the marginal posteriors are to be computed, these calculations are performed at the end of computations. 
-* `allTrialLikelihoods`: Mapping from individual aDDM models to their computed `ProbabilityData` objects. For reference, this object contains information regarding the computed proabilities for a vector of `aDDMTrial` objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial. 
+* `allTrialLikelihoods`: Mapping from individual aDDM models to their computed `ProbabilityData` objects. For reference, this object contains information regarding the computed probabilities for a vector of `aDDMTrial` objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial. 
 * `optimal`: The most optimal model to fit the given trials. 
 
 When redesigning this segment of code, the minimum requirement is that some `aDDM` object is selected as the __optimal__ model. All other computational features can be determined by the user. The decision to compute the marginal posteriors or include code to add to the mappings can also be determined by the user if they inted on using that feature. The code should still compile and run if the `posteriors` and `allTrialLikelihoods` maps are left empty. 
@@ -306,14 +306,14 @@ std::map<string, vector<float>> rangeOptional = {
     {"C", {0.8, 0.9}}
 };
 ```
-3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exists potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
+3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exist potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
 ```cpp
 std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(SIMS);
 MLEinfo info = aDDM::fitModelMLE(
     trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
 ```
 
-Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the users will. See the Python Bindings section below for more details on getting started with Python Bindings. 
+Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the user's will. See the Python Bindings section below for more details on getting started with Python Bindings. 
 
 *See [`addm.h`](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/include/addm.h) for complete documentation on model fitting arguments.*
 
@@ -396,7 +396,7 @@ Note that when executing any Python files using the `addm_toolbox_cpp` module, t
 
 ### Optional: Python Syntax Highlighting ###
 
-For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, auto-complete. Although the `addm_toolbox_cpp.pyi` stub is built-in, the file can be dynamically generated using the [mypy stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html) tool. The `mypy` module can be installed using: 
+For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, and auto-complete. Although the `addm_toolbox_cpp.pyi` stub is built-in, the file can be dynamically generated using the [mypy stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html) tool. The `mypy` module can be installed using: 
 
 ```shell
 pip install mypy
@@ -428,4 +428,4 @@ See the individual file documentation for usage instructions.
 
 ## Acknowledgements ##
 
-This toolbox was developed as part of a resarch project in the [Rangel Neuroeconomics Lab](http://www.rnl.caltech.edu/) at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. 
+This toolbox was developed as part of a research project in the [Rangel Neuroeconomics Lab](http://www.rnl.caltech.edu/) at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. 
