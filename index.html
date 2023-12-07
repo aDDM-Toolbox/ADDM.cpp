@@ -96,31 +96,33 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="textblock"><p><a class="anchor" id="md_README"></a> C++ implementation of the aDDM-Toolbox.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Getting Started</h1>
-<p>The <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. <b>We recommend using the Docker image unless you are familiar with installing and compiling c++ packages</b>. For requirements for a local build of the ADDM.cpp, see the <b>Local Installation</b>. For instructions on the Docker installation, continue to the <b>Docker Image</b> section.</p>
+<p>The <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. <b>We recommend using the Docker image unless you are familiar with installing and compiling C++ packages</b>. For requirements for a local build of the ADDM.cpp, see the Local Installation section. For instructions on the Docker installation, continue to the Docker Image section.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Docker Image</h1>
-<p>To pull a Docker Image with ADDM.cpp installed, follow the steps below:</p>
+<p>To pull a Docker image with ADDM.cpp installed, follow the steps below:</p>
 <ul>
 <li>Install <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a>.</li>
 <li>Start Docker Desktop.</li>
 <li>Pull the Docker image, currently linked at <code>rnlcaltech/addm.cpp</code>. This can be done via terminal using:</li>
 </ul>
-<div class="fragment"><div class="line">docker pull rnlcaltech/addm.cpp:latest</div>
+<div class="fragment"><div class="line">$ docker pull rnlcaltech/addm.cpp:latest</div>
 </div><!-- fragment --><ul>
-<li>You can use the Docker image either through Docker Desktop and selecting <b>run</b> on <code>rnlcaltech/addm.cpp</code> in the list of your local Docker or using a CLI with the following command:</li>
+<li>You can use the Docker image either through Docker Desktop and selecting <b>run</b> on <code>rnlcaltech/addm.cpp</code> in the list of your local Docker images or using a CLI with the following command:</li>
 </ul>
-<div class="fragment"><div class="line">docker run -it --rm \</div>
-<div class="line">-v $(pwd):/home \</div>
-<div class="line">rnlcaltech/addm.cpp:latest</div>
-</div><!-- fragment --><ul>
-<li>If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the <a href="https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile">Dockerfile</a> provided in this repo. To do so navigate to the directory you cloned this repo to and run:</li>
+<div class="fragment"><div class="line">$ docker run -it --rm \</div>
+<div class="line">    -v $(pwd):/home \</div>
+<div class="line">    rnlcaltech/addm.cpp:latest</div>
+</div><!-- fragment --><p>This command will mount <code>/home</code> in the Docker container to your current directory. Any files you want to keep after exiting the container should be saved there.</p>
+<ul>
+<li>If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the <a href="https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile">Dockerfile</a> provided in this repo. To do so navigate to the directory you cloned this repo to and run:</li>
 </ul>
-<div class="fragment"><div class="line">docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md3"></a>
+<div class="fragment"><div class="line">$ docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .</div>
+</div><!-- fragment --><p>You can exit the container with Ctrl+D or the command <code>exit</code>. Note that this will permanently delete any changes or new files you created in your container unless saved in <code>/home</code>.</p>
+<h1><a class="anchor" id="autotoc_md3"></a>
 Local Installation</h1>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Requirements</h2>
-<p>The standard build of the ADDM.cpp assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:</p>
+<p>The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:</p>
 <ul>
 <li><a href="https://github.com/bshoshany/thread-pool">BS::thread_pool</a></li>
 <li><a href="https://github.com/nlohmann/json">JSON for Modern C++</a></li>
@@ -140,7 +142,7 @@ Installation</h2>
 </div><!-- fragment --><p><em>In the event of a <b>Permission Denied</b> error, precede the above command with <b>sudo</b>.</em></p>
 <h1><a class="anchor" id="autotoc_md6"></a>
 Basic Usage</h1>
-<p>Both methods of the above methods will install the <code>libaddm.so</code> shared library as well as the corresponding header files. Although there are multiple header files corresponding to the <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> and <a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a> programs, simply adding <code>#include &lt;addm/cpp_toolbox.h&gt;</code> to a C++ program will include all necessary headers. A simple usage example is described below:</p>
+<p>Both of the above methods will install the <code>libaddm.so</code> shared library as well as the corresponding header files. Although there are multiple header files corresponding to the <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> and <a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a> programs, simply adding <code>#include &lt;addm/cpp_toolbox.h&gt;</code> to a C++ program will include all necessary headers. A simple usage example is described below:</p>
 <p><code>main.cpp</code>: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;addm/cpp_toolbox.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"> </div>
@@ -155,12 +157,13 @@ Basic Usage</h1>
 </div><!-- fragment --><p>When compiling any code using the toolbox, include the <code>-laddm</code> flag to link with the installed shared object library.</p>
 <div class="fragment"><div class="line">$ g++ -o main main.cpp -laddm</div>
 <div class="line">$ ./main</div>
-<div class="line">d: 0.005</div>
+</div><!-- fragment --><p>Expected output:</p>
+<div class="fragment"><div class="line">d: 0.005</div>
 <div class="line">sigma: 0.07</div>
 <div class="line">theta: 0.5</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md7"></a>
 Tutorial</h1>
-<p>In the <a href="data/">data</a> directory, we have included two test files to demonstrate how to use the toolbox. <a href="data/expdata.csv">expdata.csv</a> contains experimental data and <a href="data/fixations.csv">fixations.csv</a> contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in <a href="sample/tutorial.cpp">tutorial.cpp</a>. An executable version of this script can be build using the <code>make run</code> target. The contents of the tutorial are listed below, but can be found <b>verbatim</b> in <a href="sample/tutorial.cpp">tutorial.cpp</a>.</p>
+<p>In the <a href="data/">data</a> directory, we have included two test files to demonstrate how to use the toolbox. <a href="data/expdata.csv">expdata.csv</a> contains sample experimental data and <a href="data/fixations.csv">fixations.csv</a> contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in <a href="sample/tutorial.cpp">tutorial.cpp</a>. An executable version of this script can be built using the <code>make run</code> target. The contents of the tutorial are listed below, but can be found <b>verbatim</b> in <a href="sample/tutorial.cpp">tutorial.cpp</a>.</p>
 <p><code><a class="el" href="tutorial_8cpp.html">sample/tutorial.cpp</a></code> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;addm/cpp_toolbox.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span> </div>
 <div class="line"> </div>
@@ -183,8 +186,9 @@ Tutorial</h1>
 <div class="ttc" id="autil_8h_html_a78fc1c7aadc9bd3f08e29b796632b49b"><div class="ttname"><a href="util_8h.html#a78fc1c7aadc9bd3f08e29b796632b49b">loadDataFromCSV</a></div><div class="ttdeci">std::map&lt; int, std::vector&lt; aDDMTrial &gt; &gt; loadDataFromCSV(std::string expDataFilename, std::string fixDataFilename)</div><div class="ttdoc">Load experimental data from two CSV files: an experimental data file and a fixations file....</div><div class="ttdef"><b>Definition</b> util.cpp:24</div></div>
 </div><!-- fragment --><p>Let's break this down piece by piece:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;addm/cpp_toolbox.h&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span> </div>
-</div><!-- fragment --><p>This tells the C++ pre-processor to find the <code>addm</code> library and the main header file <code><a class="el" href="cpp__toolbox_8h.html">cpp_toolbox.h</a></code>. The main header file includes all sub-headers for the <code><a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a></code> and <code><a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a></code> classes and utility methods, so there is no need to include any other files. If you haven't already, run <code>make install</code> to install the <code>addm</code> library on your machine. This also tells the pre-processor to compile with the <code>&lt;iostream&gt;</code> library, which provides functionality for printing to the console.</p>
+</div><!-- fragment --><p>This tells the C++ pre-processor to find the <code>addm</code> library and the main header file <code><a class="el" href="cpp__toolbox_8h.html">cpp_toolbox.h</a></code>. The main header file includes all sub-headers for the <code><a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a></code> and <code><a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a></code> classes and utility methods, so there is no need to include any other files. If you haven't already, run <code>make install</code> to install the <code>addm</code> library on your machine.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+</div><!-- fragment --><p>This tells the pre-processor to compile with the <code>&lt;iostream&gt;</code> library, which provides functionality for printing to the console.</p>
 <div class="fragment"><div class="line"><span class="comment">// Load trial and fixation data</span></div>
 <div class="line">std::map&lt;int, std::vector&lt;aDDMTrial&gt;&gt; data = <a class="code hl_function" href="util_8h.html#a78fc1c7aadc9bd3f08e29b796632b49b">loadDataFromCSV</a>(<span class="stringliteral">&quot;data/expdata.csv&quot;</span>, <span class="stringliteral">&quot;data/fixations.csv&quot;</span>);</div>
 </div><!-- fragment --><p>This uses the <code>loadDataFromCSV</code> function included in <code><a class="el" href="util_8h.html">util.h</a></code> to load the experimental data and fixation data from CSV files. Both files need to be structured in a specific format to be properly loaded. These formats are described below, with sample experimental data in <code>data/expdata.csv</code> and fixation data in <code>data/fixations.csv</code>.</p>
@@ -224,7 +228,7 @@ Tutorial</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyCenter">1   </td><td class="markdownTableBodyCenter">-1   </td><td class="markdownTableBodyCenter">400   </td><td class="markdownTableBodyCenter">4   </td><td class="markdownTableBodyCenter">5   </td><td class="markdownTableBodyCenter">2   </td><td class="markdownTableBodyCenter">100   </td></tr>
 </table>
-<p>The <code>loadDataFromCSV</code> function returns a <code>std::map&lt;int, std::vector&lt;<a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a>&gt;&gt;</code>. This is a mapping from subjectIDs to their corresponding list of trials. A single trial (choice, response time, fixations) is represented in the <code><a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a></code> object.</p>
+<p>The <code>loadDataFromCSV</code> function returns a <code>std::map&lt;int, std::vector&lt;<a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a>&gt;&gt;</code>. This is a mapping from subjectIDs to their corresponding list of trials. A single trial (choice, response time, fixations) is represented in each <code><a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a></code> object.</p>
 <div class="fragment"><div class="line"><span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [subjectID, trials] : data) ...</div>
 </div><!-- fragment --><p>Iterate through each individual subjectID and its list of aDDMTrials.</p>
 <div class="fragment"><div class="line">std::cout &lt;&lt; subjectID &lt;&lt; <span class="stringliteral">&quot;: &quot;</span>; </div>
@@ -242,7 +246,7 @@ Tutorial</h1>
 <li><code>{0}</code> - Range to test for additive fixation factor (k). The default <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> model assumes no additive scalar for fixations.</li>
 <li><code>"thread"</code> - indicates whether to use the standard or multithreaded implementation. Must be selected between <code>"basic"</code> and <code>"thread"</code>.</li>
 </ul>
-<p>When building the tutorial with <code>make run</code>, an executable will be created at <code>bin/tutorial</code>. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below:</p>
+<p>When building the tutorial with <code>make run</code>, an executable will be created at <code>bin/tutorial</code>. Running this executable should print the model parameters for each subject. At first, it may seem like most subjects report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below:</p>
 <div class="fragment"><div class="line">0: d: 0.001 sigma: 0.0925 theta: 0.1</div>
 <div class="line">1: d: 0.001 sigma: 0.09 theta: 0.1</div>
 <div class="line">2: d: 0.001 sigma: 0.0875 theta: 0.1</div>
@@ -251,9 +255,9 @@ Tutorial</h1>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md8"></a>
 Testing</h1>
 <p>A set of basic correctnesss tests are located in the <a href="tests/">tests</a> directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests:</p>
-<div class="fragment"><div class="line">make test</div>
-<div class="line">bin/addm_test</div>
-</div><!-- fragment --><p>These tests are also configured to automaticcally run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge.</p>
+<div class="fragment"><div class="line">$ make test</div>
+<div class="line">$ bin/addm_test</div>
+</div><!-- fragment --><p>These tests are also configured to automatically run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge.</p>
 <h1><a class="anchor" id="autotoc_md9"></a>
 Modifying the Toolbox</h1>
 <p>Some users may want to modify this codebase for their own purposes. Below are some examples of what users may want to do and some tips on altering the code.</p>
@@ -278,9 +282,9 @@ Alternative Optimization Algorithms</h2>
 <div class="ttc" id="aclassProbabilityData_html"><div class="ttname"><a href="classProbabilityData.html">ProbabilityData</a></div><div class="ttdoc">Information pertaining to the computation of likelihoods for a dataset of trials (either DDM or aDDM)...</div><div class="ttdef"><b>Definition</b> mle_info.h:29</div></div>
 <div class="ttc" id="aclassProbabilityData_html_ac82874e15b2365db4ce1320aa2097055"><div class="ttname"><a href="classProbabilityData.html#ac82874e15b2365db4ce1320aa2097055">ProbabilityData::NLL</a></div><div class="ttdeci">double NLL</div><div class="ttdef"><b>Definition</b> mle_info.h:33</div></div>
 </div><!-- fragment --><p>Key Variables:</p><ul>
-<li><code>potentialModels</code>: Vector of all possible <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> models and is created by iterating through the entire parameter grid-space.</li>
+<li><code>potentialModels</code>: Vector of all possible <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> models, created by iterating through the entire parameter grid-space.</li>
 <li><code>posteriors</code>: Mapping from individual <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> models to their NLL or marginalized posteriors, depending on input conditions. If the marginal posteriors are to be computed, these calculations are performed at the end of computations.</li>
-<li><code>allTrialLikelihoods</code>: Mapping from individual <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> models to their computed <code><a class="el" href="classProbabilityData.html" title="Information pertaining to the computation of likelihoods for a dataset of trials (either DDM or aDDM)...">ProbabilityData</a></code> objects. For reference, this object contains information regarding the computed proabilities for a vector of <code><a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a></code> objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial.</li>
+<li><code>allTrialLikelihoods</code>: Mapping from individual <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> models to their computed <code><a class="el" href="classProbabilityData.html" title="Information pertaining to the computation of likelihoods for a dataset of trials (either DDM or aDDM)...">ProbabilityData</a></code> objects. For reference, this object contains information regarding the computed probabilities for a vector of <code><a class="el" href="classaDDMTrial.html" title="Implementation of a single aDDMTrial object.">aDDMTrial</a></code> objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial.</li>
 <li><code>optimal</code>: The most optimal model to fit the given trials.</li>
 </ul>
 <p>When redesigning this segment of code, the minimum requirement is that some <code><a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a></code> object is selected as the <b>optimal</b> model. All other computational features can be determined by the user. The decision to compute the marginal posteriors or include code to add to the mappings can also be determined by the user if they inted on using that feature. The code should still compile and run if the <code>posteriors</code> and <code>allTrialLikelihoods</code> maps are left empty.</p>
@@ -332,22 +336,22 @@ Adding Parameters and Alternative Likelihood Calculators</h2>
 <div class="line">    {<span class="stringliteral">&quot;C&quot;</span>, {0.8, 0.9}}</div>
 <div class="line">};</div>
 </div><!-- fragment --></li>
-<li>Load trials as usual and call <code><a class="el" href="classaDDM.html#acc9951f76f33388905921ef38a76c89b" title="Complete a grid-search based Maximum Likelihood Estimation of all possible parameter combinations (d,...">aDDM::fitModelMLE</a></code> to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if <code>getLikelihoodAlternative</code> should be used and if there exists potential values for custom parameters to test all combinations of. (These parameters should be <b>true</b> and <b>rangeOptional</b> if the custom parameter space is non-empty). <div class="fragment"><div class="line">std::vector&lt;aDDMTrial&gt; trials = <a class="code hl_function" href="classaDDMTrial.html#a370280f496885eeb71c2530d77f5d889">aDDMTrial::loadTrialsFromCSV</a>(<a class="code hl_variable" href="addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba">SIMS</a>);</div>
+<li>Load trials as usual and call <code><a class="el" href="classaDDM.html#acc9951f76f33388905921ef38a76c89b" title="Complete a grid-search based Maximum Likelihood Estimation of all possible parameter combinations (d,...">aDDM::fitModelMLE</a></code> to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if <code>getLikelihoodAlternative</code> should be used and if there exist potential values for custom parameters to test all combinations of. (These parameters should be <b>true</b> and <b>rangeOptional</b> if the custom parameter space is non-empty). <div class="fragment"><div class="line">std::vector&lt;aDDMTrial&gt; trials = <a class="code hl_function" href="classaDDMTrial.html#a370280f496885eeb71c2530d77f5d889">aDDMTrial::loadTrialsFromCSV</a>(<a class="code hl_variable" href="addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba">SIMS</a>);</div>
 <div class="line"><a class="code hl_struct" href="structMLEinfo.html">MLEinfo</a> info = <a class="code hl_function" href="classaDDM.html#acc9951f76f33388905921ef38a76c89b">aDDM::fitModelMLE</a>(</div>
 <div class="line">    trials, {0.005}, {0.07}, {0.5}, {0}, <span class="stringliteral">&quot;thread&quot;</span>, <span class="keyword">false</span>, 1, 0, 10, 0.1, {0}, {0}, <span class="keyword">true</span>, rangeOptional);</div>
 <div class="ttc" id="aaddm__mle_8cpp_html_a82b30bdf03d8d4f4499963ac4878b6ba"><div class="ttname"><a href="addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba">SIMS</a></div><div class="ttdeci">const std::string SIMS</div><div class="ttdef"><b>Definition</b> addm_mle.cpp:7</div></div>
 <div class="ttc" id="aclassaDDMTrial_html_a370280f496885eeb71c2530d77f5d889"><div class="ttname"><a href="classaDDMTrial.html#a370280f496885eeb71c2530d77f5d889">aDDMTrial::loadTrialsFromCSV</a></div><div class="ttdeci">static vector&lt; aDDMTrial &gt; loadTrialsFromCSV(string filename)</div><div class="ttdoc">Load a dataset of aDDMTrials into program memory.</div><div class="ttdef"><b>Definition</b> addm.cpp:614</div></div>
 </div><!-- fragment --></li>
 </ol>
-<p>Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the users will. See the Python Bindings section below for more details on getting started with Python Bindings.</p>
+<p>Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the user's will. See the Python Bindings section below for more details on getting started with Python Bindings.</p>
 <p>*See <a href="https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/include/addm.h"><code>addm.h</code></a> for complete documentation on model fitting arguments.*</p>
 <h1><a class="anchor" id="autotoc_md12"></a>
 Python Bindings</h1>
 <p>Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in <a href="lib/bindings.cpp">lib/bindings.cpp</a>. Note that <a href="https://github.com/pybind/pybind11">pybind11</a> and Python version 3.10 (at a minimum) are <b>strict</b> prerequisites for installation and usage of the Python code. These are installed in the Docker image. For local installation on a Linux OS they can be installed with</p>
-<div class="fragment"><div class="line">apt-get install python3.10</div>
-<div class="line">pip3 install pybind11</div>
+<div class="fragment"><div class="line">$ apt-get install python3.10</div>
+<div class="line">$ pip3 install pybind11</div>
 </div><!-- fragment --><p>Once <code>pybind11</code> and Python 3.10 are installed, the module can be built with:</p>
-<div class="fragment"><div class="line">make pybind</div>
+<div class="fragment"><div class="line">$ make pybind</div>
 </div><!-- fragment --><p>This will create a shared library object in the repository's root directory containing the <code>addm_toolbox_cpp</code> module. Although function calls remain largely analogous with the original C++ code, an example is described below that can be used to ensure the code is working properly:</p>
 <p><code>main.py</code>:</p>
 <div class="fragment"><div class="line"><span class="keyword">import</span> addm_toolbox_cpp</div>
@@ -359,8 +363,10 @@ Python Bindings</h1>
 <div class="line">trial = ddm.simulateTrial(3, 7, 10, 540)</div>
 <div class="line">print(f<span class="stringliteral">&quot;RT = {trial.RT}&quot;</span>)</div>
 <div class="line">print(f<span class="stringliteral">&quot;choice = {trial.choice}&quot;</span>)</div>
-</div><!-- fragment --><p> To run the code: </p><div class="fragment"><div class="line">$ python3 main.py</div>
-<div class="line">d = 0.005</div>
+</div><!-- fragment --><p>To run the code:</p>
+<div class="fragment"><div class="line">$ python3 main.py</div>
+</div><!-- fragment --><p>Expected output:</p>
+<div class="fragment"><div class="line">d = 0.005</div>
 <div class="line">sigma = 0.07</div>
 <div class="line">RT = 850</div>
 <div class="line">choice = 1</div>
@@ -383,8 +389,10 @@ Python Bindings</h1>
 <div class="line">          f<span class="stringliteral">&quot;d: {round(info.optimal.d, 4)} &quot;</span> + </div>
 <div class="line">          f<span class="stringliteral">&quot;sigma: {round(info.optimal.sigma, 4)} &quot;</span> +</div>
 <div class="line">          f<span class="stringliteral">&quot;theta: {round(info.optimal.theta, 4)}&quot;</span>)</div>
-</div><!-- fragment --><p> To run the code: </p><div class="fragment"><div class="line">$ python3 tutorial.py</div>
-<div class="line">0: d: 0.001 sigma: 0.0925 theta: 0.1</div>
+</div><!-- fragment --><p>To run the code:</p>
+<div class="fragment"><div class="line">$ python3 tutorial.py</div>
+</div><!-- fragment --><p>Expected output:</p>
+<div class="fragment"><div class="line">0: d: 0.001 sigma: 0.0925 theta: 0.1</div>
 <div class="line">1: d: 0.001 sigma: 0.09 theta: 0.1</div>
 <div class="line">2: d: 0.001 sigma: 0.0875 theta: 0.1</div>
 <div class="line">3: d: 0.001 sigma: 0.09 theta: 0.1</div>
@@ -396,10 +404,10 @@ Python Bindings</h1>
 </ul>
 <h2><a class="anchor" id="autotoc_md13"></a>
 Optional: Python Syntax Highlighting</h2>
-<p>For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, auto-complete. Although the <code>addm_toolbox_cpp.pyi</code> stub is built-in, the file can be dynamically generated using the <a href="https://mypy.readthedocs.io/en/stable/stubgen.html">mypy stubgen</a> tool. The <code>mypy</code> module can be installed using:</p>
-<div class="fragment"><div class="line">pip install mypy</div>
+<p>For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, and auto-complete. Although the <code>addm_toolbox_cpp.pyi</code> stub is built-in, the file can be dynamically generated using the <a href="https://mypy.readthedocs.io/en/stable/stubgen.html">mypy stubgen</a> tool. The <code>mypy</code> module can be installed using:</p>
+<div class="fragment"><div class="line">$ pip install mypy</div>
 </div><!-- fragment --><p>For users who plan to modify the library for their own use and want the provided features, the stub file can be built as follows:</p>
-<div class="fragment"><div class="line">stubgen -m addm_toolbox_cpp -o .</div>
+<div class="fragment"><div class="line">$ stubgen -m addm_toolbox_cpp -o .</div>
 </div><!-- fragment --><p> <em>Note that the <code>pybind11</code> shared library file should be built before running <code>stubgen</code>.</em></p>
 <h1><a class="anchor" id="autotoc_md14"></a>
 Data Analysis Scripts</h1>
@@ -420,7 +428,7 @@ Authors</h1>
 </ul>
 <h1><a class="anchor" id="autotoc_md16"></a>
 Acknowledgements</h1>
-<p>This toolbox was developed as part of a resarch project in the <a href="http://www.rnl.caltech.edu/">Rangel Neuroeconomics Lab</a> at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. </p>
+<p>This toolbox was developed as part of a research project in the <a href="http://www.rnl.caltech.edu/">Rangel Neuroeconomics Lab</a> at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
