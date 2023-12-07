@@ -4,7 +4,7 @@ C++ implementation of the aDDM-Toolbox.
 
 ## Getting Started ##
 
-The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling C++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__ section. For instructions on the Docker installation, continue to the __Docker Image__ section. 
+The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling C++ packages__. For requirements for a local build of the ADDM.cpp, see the [Local Installation](#local-installation) section. For instructions on the Docker installation, continue to the [Docker Image](#docker-image) section. 
 
 ## Docker Image ## 
 
@@ -313,7 +313,7 @@ MLEinfo info = aDDM::fitModelMLE(
     trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
 ```
 
-Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the user's will. See the Python Bindings section below for more details on getting started with Python Bindings. 
+Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the user's will. See the [Python Bindings](#python-bindings) section below for more details on getting started with Python Bindings. 
 
 *See [`addm.h`](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/include/addm.h) for complete documentation on model fitting arguments.*
 
