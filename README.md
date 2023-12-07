@@ -4,38 +4,42 @@ C++ implementation of the aDDM-Toolbox.
 
 ## Getting Started ##
 
-The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling c++ packages__. For requirements for a local build of the ADDM.cpp, see the __Local Installation__. For instructions on the Docker installation, continue to the __Docker Image__ section. 
+The aDDM Toolbox library for C++ can be cloned on the user's machine or run in a Docker container. __We recommend using the Docker image unless you are familiar with installing and compiling C++ packages__. For requirements for a local build of the ADDM.cpp, see the [Local Installation](#local-installation) section. For instructions on the Docker installation, continue to the [Docker Image](#docker-image) section. 
 
 ## Docker Image ## 
 
-To pull a Docker Image with ADDM.cpp installed, follow the steps below: 
+To pull a Docker image with ADDM.cpp installed, follow the steps below: 
 
 * Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 * Start Docker Desktop. 
 * Pull the Docker image, currently linked at `rnlcaltech/addm.cpp`. This can be done via terminal using: 
 
 ```shell
-docker pull rnlcaltech/addm.cpp:latest
+$ docker pull rnlcaltech/addm.cpp:latest
 ```
-* You can use the Docker image either through Docker Desktop and selecting __run__ on `rnlcaltech/addm.cpp` in the list of your local Docker or using a CLI with the following command:
+* You can use the Docker image either through Docker Desktop and selecting __run__ on `rnlcaltech/addm.cpp` in the list of your local Docker images or using a CLI with the following command:
 
 ```shell
-docker run -it --rm \
--v $(pwd):/home \
-rnlcaltech/addm.cpp:latest
+$ docker run -it --rm \
+    -v $(pwd):/home \
+    rnlcaltech/addm.cpp:latest
 ```
 
-* If you not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
+This command will mount `/home` in the Docker container to your current directory. Any files you want to keep after exiting the container should be saved there.
+
+* If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
 
 ```shell
-docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
+$ docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
 ```
+
+You can exit the container with Ctrl+D or the command `exit`. Note that this will permanently delete any changes or new files you created in your container unless saved in `/home`.
 
 ## Local Installation ##
 
 ### Requirements ###
 
-The standard build of the ADDM.cpp assumes the Linux Ubuntu Distribution 22.04. This library requires g++ version 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
+The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
 
 * [BS::thread_pool](https://github.com/bshoshany/thread-pool)
 * [JSON for Modern C++](https://github.com/nlohmann/json)
@@ -66,7 +70,7 @@ $ make install
 
 ## Basic Usage ##
 
-Both methods of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
+Both of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
 
 `main.cpp`:
 ```cpp
@@ -86,6 +90,11 @@ When compiling any code using the toolbox, include the `-laddm` flag to link wit
 ```
 $ g++ -o main main.cpp -laddm
 $ ./main
+```
+
+Expected output:
+
+```
 d: 0.005
 sigma: 0.07
 theta: 0.5
@@ -93,7 +102,7 @@ theta: 0.5
 
 ## Tutorial ##
 
-In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be build using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
+In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains sample experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be built using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
 
 `sample/tutorial.cpp`
 ```cpp
@@ -119,10 +128,15 @@ Let's break this down piece by piece:
 
 ```cpp
 #include <addm/cpp_toolbox.h>
-#include <iostream> 
 ```
 
-This tells the C++ pre-processor to find the `addm` library and the main header file `cpp_toolbox.h`. The main header file includes all sub-headers for the `DDM` and `aDDM` classes and utility methods, so there is no need to include any other files. If you haven't already, run `make install` to install the `addm` library on your machine. This also tells the pre-processor to compile with the `<iostream>` library, which provides functionality for printing to the console. 
+This tells the C++ pre-processor to find the `addm` library and the main header file `cpp_toolbox.h`. The main header file includes all sub-headers for the `DDM` and `aDDM` classes and utility methods, so there is no need to include any other files. If you haven't already, run `make install` to install the `addm` library on your machine.
+
+```cpp
+#include <iostream>
+```
+
+This tells the pre-processor to compile with the `<iostream>` library, which provides functionality for printing to the console. 
 
 ```cpp
 // Load trial and fixation data
@@ -158,7 +172,7 @@ __Single CSV__
 |   1	|   -1	|  400 	|   4	        |  5            |   0	    |   300	    |
 |   1	|   -1	|  400 	|   4	        |   5	        |   2	    |   100	    |
 
-The `loadDataFromCSV` function returns a `std::map<int, std::vector<aDDMTrial>>`. This is a mapping from subjectIDs to their corresponding list of trials. A single trial (choice, response time, fixations) is represented in the `aDDMTrial` object. 
+The `loadDataFromCSV` function returns a `std::map<int, std::vector<aDDMTrial>>`. This is a mapping from subjectIDs to their corresponding list of trials. A single trial (choice, response time, fixations) is represented in each `aDDMTrial` object. 
 
 ```cpp
 for (const auto& [subjectID, trials] : data) ...
@@ -184,7 +198,7 @@ Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optima
 * `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
-When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjecs report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
+When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjects report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
 
 ```
 0: d: 0.001 sigma: 0.0925 theta: 0.1
@@ -199,11 +213,11 @@ When building the tutorial with `make run`, an executable will be created at `bi
 A set of basic correctnesss tests are located in the [tests](tests/) directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
 
 ```shell
-make test
-bin/addm_test
+$ make test
+$ bin/addm_test
 ```
 
-These tests are also configured to automaticcally run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
+These tests are also configured to automatically run when pushed to GitHub. If you are contributing to the toolbox, be sure that your commit succesfully runs and passes the tests before attempting to merge. 
 
 ## Modifying the Toolbox ## 
 
@@ -232,9 +246,9 @@ for (aDDM addm : potentialModels) {
 ```
 
 Key Variables: 
-* `potentialModels`: Vector of all possible aDDM models and is created by iterating through the entire parameter grid-space. 
+* `potentialModels`: Vector of all possible aDDM models, created by iterating through the entire parameter grid-space. 
 * `posteriors`: Mapping from individual aDDM models to their NLL or marginalized posteriors, depending on input conditions. If the marginal posteriors are to be computed, these calculations are performed at the end of computations. 
-* `allTrialLikelihoods`: Mapping from individual aDDM models to their computed `ProbabilityData` objects. For reference, this object contains information regarding the computed proabilities for a vector of `aDDMTrial` objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial. 
+* `allTrialLikelihoods`: Mapping from individual aDDM models to their computed `ProbabilityData` objects. For reference, this object contains information regarding the computed probabilities for a vector of `aDDMTrial` objects. It is comprised of the sum of Negative Log Likelihoods, sum of likelihoods, and a list of all likelihoods for each trial. 
 * `optimal`: The most optimal model to fit the given trials. 
 
 When redesigning this segment of code, the minimum requirement is that some `aDDM` object is selected as the __optimal__ model. All other computational features can be determined by the user. The decision to compute the marginal posteriors or include code to add to the mappings can also be determined by the user if they inted on using that feature. The code should still compile and run if the `posteriors` and `allTrialLikelihoods` maps are left empty. 
@@ -306,14 +320,14 @@ std::map<string, vector<float>> rangeOptional = {
     {"C", {0.8, 0.9}}
 };
 ```
-3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exists potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
+3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exist potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
 ```cpp
 std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(SIMS);
 MLEinfo info = aDDM::fitModelMLE(
     trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
 ```
 
-Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the users will. See the Python Bindings section below for more details on getting started with Python Bindings. 
+Note that C++ requires positional arguments, so there is no way to get around filling in all arguments up to the ones you intend to modify from the default. Some users may prefer to use Python instead of C++ to allow for keyword arguments, which may be filled in and changed from the default at the user's will. See the [Python Bindings](#python-bindings) section below for more details on getting started with Python Bindings. 
 
 *See [`addm.h`](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/include/addm.h) for complete documentation on model fitting arguments.*
 
@@ -322,14 +336,14 @@ Note that C++ requires positional arguments, so there is no way to get around fi
 Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in [lib/bindings.cpp](lib/bindings.cpp). Note that [pybind11](https://github.com/pybind/pybind11) and Python version 3.10 (at a minimum) are __strict__ prerequisites for installation and usage of the Python code. These are installed in the Docker image. For local installation on a Linux OS they can be installed with 
 
 ```shell
-apt-get install python3.10
-pip3 install pybind11
+$ apt-get install python3.10
+$ pip3 install pybind11
 ```
 
 Once `pybind11` and Python 3.10 are installed, the module can be built with:
 
 ```
-make pybind
+$ make pybind
 ```
 
 This will create a shared library object in the repository's root directory containing the `addm_toolbox_cpp` module. Although function calls remain largely analogous with the original C++ code, an example is described below that can be used to ensure the code is working properly: 
@@ -347,9 +361,16 @@ trial = ddm.simulateTrial(3, 7, 10, 540)
 print(f"RT = {trial.RT}")
 print(f"choice = {trial.choice}")
 ```
+
 To run the code: 
+
 ```
 $ python3 main.py
+```
+
+Expected output:
+
+```
 d = 0.005
 sigma = 0.07
 RT = 850
@@ -379,9 +400,16 @@ for subject_id, trials in data.items():
           f"sigma: {round(info.optimal.sigma, 4)} " +
           f"theta: {round(info.optimal.theta, 4)}")
 ```
+
 To run the code: 
+
 ```
 $ python3 tutorial.py
+```
+
+Expected output:
+
+```
 0: d: 0.001 sigma: 0.0925 theta: 0.1
 1: d: 0.001 sigma: 0.09 theta: 0.1
 2: d: 0.001 sigma: 0.0875 theta: 0.1
@@ -396,16 +424,16 @@ Note that when executing any Python files using the `addm_toolbox_cpp` module, t
 
 ### Optional: Python Syntax Highlighting ###
 
-For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, auto-complete. Although the `addm_toolbox_cpp.pyi` stub is built-in, the file can be dynamically generated using the [mypy stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html) tool. The `mypy` module can be installed using: 
+For users working in a user interface, such as Visual Studio Code, a Python stub is provided to facilitate features including syntax highlighting, type-hinting, and auto-complete. Although the `addm_toolbox_cpp.pyi` stub is built-in, the file can be dynamically generated using the [mypy stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html) tool. The `mypy` module can be installed using: 
 
 ```shell
-pip install mypy
+$ pip install mypy
 ```
 
 For users who plan to modify the library for their own use and want the provided features, the stub file can be built as follows: 
 
 ```shell
-stubgen -m addm_toolbox_cpp -o .
+$ stubgen -m addm_toolbox_cpp -o .
 ```
 *Note that the `pybind11` shared library file should be built before running `stubgen`.*
 
@@ -428,4 +456,4 @@ See the individual file documentation for usage instructions.
 
 ## Acknowledgements ##
 
-This toolbox was developed as part of a resarch project in the [Rangel Neuroeconomics Lab](http://www.rnl.caltech.edu/) at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. 
+This toolbox was developed as part of a research project in the [Rangel Neuroeconomics Lab](http://www.rnl.caltech.edu/) at the California Institute of Technology. Special thanks to Antonio Rangel and Zeynep Enkavi for your help with this project. 
