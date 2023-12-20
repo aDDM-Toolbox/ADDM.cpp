@@ -27,4 +27,4 @@ RUN pip install --upgrade pip && \
 
 CMD ["/bin/bash"]
 
-# Add examples in README as tests to make sure installation worked?
+# Todo: should testing happen for this image?
