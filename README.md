@@ -12,17 +12,12 @@ To pull a Docker image with ADDM.cpp installed, follow the steps below:
 
 * Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 * Start Docker Desktop. 
-* Pull the Docker image, currently linked at `rnlcaltech/addm.cpp`. This can be done via terminal using: 
-
-```shell
-$ docker pull rnlcaltech/addm.cpp:latest
-```
-* You can use the Docker image either through Docker Desktop and selecting __run__ on `rnlcaltech/addm.cpp` in the list of your local Docker images or using a CLI with the following command:
+* You can use the Docker image either through Docker Desktop and selecting __run__ on `rnlcaltech/addm-toolbox:addm.cpp` in the list of your local Docker images or using a CLI with the following command:
 
 ```shell
 $ docker run -it --rm \
     -v $(pwd):/home \
-    rnlcaltech/addm.cpp:latest
+    rnlcaltech/addm-toolbox:addm.cpp
 ```
 
 This command will mount `/home` in the Docker container to your current directory. Any files you want to keep after exiting the container should be saved there.
@@ -30,12 +25,14 @@ This command will mount `/home` in the Docker container to your current director
 * If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the [Dockerfile](https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile) provided in this repo. To do so navigate to the directory you cloned this repo to and run: 
 
 ```shell
-$ docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .
+$ docker build -t {USER_NAME}/addm-toolbox:addm.cpp -f ./Dockerfile .
 ```
 
-You can exit the container with Ctrl+D or the command `exit`. Note that this will permanently delete any changes or new files you created in your container unless saved in `/home`.
+You can exit the container with Ctrl+C or the command `exit`. Note that this will permanently delete any changes or new files you created in your container unless saved in `/home`.
 
 ## Local Installation ##
+
+Skip this if you are using the Docker image as recommended above.
 
 ### Requirements ###
 
@@ -70,7 +67,16 @@ $ make install
 
 ## Basic Usage ##
 
-Both of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below: 
+Both of the above methods will install the `libaddm.so` shared library as well as the corresponding header files. Although there are multiple header files corresponding to the aDDM and DDM programs, simply adding `#include <addm/cpp_toolbox.h>` to a C++ program will include all necessary headers. A simple usage example is described below.
+
+To use the C++ toolbox, you need to create programs (files with `.cpp` extensions), compile them (e.g. using `g++`) and then run them. If you have installed the toolbox locally, you can create your programs or the ones described in this tutorual in any text editor you have on your system. Alternatively, if you're using the Docker image, as advised above, you can use `vim` as the editor to write or paste the code from the tutorial. 
+
+So e.g., after starting a container using the `docker run ...` command above, you will be in a shell session that has the precompiled aDDM-toolbox. From the command line you can run
+
+```shell
+root ➜ ~/ADDM.cpp (main) $ vim main.cpp
+```
+to create a new file names `main.cpp`, hit `i` to copy and paste the code from below, and save it using `:x`.
 
 `main.cpp`:
 ```cpp
@@ -85,7 +91,13 @@ int main() {
 }
 ```
 
-When compiling any code using the toolbox, include the `-laddm` flag to link with the installed shared object library.
+You can confirm you created the `main.cpp` program by running
+
+```shell
+root ➜ ~/ADDM.cpp (main) $ ls
+```
+
+The next step is to compile this new program. When compiling any code using the toolbox, include the `-laddm` flag to link with the installed shared object library.
 
 ```
 $ g++ -o main main.cpp -laddm
