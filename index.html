@@ -103,23 +103,20 @@ Docker Image</h1>
 <ul>
 <li>Install <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a>.</li>
 <li>Start Docker Desktop.</li>
-<li>Pull the Docker image, currently linked at <code>rnlcaltech/addm.cpp</code>. This can be done via terminal using:</li>
-</ul>
-<div class="fragment"><div class="line">$ docker pull rnlcaltech/addm.cpp:latest</div>
-</div><!-- fragment --><ul>
-<li>You can use the Docker image either through Docker Desktop and selecting <b>run</b> on <code>rnlcaltech/addm.cpp</code> in the list of your local Docker images or using a CLI with the following command:</li>
+<li>You can use the Docker image either through Docker Desktop and selecting <b>run</b> on <code>rnlcaltech/addm-toolbox:<a class="el" href="addm_8cpp.html">addm.cpp</a></code> in the list of your local Docker images or using a CLI with the following command:</li>
 </ul>
 <div class="fragment"><div class="line">$ docker run -it --rm \</div>
 <div class="line">    -v $(pwd):/home \</div>
-<div class="line">    rnlcaltech/addm.cpp:latest</div>
+<div class="line">    rnlcaltech/addm-toolbox:addm.cpp</div>
 </div><!-- fragment --><p>This command will mount <code>/home</code> in the Docker container to your current directory. Any files you want to keep after exiting the container should be saved there.</p>
 <ul>
 <li>If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the <a href="https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile">Dockerfile</a> provided in this repo. To do so navigate to the directory you cloned this repo to and run:</li>
 </ul>
-<div class="fragment"><div class="line">$ docker build -t {USER_NAME}/addm.cpp:{YOUR_TAG} -f ./Dockerfile .</div>
-</div><!-- fragment --><p>You can exit the container with Ctrl+D or the command <code>exit</code>. Note that this will permanently delete any changes or new files you created in your container unless saved in <code>/home</code>.</p>
+<div class="fragment"><div class="line">$ docker build -t {USER_NAME}/addm-toolbox:addm.cpp -f ./Dockerfile .</div>
+</div><!-- fragment --><p>You can exit the container with Ctrl+C or the command <code>exit</code>. Note that this will permanently delete any changes or new files you created in your container unless saved in <code>/home</code>.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Local Installation</h1>
+<p>Skip this if you are using the Docker image as recommended above.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Requirements</h2>
 <p>The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:</p>
@@ -142,7 +139,11 @@ Installation</h2>
 </div><!-- fragment --><p><em>In the event of a <b>Permission Denied</b> error, precede the above command with <b>sudo</b>.</em></p>
 <h1><a class="anchor" id="autotoc_md6"></a>
 Basic Usage</h1>
-<p>Both of the above methods will install the <code>libaddm.so</code> shared library as well as the corresponding header files. Although there are multiple header files corresponding to the <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> and <a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a> programs, simply adding <code>#include &lt;addm/cpp_toolbox.h&gt;</code> to a C++ program will include all necessary headers. A simple usage example is described below:</p>
+<p>Both of the above methods will install the <code>libaddm.so</code> shared library as well as the corresponding header files. Although there are multiple header files corresponding to the <a class="el" href="classaDDM.html" title="Implementation of the attentional Drift Diffusion Model (aDDM).">aDDM</a> and <a class="el" href="classDDM.html" title="Implementation of the Drift Diffusion Model (DDM).">DDM</a> programs, simply adding <code>#include &lt;addm/cpp_toolbox.h&gt;</code> to a C++ program will include all necessary headers. A simple usage example is described below.</p>
+<p>To use the C++ toolbox, you need to create programs (files with <code>.cpp</code> extensions), compile them (e.g. using <code>g++</code>) and then run them. If you have installed the toolbox locally, you can create your programs or the ones described in this tutorual in any text editor you have on your system. Alternatively, if you're using the Docker image, as advised above, you can use <code>vim</code> as the editor to write or paste the code from the tutorial.</p>
+<p>So e.g., after starting a container using the <code>docker run ...</code> command above, you will be in a shell session that has the precompiled aDDM-toolbox. From the command line you can run</p>
+<div class="fragment"><div class="line">root ➜ ~/ADDM.cpp (main) $ vim main.cpp</div>
+</div><!-- fragment --><p> to create a new file names <code>main.cpp</code>, hit <code>i</code> to copy and paste the code from below, and save it using <code>:x</code>.</p>
 <p><code>main.cpp</code>: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;addm/cpp_toolbox.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"> </div>
@@ -154,7 +155,9 @@ Basic Usage</h1>
 <div class="line">}</div>
 <div class="ttc" id="aaddm__mle_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="addm__mle_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition</b> addm_mle.cpp:16</div></div>
 <div class="ttc" id="aclassaDDM_html"><div class="ttname"><a href="classaDDM.html">aDDM</a></div><div class="ttdoc">Implementation of the attentional Drift Diffusion Model (aDDM).</div><div class="ttdef"><b>Definition</b> addm.h:128</div></div>
-</div><!-- fragment --><p>When compiling any code using the toolbox, include the <code>-laddm</code> flag to link with the installed shared object library.</p>
+</div><!-- fragment --><p>You can confirm you created the <code>main.cpp</code> program by running</p>
+<div class="fragment"><div class="line">root ➜ ~/ADDM.cpp (main) $ ls</div>
+</div><!-- fragment --><p>The next step is to compile this new program. When compiling any code using the toolbox, include the <code>-laddm</code> flag to link with the installed shared object library.</p>
 <div class="fragment"><div class="line">$ g++ -o main main.cpp -laddm</div>
 <div class="line">$ ./main</div>
 </div><!-- fragment --><p>Expected output:</p>
