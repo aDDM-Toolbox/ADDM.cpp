@@ -28,7 +28,7 @@ This command will mount `/home` in the Docker container to your current director
 $ docker build -t {USER_NAME}/addm-toolbox:addm.cpp -f ./Dockerfile .
 ```
 
-You can exit the container with Ctrl+C or the command `exit`. Note that this will permanently delete any changes or new files you created in your container unless saved in `/home`.
+You can exit the container with Ctrl+D or the command `exit`. Note that this will permanently delete any changes or new files you created in your container unless saved in `/home`.
 
 ## Local Installation ##
 
@@ -36,11 +36,12 @@ Skip this if you are using the Docker image as recommended above.
 
 ### Requirements ###
 
-The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:
+The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as several third-party C++ packages:
 
 * [BS::thread_pool](https://github.com/bshoshany/thread-pool)
 * [JSON for Modern C++](https://github.com/nlohmann/json)
 * [Boost Math/Statistical Distributions](https://www.boost.org/doc/libs/?view=category_math)
+* [Catch2](https://github.com/catchorg/Catch2)
 
 These dependencies can be installed using the following commands. Note that they assume the path `/usr/include/c++/11/` and `apt-get` exist on your system.
 
@@ -48,7 +49,7 @@ These dependencies can be installed using the following commands. Note that they
 $ wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent.com/bshoshany/thread-pool/master/include/BS_thread_pool.hpp
 $ mkdir -p /usr/include/c++/11/nlohmann
 $ wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp
-$ apt-get install libboost-math-dev libboost-math1.74-dev
+$ apt-get install libboost-math-dev libboost-math1.74-dev catch2
 ```
 
 Be sure to clone the [ADDM.cpp](https://github.com/aDDM-Toolbox/ADDM.cpp) library from Github if you haven't done so already. 
