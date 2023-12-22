@@ -113,23 +113,24 @@ Docker Image</h1>
 <li>If you're not on an architecture that is currently supported by the images on Docker Hub you can build the image appropriate for your system using the <a href="https://github.com/aDDM-Toolbox/ADDM.cpp/blob/main/Dockerfile">Dockerfile</a> provided in this repo. To do so navigate to the directory you cloned this repo to and run:</li>
 </ul>
 <div class="fragment"><div class="line">$ docker build -t {USER_NAME}/addm-toolbox:addm.cpp -f ./Dockerfile .</div>
-</div><!-- fragment --><p>You can exit the container with Ctrl+C or the command <code>exit</code>. Note that this will permanently delete any changes or new files you created in your container unless saved in <code>/home</code>.</p>
+</div><!-- fragment --><p>You can exit the container with Ctrl+D or the command <code>exit</code>. Note that this will permanently delete any changes or new files you created in your container unless saved in <code>/home</code>.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Local Installation</h1>
 <p>Skip this if you are using the Docker image as recommended above.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Requirements</h2>
-<p>The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as three third-party C++ packages for thread pools, JSON processing, and statistical distributions:</p>
+<p>The standard build of ADDM.cpp assumes Ubuntu Linux 22.04. This library requires g++ 11.3.0, as well as several third-party C++ packages:</p>
 <ul>
 <li><a href="https://github.com/bshoshany/thread-pool">BS::thread_pool</a></li>
 <li><a href="https://github.com/nlohmann/json">JSON for Modern C++</a></li>
 <li><a href="https://www.boost.org/doc/libs/?view=category_math">Boost Math/Statistical Distributions</a></li>
+<li><a href="https://github.com/catchorg/Catch2">Catch2</a></li>
 </ul>
 <p>These dependencies can be installed using the following commands. Note that they assume the path <code>/usr/include/c++/11/</code> and <code>apt-get</code> exist on your system.</p>
 <div class="fragment"><div class="line">$ wget -O /usr/include/c++/11/BS_thread_pool.hpp https://raw.githubusercontent.com/bshoshany/thread-pool/master/include/BS_thread_pool.hpp</div>
 <div class="line">$ mkdir -p /usr/include/c++/11/nlohmann</div>
 <div class="line">$ wget -O /usr/include/c++/11/nlohmann/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp</div>
-<div class="line">$ apt-get install libboost-math-dev libboost-math1.74-dev</div>
+<div class="line">$ apt-get install libboost-math-dev libboost-math1.74-dev catch2</div>
 </div><!-- fragment --><p>Be sure to clone the <a href="https://github.com/aDDM-Toolbox/ADDM.cpp">ADDM.cpp</a> library from Github if you haven't done so already.</p>
 <p><em>Note that the installation directory /usr/include/c++/11 may be modified to support newer versions of C++. In the event of a <b>Permission Denied</b> error, precede the above commands with <b>sudo</b>.</em></p>
 <h2><a class="anchor" id="autotoc_md5"></a>
