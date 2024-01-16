@@ -746,6 +746,45 @@ MLEinfo<aDDM> aDDM::computeFitAndPosteriors(
     return info;   
 }
 
+void checkComputeMethod(std::string computeMethod) {
+    if (std::find(
+        validComputeMethods.begin(), validComputeMethods.end(), 
+        computeMethod) == validComputeMethods.end()) {
+        throw std::invalid_argument("Input computeMethod is invalid.");
+    }
+}
+
+void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateStep, bool useAlternative, string computeMethod) {
+    // select method for computing likelihoods
+    if (computeMethod == "basic") {
+        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            ProbabilityData data = ProbabilityData(); 
+            if (!useAlternative) {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            } else {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            }
+            return data; 
+        };
+    }
+    else if (computeMethod == "thread") {
+        NLLcomputer = [
+            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
+        };
+    }
+}
+
 MLEinfo<aDDM> aDDM::fitModelCSV(
     std::vector<aDDMTrial> trials, 
     std::string filename, 
@@ -757,11 +796,7 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
     float approxStateStep, 
     bool useAlternative) {
 
-    if (std::find(
-        validComputeMethods.begin(), validComputeMethods.end(), 
-        computeMethod) == validComputeMethods.end()) {
-        throw std::invalid_argument("Input computeMethod is invalid.");
-    }
+    checkComputeMethod(computeMethod);
 
     // default parameters handled in built-in aDDM implementation
     vector<string> validParams = {"d", "sigma", "theta", "k", "bias", "decay"};
@@ -791,7 +826,13 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
         string curr;
         getline(ss, curr, ',');
         ltrim(curr);
-        rtrim(curr);
+        rtrim(curr);        
+        if (std::find(
+            headers.begin(), headers.end(), curr) != headers.end()) {
+            throw std::invalid_argument(
+                string("Duplicate parameter found: ") + curr
+            );
+        }
         headers.push_back(curr);      
 
         std::transform(curr.begin(), curr.end(), curr.begin(),
@@ -867,35 +908,7 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
     //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl; 
     // }
 
-    // select method for computing likelihoods
-    if (computeMethod == "basic") {
-        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            ProbabilityData data = ProbabilityData(); 
-            if (!useAlternative) {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            } else {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            }
-            return data; 
-        };
-    }
-    else if (computeMethod == "thread") {
-        NLLcomputer = [
-            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
-        };
-    }
-
+    setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
     return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
 }
 
@@ -916,11 +929,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     bool useAlternative, 
     map<string, vector<float>>rangeOptional) {
 
-    if (std::find(
-        validComputeMethods.begin(), validComputeMethods.end(), 
-        computeMethod) == validComputeMethods.end()) {
-        throw std::invalid_argument("Input computeMethod is invalid.");
-    }
+    checkComputeMethod(computeMethod);
 
     std::function<void(int)> generate; 
 
@@ -1014,35 +1023,6 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         }        
     }
 
-    // select method for computing likelihoods
-    if (computeMethod == "basic") {
-        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            ProbabilityData data = ProbabilityData(); 
-            if (!useAlternative) {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            } else {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            }
-            return data; 
-        };
-    }
-    else if (computeMethod == "thread") {
-        NLLcomputer = [
-            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
-        };
-    }
-
+    setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
     return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
 }
-
