@@ -14,6 +14,9 @@
 #include "stats.h"
 
 
+std::function<ProbabilityData(aDDM)> NLLcomputer; 
+
+
 FixationData::FixationData(float probFixLeftFirst, std::vector<int> latencies, 
     std::vector<int> transitions, fixDists fixations) {
 
@@ -669,127 +672,12 @@ vector<aDDMTrial> aDDMTrial::loadTrialsFromCSV(string filename) {
     return trials;
 }
 
-
-MLEinfo<aDDM> aDDM::fitModelMLE(
-    std::vector<aDDMTrial> trials, 
-    std::vector<float> rangeD, 
-    std::vector<float> rangeSigma, 
-    std::vector<float> rangeTheta, 
-    std::vector<float> rangeK,
-    std::string computeMethod, 
-    bool normalizePosteriors,
-    float barrier,
-    unsigned int nonDecisionTime,
-    int timeStep, 
-    float approxStateStep,
-    std::vector<float> bias, 
-    std::vector<float> decay,
-    bool useAlternative, 
-    map<string, vector<float>>rangeOptional) {
-
-    if (std::find(validComputeMethods.begin(), validComputeMethods.end(), computeMethod) == validComputeMethods.end()) {
-        throw std::invalid_argument("Input computeMethod is invalid.");
-    }
-
-    sort(rangeD.begin(), rangeD.end());
-    sort(rangeSigma.begin(), rangeSigma.end());
-    sort(rangeTheta.begin(), rangeTheta.end()); 
-    sort(rangeK.begin(), rangeK.end());
-    sort(bias.begin(), bias.end());
-    sort(decay.begin(), decay.end());
-
-
-    /** On every combination of default parameters, iterate through a list of all combinations for each parameter value. 
-     * {"A":{1, 2, 3}, "B":{4, 5, 6}} ==> {{1, 4}, {1, 5}, {1, 6}, 
-     *                                     {2, 4}, {2, 5}, {2, 6}, 
-     *                                     {3, 4}, {3, 5}, {3, 6}}
-     */    
-    std::vector<string> optionalKeys; // {"A", "B"}
-    std::vector<std::vector<float>> optionalUnlabeledRanges; // {{1, 2, 3}, {4, 5, 6}}
-    std::vector<std::vector<float>> optionalCombinations; // {{1, 4}, {1, 5}, ...}
-    if (!rangeOptional.empty()) {
-        for (auto it = rangeOptional.begin(); it != rangeOptional.end(); ++it) {
-            optionalKeys.push_back(it->first);
-            optionalUnlabeledRanges.push_back(it->second);
-        }
-        std::vector<float> currentCombination(optionalUnlabeledRanges.size(), 0);
-        std::function<void(int)> generate = [&](int index) {
-            if (index == optionalUnlabeledRanges.size()) {
-                optionalCombinations.push_back(currentCombination);
-            } else {
-                for (float element : optionalUnlabeledRanges[index]) {
-                    currentCombination[index] = element; 
-                    generate(index + 1);
-                }
-            }
-        };
-        generate(0);
-        
-        for (auto combination : optionalCombinations) {
-            assert(combination.size() == optionalKeys.size());
-        }  
-    }                      
-
-    std::vector<aDDM> potentialModels; 
-    for (float d : rangeD) {
-        for (float sigma : rangeSigma) {
-            for (float theta : rangeTheta) {
-                for (float k : rangeK) {
-                    for (float b : bias) {
-                        for (float dec : decay) {
-                            if (optionalCombinations.empty()) {
-                                aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
-                                potentialModels.push_back(addm);
-                            } else {
-                                // Iterate through each possible combination of parameters. 
-                                // Create a new aDDM for each combination. 
-                                for (auto combination : optionalCombinations) {
-                                    aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
-                                    for (int i = 0; i < combination.size(); i++) {
-                                        addm.addParameter(optionalKeys[i], combination[i]);
-                                    }
-                                    potentialModels.push_back(addm);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-                
-    std::function<ProbabilityData(aDDM)> NLLcomputer; 
-    if (computeMethod == "basic") {
-        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            ProbabilityData data = ProbabilityData(); 
-            if (!useAlternative) {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            } else {
-                for (aDDMTrial trial : trials) {
-                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
-                    data.trialLikelihoods.push_back(prob);
-                    data.NLL += -log(prob);
-                }
-            }
-            return data; 
-        };
-    }
-    else if (computeMethod == "thread") {
-        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
-        };
-    }
+MLEinfo<aDDM> aDDM::computeFitAndPosteriors(
+    std::vector<aDDM> potentialModels, bool normalizePosteriors, int numTrials) {
 
     std::map<aDDM, ProbabilityData> allTrialLikelihoods; 
     std::map<aDDM, float> posteriors; 
-    double numModels = rangeD.size() * rangeSigma.size() * rangeTheta.size() * bias.size() * decay.size();
-
+    double numModels = potentialModels.size();
     /**
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * MLE IS PERFORMED HERE! 
@@ -827,7 +715,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if (normalizePosteriors) {
-        for (int tn = 0; tn < trials.size(); tn++) {
+        for (int tn = 0; tn < numTrials; tn++) {
             double denominator = 0; 
             for (const auto &addmPD : allTrialLikelihoods) {
                 aDDM curr = addmPD.first; 
@@ -856,5 +744,305 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     info.optimal = optimal; 
     info.likelihoods = posteriors; 
     return info;   
+}
+
+MLEinfo<aDDM> aDDM::fitModelCSV(
+    std::vector<aDDMTrial> trials, 
+    std::string filename, 
+    std::string computeMethod, 
+    bool normalizePosteriors, 
+    float barrier, 
+    unsigned int nonDecisionTime, 
+    int timeStep, 
+    float approxStateStep, 
+    bool useAlternative) {
+
+    if (std::find(
+        validComputeMethods.begin(), validComputeMethods.end(), 
+        computeMethod) == validComputeMethods.end()) {
+        throw std::invalid_argument("Input computeMethod is invalid.");
+    }
+
+    // default parameters handled in built-in aDDM implementation
+    vector<string> validParams = {"d", "sigma", "theta", "k", "bias", "decay"};
+
+    // trim whitespace from headers
+    auto ltrim = [](string &str) {
+        str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](char ch) {
+            return !std::isspace<char>(ch, std::locale::classic());
+        }));
+    };
+    auto rtrim = [](string &str) {
+        str.erase(std::find_if(str.rbegin(), str.rend(), [](char ch) {
+            return !std::isspace<char>(ch, std::locale::classic());
+        }).base(), str.end());
+    };
+
+    // read in the headers
+    std::ifstream paramsFile(filename);
+    string paramNames; 
+    std::getline(paramsFile, paramNames);
+    std::stringstream ss(paramNames);    
+    
+    // convert headers to an array and check if they are implemented
+    vector<string> headers;
+    vector<bool> isBuiltInParam; 
+    while(ss.good()) {
+        string curr;
+        getline(ss, curr, ',');
+        ltrim(curr);
+        rtrim(curr);
+        headers.push_back(curr);      
+
+        std::transform(curr.begin(), curr.end(), curr.begin(),
+            [](unsigned char c){ return std::tolower(c); });
+        if (std::find(
+            validParams.begin(), validParams.end(), curr) != validParams.end()) {
+            isBuiltInParam.push_back(true);
+        }
+        else {
+            isBuiltInParam.push_back(false);
+        }
+    }
+
+    string line; 
+    vector<float> currParams; 
+    vector<aDDM> potentialModels; 
+    while (std::getline(paramsFile, line)) { // Read each line in the CSV
+        ss.clear(); 
+        ss.str(line);
+        aDDM addm = aDDM(0, 0, 0, 0, barrier, nonDecisionTime, 0, 0);
+
+        int col = 0; 
+        while (ss.good()) {
+            string curr; 
+            float curr_f; 
+            getline(ss, curr, ',');
+            try {
+               curr_f = stof(curr);
+            }
+            catch (invalid_argument &e) {
+                throw std::invalid_argument(
+                    string("Non-float entry provided: ") + curr);
+            }
+            if (col >= headers.size()) {
+                throw std::invalid_argument("Row with too many entries provided");
+            }
+            if (isBuiltInParam[col]) {
+                string currHeader = headers[col];
+                if (currHeader == "d") {
+                    addm.d = curr_f;
+                } else if (currHeader == "sigma") {
+                    addm.sigma = curr_f;
+                } else if (currHeader == "theta") {
+                    addm.theta = curr_f;
+                } else if (currHeader == "k") {
+                    addm.k = curr_f; 
+                } else if (currHeader == "bias") {
+                    addm.bias = curr_f;
+                } else if (currHeader == "decay") {
+                    addm.decay = curr_f;
+                }
+            } else {
+                addm.optionalParams[headers[col]] = curr_f; 
+            }
+            col++; 
+        }
+        potentialModels.push_back(addm);
+        if (col != headers.size()) {
+            throw std::invalid_argument("Row with insufficient entries provided");            
+        }
+    }
+
+    // for (string head : headers) {
+    //     std::cout << head << " ";
+    // }
+    // std::cout << std::endl; 
+    // for (bool f : isBuiltInParam) {
+    //     std::cout << f << " ";
+    // }
+    // std::cout << std::endl; 
+
+    // for (aDDM addm : potentialModels) {
+    //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl; 
+    // }
+
+    // select method for computing likelihoods
+    if (computeMethod == "basic") {
+        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            ProbabilityData data = ProbabilityData(); 
+            if (!useAlternative) {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            } else {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            }
+            return data; 
+        };
+    }
+    else if (computeMethod == "thread") {
+        NLLcomputer = [
+            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
+        };
+    }
+
+    return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
+}
+
+MLEinfo<aDDM> aDDM::fitModelMLE(
+    std::vector<aDDMTrial> trials, 
+    std::vector<float> rangeD, 
+    std::vector<float> rangeSigma, 
+    std::vector<float> rangeTheta, 
+    std::vector<float> rangeK,
+    std::string computeMethod, 
+    bool normalizePosteriors,
+    float barrier,
+    unsigned int nonDecisionTime,
+    int timeStep, 
+    float approxStateStep,
+    std::vector<float> bias, 
+    std::vector<float> decay,
+    bool useAlternative, 
+    map<string, vector<float>>rangeOptional) {
+
+    if (std::find(
+        validComputeMethods.begin(), validComputeMethods.end(), 
+        computeMethod) == validComputeMethods.end()) {
+        throw std::invalid_argument("Input computeMethod is invalid.");
+    }
+
+    std::function<void(int)> generate; 
+
+    sort(rangeD.begin(), rangeD.end());
+    sort(rangeSigma.begin(), rangeSigma.end());
+    sort(rangeTheta.begin(), rangeTheta.end()); 
+    sort(rangeK.begin(), rangeK.end());
+    sort(bias.begin(), bias.end());
+    sort(decay.begin(), decay.end());
+
+    std::vector<std::vector<float>> allParams = {
+        rangeD, 
+        rangeSigma, 
+        rangeTheta, 
+        rangeK, 
+        bias, 
+        decay
+    };
+
+    /** On every combination of default parameters, 
+     * iterate through a list of all combinations for each parameter value. 
+     * {"A":{1, 2, 3}, "B":{4, 5, 6}} ==> {{1, 4}, {1, 5}, {1, 6}, 
+     *                                     {2, 4}, {2, 5}, {2, 6}, 
+     *                                     {3, 4}, {3, 5}, {3, 6}}
+     */    
+    std::vector<string> optionalKeys; // {"A", "B"}
+    std::vector<std::vector<float>> optionalUnlabeledRanges; // {{1, 2, 3}, {4, 5, 6}}
+    std::vector<std::vector<float>> optionalCombinations; // {{1, 4}, {1, 5}, ...}
+    if (!rangeOptional.empty()) {
+        for (auto it = rangeOptional.begin(); it != rangeOptional.end(); ++it) {
+            optionalKeys.push_back(it->first);
+            optionalUnlabeledRanges.push_back(it->second);
+        }
+        std::vector<float> currentOpt(optionalUnlabeledRanges.size(), 0);
+        generate = [&](int index) {
+            if (index == optionalUnlabeledRanges.size()) {
+                optionalCombinations.push_back(currentOpt);
+            } else {
+                for (float element : optionalUnlabeledRanges[index]) {
+                    currentOpt[index] = element; 
+                    generate(index + 1);
+                }
+            }
+        };
+        generate(0);
+        
+        for (auto combination : optionalCombinations) {
+            assert(combination.size() == optionalKeys.size());
+        }  
+    } 
+
+    // generate all possible parameter combinations
+    std::vector<float> current(allParams.size(), 0);
+    std::vector<std::vector<float>> paramCombinations;
+    generate = [&](int index) {
+        if (index == allParams.size()) {
+            paramCombinations.push_back(current); 
+        } else {
+            for (float element : allParams[index]) {
+                current[index] = element; 
+                generate(index + 1);
+            }
+        }
+    }; 
+    generate(0);
+
+    // create all potential models
+    std::vector<aDDM> potentialModels; 
+    for (std::vector<float> combination : paramCombinations) {
+        assert(combination.size() == 6);
+        float d = combination[0]; 
+        float sigma = combination[1];
+        float theta = combination[2];
+        float k = combination[3];
+        float b = combination[4];
+        float dec = combination[5];
+
+        if (optionalCombinations.empty()) {
+            aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
+            potentialModels.push_back(addm);
+        } else {
+            // Iterate through each possible combination of parameters. 
+            // Create a new aDDM for each combination. 
+            for (auto combination : optionalCombinations) {
+                aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
+                for (int i = 0; i < combination.size(); i++) {
+                    addm.addParameter(optionalKeys[i], combination[i]);
+                }
+                potentialModels.push_back(addm);
+            }
+        }        
+    }
+
+    // select method for computing likelihoods
+    if (computeMethod == "basic") {
+        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            ProbabilityData data = ProbabilityData(); 
+            if (!useAlternative) {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            } else {
+                for (aDDMTrial trial : trials) {
+                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
+                    data.likelihood += prob; 
+                    data.trialLikelihoods.push_back(prob);
+                    data.NLL += -log(prob);
+                }
+            }
+            return data; 
+        };
+    }
+    else if (computeMethod == "thread") {
+        NLLcomputer = [
+            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
+        };
+    }
+
+    return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
 }
 

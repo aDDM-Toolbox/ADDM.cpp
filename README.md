@@ -452,7 +452,7 @@ $ stubgen -m addm_toolbox_cpp -o .
 
 ## Data Analysis Scripts ##
 
-A set of data analysis and visualization tools are provided in the [analysis](analysis/) directory. Current provided scripts include: 
+A set of data analysis and visualization tools are provided in the __analysis__ directory. Current provided scripts include: 
 
 * DDM Heatmaps for MLE. 
 * aDDM Heatmap for MLE. 

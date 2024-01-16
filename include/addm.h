@@ -127,6 +127,9 @@ class aDDMTrial: public DDMTrial {
  */
 class aDDM: public DDM {
     private:
+        static MLEinfo<aDDM> computeFitAndPosteriors(
+            std::vector<aDDM> potentialModels, bool normalizePosteriors, int numTrials);
+
     public: 
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
@@ -239,6 +242,17 @@ class aDDM: public DDM {
             vector<aDDMTrial> trials, int timeStep=10, 
             float approxStateStep=0.1, bool useAlternative=false
         );
+
+        static MLEinfo<aDDM> fitModelCSV(
+            std::vector<aDDMTrial> trials, 
+            std::string filename, 
+            std::string computeMethod="basic", 
+            bool normalizePosteriors=false, 
+            float barrier=1, 
+            unsigned int nonDecisionTime=0, 
+            int timeStep=10, 
+            float approxStateStep=0.1,
+            bool useAlternative=false);
 
         /**
          * @brief Complete a grid-search based Maximum Likelihood Estimation of all possible parameter 
