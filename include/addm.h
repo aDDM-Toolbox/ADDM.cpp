@@ -229,7 +229,7 @@ class aDDM: public DDM {
         /**
          * @brief Alternative simulator for users who want  custom model.
         */
-        aDDMTrial aDDM::simulateTrialAlternative(
+        aDDMTrial simulateTrialAlternative(
             int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
             int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
         );
