@@ -166,6 +166,8 @@ __Experimental Data__
 | 0       | 1     |873 | 1      | -15       | 5          |  
 | 0       | 2     |1345| 1      | 10        | -5         |  
 
+Parcode is required for the program to run. Reaction time is measured in milliseconds.
+
 __Fixation Data__
 
 | parcode | trial | fixItem | fixTime |
@@ -205,10 +207,10 @@ std::cout << "theta: " << info.optimal.theta << std::endl;
 Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optimal parameters for each subject. The arguments for this function are as follows: 
 
 * `trials` - The list of trials for the given subjectID. 
-* `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
-* `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
-* `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
+* `{0.001, 0.002, 0.003}` - Parameter range to test for the drift rate (d).
+* `{0.0875, 0.09, 0.0925}` - Parameter range to test for noise (sigma).
+* `{0.1, 0.3, 0.5}` - Parameter range to test for the fixation discount (theta).
+* `{0}` - Parameter range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
 When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjects report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
@@ -335,6 +337,7 @@ std::map<string, vector<float>> rangeOptional = {
 ```
 3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exist potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
 ```cpp
+const std::string SIMS = "(Path to data on aDDM trials)";
 std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(SIMS);
 MLEinfo info = aDDM::fitModelMLE(
     trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
@@ -430,7 +433,7 @@ Expected output:
 ⋮
 ```
 
-Note that when executing any Python files using the `addm_toolbox_cpp` module, the compiled shared libary (`.so`) should be either: 
+Note that when executing any Python files using the `addm_toolbox_cpp` module, the compiled shared libary (i.e. `addm_toolbox_cpp.cpython-310-x86_64-linux-gnu.so`) should be either: 
 
 * Placed in the same directory as the Python executable. 
 * Placed in some directory in the `PYTHONPATH` environmental variable. (i.e. `usr/lib/python3.10` for Linux).

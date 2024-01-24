@@ -1,5 +1,5 @@
-#ifndef ADDM_CUH
-#define ADDM_CUH
+#ifndef ADDM_H
+#define ADDM_H
 
 #include <string>
 #include <vector>
@@ -222,6 +222,14 @@ class aDDM: public DDM {
          * @return aDDMTrial resulting from the simulation. 
          */
         aDDMTrial simulateTrial(
+            int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
+            int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
+        );
+
+        /**
+         * @brief Alternative simulator for users who want  custom model.
+        */
+        aDDMTrial aDDM::simulateTrialAlternative(
             int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
             int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
         );

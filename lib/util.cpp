@@ -5,32 +5,32 @@
 #include <stdexcept>
 #include <cassert>
 #include <set>
-#include <cmath> 
+#include <cmath>
 #include <fstream>
 #include <functional>
-#include <vector> 
+#include <vector>
 #include "util.h"
 #include "addm.h"
 
 vector<string> validComputeMethods = {"basic", "thread"};
 
 std::map<int, std::vector<aDDMTrial>> loadDataFromSingleCSV(std::string filename) {
-    std::map<int, std::vector<aDDMTrial>> data; 
+    std::map<int, std::vector<aDDMTrial>> data;
     std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(filename);
     data.insert({0, trials});
-    return data; 
+    return data;
 }
 
 std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
-    std::string expDataFilename, 
-    std::string fixDataFilename) {
+                                       std::string expDataFilename,
+std::string fixDataFilename) {
 
     // subjectID -> aDDM Trials
     std::map<int, std::vector<aDDMTrial>> data;
     std::map<int, std::vector<expEntry>> IDtoEXP;
     std::set<int> subjectIDs;
 
-    std::hash<std::string> hashFn; 
+    std::hash<std::string> hashFn;
     std::ifstream expFile(expDataFilename);
     std::vector<expEntry> expData;
     std::string eline;
@@ -39,10 +39,10 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
         std::stringstream ss(eline);
         std::string field;
         expEntry entry;
-        std::getline(ss, field, ',');        
+        std::getline(ss, field, ',');
         try {
             entry.parcode = std::stoi(field);
-        } 
+        }
         catch (std::invalid_argument& e) {
             entry.parcode = hashFn(field);
         }
@@ -81,7 +81,7 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
                     data.at(subjectID).push_back(
                         aDDMTrial(e.rt, e.choice, e.item_left, e.item_right)
                     );
-                }   
+                }
             }
         }
     }
@@ -90,8 +90,8 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
     std::vector<fixEntry> fixData;
     subjectIDs.clear();
     std::string fline;
-    std::getline(fixFile, fline); 
-    
+    std::getline(fixFile, fline);
+
     while (std::getline(fixFile, fline)) {
         std::stringstream ss(fline);
         std::string field;
@@ -99,11 +99,11 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
         try {
             std::getline(ss, field, ',');
             entry.parcode = std::stoi(field);
-        } 
-        catch (std::invalid_argument& e) {
-            entry.parcode = hashFn(field); 
         }
-        
+        catch (std::invalid_argument& e) {
+            entry.parcode = hashFn(field);
+        }
+
         subjectIDs.insert(entry.parcode);
         std::getline(ss, field, ',');
         entry.trial = std::stoi(field);
@@ -147,14 +147,14 @@ std::map<int, std::vector<aDDMTrial>> loadDataFromCSV(
 
 
 FixationData getEmpiricalDistributions(
-    std::map<int, std::vector<aDDMTrial>> data, 
+    std::map<int, std::vector<aDDMTrial>> data,
     int timeStep, int maxFixTime,
-    int numFixDists, 
+    int numFixDists,
     std::vector<int> valueDiffs,
     std::vector<int> subjectIDs,
-    bool useOddTrials, 
-    bool useEvenTrials, 
-    bool useCisTrials, 
+    bool useOddTrials,
+    bool useEvenTrials,
+    bool useCisTrials,
     bool useTransTrials) {
 
     int countLeftFirst = 0;
@@ -187,13 +187,15 @@ FixationData getEmpiricalDistributions(
                 continue;
             }
             bool allZero = std::all_of(
-                trial.fixItem.begin(), trial.fixItem.end(), 
-                [](int i){return i == 0;}
-            );
+                               trial.fixItem.begin(), trial.fixItem.end(),
+            [](int i) {
+                return i == 0;
+            }
+                           );
             bool containsOne = std::find(
-                trial.fixItem.begin(), trial.fixItem.end(), 1) != trial.fixItem.end();
+                                   trial.fixItem.begin(), trial.fixItem.end(), 1) != trial.fixItem.end();
             bool containsTwo = std::find(
-                trial.fixItem.begin(), trial.fixItem.end(), 2) != trial.fixItem.end();
+                                   trial.fixItem.begin(), trial.fixItem.end(), 2) != trial.fixItem.end();
             if (allZero || !(containsOne || containsTwo)) {
                 continue;
             }
@@ -216,7 +218,7 @@ FixationData getEmpiricalDistributions(
                     } else if (
                         trial.fixTime.at(i) >= timeStep &&
                         trial.fixTime.at(i) <= maxFixTime
-                        ) {
+                    ) {
                         transitions.push_back(trial.fixTime.at(i));
                     }
                 } else {
@@ -230,8 +232,8 @@ FixationData getEmpiricalDistributions(
                             countLeftFirst++;
                         }
                     }
-                    if (trial.fixTime.at(i) >= timeStep && 
-                        trial.fixTime.at(i) <= maxFixTime) {
+                    if (trial.fixTime.at(i) >= timeStep &&
+                            trial.fixTime.at(i) <= maxFixTime) {
                         if (!fixations.count(fixNumber)) {
                             fixations.insert({fixNumber, {}});
                         }

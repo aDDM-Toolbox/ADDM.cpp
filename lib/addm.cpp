@@ -7,18 +7,18 @@
 #include <ctime>
 #include <time.h>
 #include <cstdlib>
-#include <random> 
+#include <random>
 #include "ddm.h"
 #include "util.h"
 #include "addm.h"
 #include "stats.h"
 
 
-std::function<ProbabilityData(aDDM)> NLLcomputer; 
+std::function<ProbabilityData(aDDM)> NLLcomputer;
 
 
-FixationData::FixationData(float probFixLeftFirst, std::vector<int> latencies, 
-    std::vector<int> transitions, fixDists fixations) {
+FixationData::FixationData(float probFixLeftFirst, std::vector<int> latencies,
+                           std::vector<int> transitions, fixDists fixations) {
 
     this->probFixLeftFirst = probFixLeftFirst;
     this->latencies = latencies;
@@ -28,23 +28,24 @@ FixationData::FixationData(float probFixLeftFirst, std::vector<int> latencies,
 
 
 aDDMTrial::aDDMTrial(
-    unsigned int RT, int choice, int valueLeft, int valueRight, 
-    std::vector<int> fixItem, std::vector<int> fixTime, 
+    unsigned int RT, int choice, int valueLeft, int valueRight,
+    std::vector<int> fixItem, std::vector<int> fixTime,
     std::vector<float> fixRDV, float uninterruptedLastFixTime) :
     DDMTrial(RT, choice, valueLeft, valueRight) {
-        this->fixItem = fixItem;
-        this->fixTime = fixTime;
-        this->fixRDV = fixRDV;
-        this->uninterruptedLastFixTime = uninterruptedLastFixTime;
+    this->fixItem = fixItem;
+    this->fixTime = fixTime;
+    this->fixRDV = fixRDV;
+    this->uninterruptedLastFixTime = uninterruptedLastFixTime;
 }
 
 
-aDDM::aDDM(float d, float sigma, float theta, float k, float barrier, 
-    unsigned int nonDecisionTime, float bias, float decay) : 
+aDDM::aDDM(float d, float sigma, float theta, float k, float barrier,
+           unsigned int nonDecisionTime, float bias, float decay) :
     DDM(d, sigma, barrier, nonDecisionTime, bias, decay) {
-        this->theta = theta;
-        this->k = k; 
+    this->theta = theta;
+    this->k = k;
 }
+
 
 void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
     std::ofstream o(filename);
@@ -52,7 +53,7 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
     j["d"] = d;
     j["sigma"] = sigma;
     j["theta"] = theta;
-    j["k"] = k; 
+    j["k"] = k;
     j["barrier"] = barrier;
     j["NDT"] = nonDecisionTime;
     j["bias"] = bias;
@@ -64,31 +65,31 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
     j["fixItem"] = adt.fixItem;
     j["fixTime"] = adt.fixTime;
     j["timeStep"] = adt.timeStep;
-    o << std::setw(4) << j << std::endl;        
+    o << std::setw(4) << j << std::endl;
 }
 
 
 double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxStateStep) {
-    bool debug = false; 
+    bool debug = false;
     if (debug) {
         std::cout << std::setprecision(6) << std::fixed;
     }
-    // Discount any non-decision time if greater than 0. 
+    // Discount any non-decision time if greater than 0.
     std::vector<int> correctedFixItem = trial.fixItem;
     std::vector<int> correctedFixTime = trial.fixTime;
     if (this->nonDecisionTime > 0) {
         int remainingNDT = this->nonDecisionTime;
         assert(trial.fixItem.size() == trial.fixTime.size());
-        for (int i = 0; i < trial.fixItem.size(); i++) { 
+        for (int i = 0; i < trial.fixItem.size(); i++) {
             int fItem = trial.fixItem[i];
             int fTime = trial.fixTime[i];
             if (remainingNDT > 0) {
                 correctedFixItem.push_back(0);
                 correctedFixTime.push_back(min(remainingNDT, fTime));
-                fTime -= remainingNDT; 
+                fTime -= remainingNDT;
                 correctedFixItem.push_back(fItem);
                 correctedFixTime.push_back(max(fTime, 0));
-                remainingNDT -= fTime; 
+                remainingNDT -= fTime;
             } else {
                 correctedFixItem.push_back(fItem);
                 correctedFixTime.push_back(fTime);
@@ -108,8 +109,8 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
         }
         std::cout << "------" << std::endl;
     }
-    
-    // Get number of timesteps for this trial 
+
+    // Get number of timesteps for this trial
     int numTimeSteps = 0;
     for (int fTime : correctedFixTime) {
         numTimeSteps += fTime / timeStep;
@@ -119,7 +120,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
     }
     numTimeSteps++;
 
-    // Values of barriers over time 
+    // Values of barriers over time
     std::vector<float> barrierUp(numTimeSteps);
     std::vector<float> barrierDown(numTimeSteps);
     std::fill(barrierUp.begin(), barrierUp.end(), this->barrier);
@@ -129,10 +130,10 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
             barrierUp.at(i) = this->barrier / (1 + (this->decay * i));
             barrierDown.at(i) = -this->barrier / (1 + (this->decay * i));
         }
-    } 
-    
+    }
+
     // Obtain the correct state step
-    int halfNumStateBins = ceil(this->barrier / approxStateStep); 
+    int halfNumStateBins = ceil(this->barrier / approxStateStep);
     float stateStep = this->barrier / (halfNumStateBins + 0.5);
     std::vector<float> states;
     for (float ss = barrierDown.at(0) + (stateStep / 2); ss <= barrierUp.at(0) - (stateStep / 2); ss += stateStep) {
@@ -159,21 +160,21 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
         }
     }
 
-    // Initialize vectors corresponding to the probability of crossing the 
-    // top or bottom barriers at each timestep. 
-    std::vector<double> probUpCrossing; 
+    // Initialize vectors corresponding to the probability of crossing the
+    // top or bottom barriers at each timestep.
+    std::vector<double> probUpCrossing;
     std::vector<double> probDownCrossing;
     for (int i = 0; i < numTimeSteps; i++) {
         probUpCrossing.push_back(0);
         probDownCrossing.push_back(0);
     }
-    prStates.at(biasState).at(0) = 1; 
+    prStates.at(biasState).at(0) = 1;
 
     int time = 1;
 
-    // Initialize a change matrix where each value at (i, j) 
-    // indicates the difference between states[i] and states[j] 
-    std::vector<std::vector<float>> changeMatrix(states.size(), std::vector<float>(states.size())); 
+    // Initialize a change matrix where each value at (i, j)
+    // indicates the difference between states[i] and states[j]
+    std::vector<std::vector<float>> changeMatrix(states.size(), std::vector<float>(states.size()));
     for (size_t i = 0; i < states.size(); i++) {
         for (size_t j = 0; j < states.size(); j++) {
             changeMatrix[i][j] = states[i] - states[j];
@@ -208,11 +209,11 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
 
     assert(correctedFixItem.size() == correctedFixTime.size());
 
-    std::map<float, std::vector<std::vector<double>>> meansToPDCMs; 
+    std::map<float, std::vector<std::vector<double>>> meansToPDCMs;
 
-    // Iterate over all fixations in the trial 
+    // Iterate over all fixations in the trial
     std::vector<std::vector<double>> probDistChangeMatrix(states.size(), std::vector<double>(states.size()));
-    std::vector<float> currChangeUp;            
+    std::vector<float> currChangeUp;
     std::vector<double> changeUpCDFs;
     std::vector<float> currChangeDown;
     std::vector<double> changeDownCDFs;
@@ -235,7 +236,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
             mean = this->d * ((this->theta * trial.valueLeft) - (trial.valueRight + this->k));
         }
         else {
-            mean = 0; 
+            mean = 0;
         }
 
         if (meansToPDCMs.count(mean)) {
@@ -253,7 +254,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
             pmat<double>(probDistChangeMatrix, "PROBABILITY CHANGE MATRIX");
         }
 
-        // Compute the probabilities of crossing the up and down barriers. This is given by: 
+        // Compute the probabilities of crossing the up and down barriers. This is given by:
         // sum over all states s (
         //   probability of being in s at [t - 1] * probability of crossing barrier at [t]
         // )
@@ -288,7 +289,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
             // Compute the dot product between the change matrix and previous timeStep's probabilities
             std::vector<double> prStatesNew(states.size());
             for (size_t i = 0; i < states.size(); i++) {
-                double row_sum = 0; 
+                double row_sum = 0;
                 for (size_t j = 0; j < states.size(); j++) {
                     row_sum += stateStep * probDistChangeMatrix[i][j] * prTimeSlice[j];
                 }
@@ -318,7 +319,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
                     changeUpCDFs.push_back(
                         1 - cumulativeDensityFunction(mean, this->sigma, x)
                     );
-                }            
+                }
                 for (auto s: changeDown) {
                     currChangeDown.push_back(s.at(time));
                 }
@@ -339,31 +340,31 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
                 tempDownCross += changeDownCDFs[i] * prTimeSlice[i];
             }
 
-            // Renormalize to cope with numerical approximations. 
-            double sumIn = 0; 
+            // Renormalize to cope with numerical approximations.
+            double sumIn = 0;
             for (double prob : prTimeSlice) {
-                sumIn += prob; 
+                sumIn += prob;
             }
-            double sumCurrent = tempUpCross + tempDownCross; 
+            double sumCurrent = tempUpCross + tempDownCross;
             for (double prob : prStatesNew) {
                 sumCurrent += prob;
             }
-            double normFactor = sumIn / sumCurrent; 
+            double normFactor = sumIn / sumCurrent;
             for (int i = 0; i < prStatesNew.size(); i++) {
                 prStatesNew[i] *= normFactor;
             }
             tempUpCross *= normFactor;
-            tempDownCross *= normFactor; 
+            tempDownCross *= normFactor;
             for (int i = 0; i < prStates.size(); i++) {
                 prStates[i][time] = prStatesNew[i];
             }
-            probUpCrossing[time] = tempUpCross; 
+            probUpCrossing[time] = tempUpCross;
             probDownCrossing[time] = tempDownCross;
 
             time++;
         }
     }
-    // Compute the likelihood based on the final choice. 
+    // Compute the likelihood based on the final choice.
     double likelihood = 0;
     if (trial.choice == -1) {
         if (probUpCrossing[probUpCrossing.size() - 1] > 0) {
@@ -384,7 +385,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
 
 
 aDDMTrial aDDM::simulateTrial(
-    int valueLeft, int valueRight, FixationData fixationData, int timeStep, 
+    int valueLeft, int valueRight, FixationData fixationData, int timeStep,
     int numFixDists, fixDists fixationDist, vector<int> timeBins, int seed) {
 
     std::vector<int> fixItem;
@@ -393,11 +394,11 @@ aDDMTrial aDDM::simulateTrial(
 
     // If no seed is provided (default -1), use a random generator. Otherwise, use the seed
     std::random_device rd;
-    std::mt19937 gen(seed == -1 ? rd() : seed); 
+    std::mt19937 gen(seed == -1 ? rd() : seed);
 
     float RDV = this->bias;
     int time = 0;
-    int choice; 
+    int choice;
     int uninterruptedLastFixTime;
     int RT;
 
@@ -419,7 +420,7 @@ aDDMTrial aDDM::simulateTrial(
             if (RDV >= this->barrier) {
                 choice = -1;
             } else {
-                choice = 1; 
+                choice = 1;
             }
             fixRDV.push_back(RDV);
             fixItem.push_back(0);
@@ -429,8 +430,8 @@ aDDMTrial aDDM::simulateTrial(
             RT = time;
             uninterruptedLastFixTime = latency;
             return aDDMTrial(
-                RT, choice, valueLeft, valueRight, 
-                fixItem, fixTime, fixRDV, uninterruptedLastFixTime);
+                       RT, choice, valueLeft, valueRight,
+                       fixItem, fixTime, fixRDV, uninterruptedLastFixTime);
         }
     }
 
@@ -476,7 +477,7 @@ aDDMTrial aDDM::simulateTrial(
             rIDX = rand() % fixationData.transitions.size();
             currFixTime = fixationData.transitions.at(rIDX);
         }
-        // Iterate over any remaining non-decision time 
+        // Iterate over any remaining non-decision time
         if (remainingNDT > 0)  {
             for (int t = 0; t < remainingNDT / timeStep; t++) {
                 std::normal_distribution<float> ndist(0, this->sigma);
@@ -488,7 +489,7 @@ aDDMTrial aDDM::simulateTrial(
                     if (RDV >= this->barrier) {
                         choice = -1;
                     } else {
-                        choice = 1; 
+                        choice = 1;
                     }
                     fixRDV.push_back(RDV);
                     fixItem.push_back(currFixLocation);
@@ -520,13 +521,13 @@ aDDMTrial aDDM::simulateTrial(
             std::normal_distribution<float> ndist(mean, this->sigma);
             float inc = ndist(gen);
             RDV += inc;
-            RDVs.push_back(RDV); 
+            RDVs.push_back(RDV);
 
             if(RDV >= this->barrier || RDV <= -this->barrier) {
                 if (RDV >= this->barrier) {
                     choice = -1;
                 } else {
-                    choice = 1; 
+                    choice = 1;
                 }
                 fixRDV.push_back(RDV);
                 fixItem.push_back(currFixLocation);
@@ -537,7 +538,7 @@ aDDMTrial aDDM::simulateTrial(
                 uninterruptedLastFixTime = currFixTime;
                 decisionReached = true;
                 break;
-            }                
+            }
         }
 
         if (decisionReached) {
@@ -550,7 +551,7 @@ aDDMTrial aDDM::simulateTrial(
         int dt = cft - (cft % timeStep);
         fixTime.push_back(dt);
         time += dt;
-    } 
+    }
 
     aDDMTrial trial = aDDMTrial(RT, choice, valueLeft, valueRight, fixItem, fixTime, fixRDV, uninterruptedLastFixTime);
     trial.RDVs = RDVs;
@@ -564,33 +565,33 @@ ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int time
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
     BS::multi_future<ProbabilityData> futs = pool.parallelize_loop(
-        0, trials.size(), 
-        [this, &trials, timeStep, approxStateStep, &trialLikelihoods, useAlternative](const int a, const int b) {
-            ProbabilityData aux = ProbabilityData(0, 0);
-            if (!useAlternative) {
-                for (int i = a; i < b; ++i) {
-                    double prob = this->getTrialLikelihood(trials[i], timeStep, approxStateStep);
-                    trialLikelihoods[i] = prob; 
-                    aux.likelihood += prob; 
-                    aux.NLL += -log(prob);
-                }
-            } else {
-                for (int i = a; i < b; ++i) {
-                    double prob = this->getLikelihoodAlternative(trials[i], timeStep, approxStateStep);
-                    trialLikelihoods[i] = prob; 
-                    aux.likelihood += prob; 
-                    aux.NLL += -log(prob);
-                }                
+                0, trials.size(),
+    [this, &trials, timeStep, approxStateStep, &trialLikelihoods, useAlternative](const int a, const int b) {
+        ProbabilityData aux = ProbabilityData(0, 0);
+        if (!useAlternative) {
+            for (int i = a; i < b; ++i) {
+                double prob = this->getTrialLikelihood(trials[i], timeStep, approxStateStep);
+                trialLikelihoods[i] = prob;
+                aux.likelihood += prob;
+                aux.NLL += -log(prob);
             }
-            return aux;
+        } else {
+            for (int i = a; i < b; ++i) {
+                double prob = this->getLikelihoodAlternative(trials[i], timeStep, approxStateStep);
+                trialLikelihoods[i] = prob;
+                aux.likelihood += prob;
+                aux.NLL += -log(prob);
+            }
         }
-    );
+        return aux;
+    }
+            );
     std::vector<ProbabilityData> totals = futs.get();
     for (const ProbabilityData t : totals) {
         datasetTotals.NLL += t.NLL;
-        datasetTotals.likelihood += t.likelihood; 
+        datasetTotals.likelihood += t.likelihood;
     }
-    datasetTotals.trialLikelihoods = trialLikelihoods; 
+    datasetTotals.trialLikelihoods = trialLikelihoods;
     return datasetTotals;
 }
 
@@ -599,39 +600,39 @@ void aDDMTrial::writeTrialsToCSV(std::vector<aDDMTrial> trials, string filename)
     std::ofstream fp;
     fp.open(filename);
     fp << "trial,choice,rt,valueLeft,valueRight,fixItem,fixTime\n";
-    int id = 0; 
+    int id = 0;
 
     for (aDDMTrial adt : trials) {
         assert(adt.fixItem.size() == adt.fixTime.size());
         for (int i = 0; i < adt.fixItem.size(); i++) {
-            fp << id << "," << adt.choice << "," << adt.RT << "," << 
-                adt.valueLeft << "," << adt.valueRight << "," <<
-                adt.fixItem[i] << "," << adt.fixTime[i] << "\n";
+            fp << id << "," << adt.choice << "," << adt.RT << "," <<
+               adt.valueLeft << "," << adt.valueRight << "," <<
+               adt.fixItem[i] << "," << adt.fixTime[i] << "\n";
         }
         id++;
     }
-    fp.close();    
+    fp.close();
 }
 
 
 vector<aDDMTrial> aDDMTrial::loadTrialsFromCSV(string filename) {
-    std::vector<aDDMTrial> trials; 
+    std::vector<aDDMTrial> trials;
     std::vector<aDDM> addms;
     std::ifstream file(filename);
     std::string line;
     std::getline(file, line);
 
     int ID;
-    int choice; 
-    int RT; 
+    int choice;
+    int RT;
     int valueLeft;
     int valueRight;
     int prevID;
     int fItem;
-    int fTime; 
-    bool firstIter = true; 
+    int fTime;
+    bool firstIter = true;
     std::vector<int> fixItem;
-    std::vector<int> fixTime; 
+    std::vector<int> fixTime;
 
     aDDMTrial adt = aDDMTrial();
     while (std::getline(file, line)) {
@@ -656,7 +657,7 @@ vector<aDDMTrial> aDDMTrial::loadTrialsFromCSV(string filename) {
             adt.fixTime.push_back(fTime);
         } else {
             if (firstIter) {
-                firstIter = false; 
+                firstIter = false;
             } else {
                 trials.push_back(adt);
             }
@@ -672,33 +673,34 @@ vector<aDDMTrial> aDDMTrial::loadTrialsFromCSV(string filename) {
     return trials;
 }
 
+
 MLEinfo<aDDM> aDDM::computeFitAndPosteriors(
     std::vector<aDDM> potentialModels, bool normalizePosteriors, int numTrials) {
 
-    std::map<aDDM, ProbabilityData> allTrialLikelihoods; 
-    std::map<aDDM, float> posteriors; 
+    std::map<aDDM, ProbabilityData> allTrialLikelihoods;
+    std::map<aDDM, float> posteriors;
     double numModels = potentialModels.size();
     /**
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     * MLE IS PERFORMED HERE! 
+     * MLE IS PERFORMED HERE!
      * Feel free to disregard the posteriors when making modifications
-     * if you do not plan on using them in analyses. 
-     * 
-     * Example code without posterior computation for MLE: 
-     * 
-     * double minNLL = __DBL_MAX__; 
-     * aDDM optimal = aDDM(); 
+     * if you do not plan on using them in analyses.
+     *
+     * Example code without posterior computation for MLE:
+     *
+     * double minNLL = __DBL_MAX__;
+     * aDDM optimal = aDDM();
      * for (aDDM addm : potentialModels) {
      *     ProbabilityData aux = NLLcomputer(addm);
      *     if (aux.NLL < minNLL) {
-     *         minNLL = aux.NLL; 
-     *         optimal = addm; 
+     *         minNLL = aux.NLL;
+     *         optimal = addm;
      *     }
      * }
-     * 
+     *
      */
-    double minNLL = __DBL_MAX__; 
-    aDDM optimal = aDDM(); 
+    double minNLL = __DBL_MAX__;
+    aDDM optimal = aDDM();
     for (aDDM addm : potentialModels) {
         ProbabilityData aux = NLLcomputer(addm);
         if (normalizePosteriors) {
@@ -708,92 +710,95 @@ MLEinfo<aDDM> aDDM::computeFitAndPosteriors(
             posteriors.insert({addm, aux.NLL});
         }
         if (aux.NLL < minNLL) {
-            minNLL = aux.NLL; 
-            optimal = addm; 
+            minNLL = aux.NLL;
+            optimal = addm;
         }
     }
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if (normalizePosteriors) {
         for (int tn = 0; tn < numTrials; tn++) {
-            double denominator = 0; 
+            double denominator = 0;
             for (const auto &addmPD : allTrialLikelihoods) {
-                aDDM curr = addmPD.first; 
-                ProbabilityData data = addmPD.second; 
+                aDDM curr = addmPD.first;
+                ProbabilityData data = addmPD.second;
                 double likelihood = data.trialLikelihoods[tn];
-                denominator += posteriors[curr] * likelihood; 
+                denominator += posteriors[curr] * likelihood;
             }
-            double sum = 0; 
+            double sum = 0;
             for (const auto &addmPD : allTrialLikelihoods) {
-                aDDM curr = addmPD.first; 
-                ProbabilityData data = addmPD.second; 
+                aDDM curr = addmPD.first;
+                ProbabilityData data = addmPD.second;
                 double prior = posteriors[curr];
-                double newLikelihoood = data.trialLikelihoods[tn] * prior / denominator; 
-                posteriors[curr] = newLikelihoood; 
+                double newLikelihoood = data.trialLikelihoods[tn] * prior / denominator;
+                posteriors[curr] = newLikelihoood;
                 sum += newLikelihoood;
             }
             if (sum != 1) {
-                double normalizer = 1 / sum; 
+                double normalizer = 1 / sum;
                 for (auto &p : posteriors) {
-                    p.second *= normalizer; 
+                    p.second *= normalizer;
                 }
             }
         }
     }
     MLEinfo<aDDM> info;
-    info.optimal = optimal; 
-    info.likelihoods = posteriors; 
-    return info;   
+    info.optimal = optimal;
+    info.likelihoods = posteriors;
+    return info;
 }
+
 
 void checkComputeMethod(std::string computeMethod) {
     if (std::find(
-        validComputeMethods.begin(), validComputeMethods.end(), 
-        computeMethod) == validComputeMethods.end()) {
+                validComputeMethods.begin(), validComputeMethods.end(),
+                computeMethod) == validComputeMethods.end()) {
         throw std::invalid_argument("Input computeMethod is invalid.");
     }
 }
+
 
 void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateStep, bool useAlternative, string computeMethod) {
     // select method for computing likelihoods
     if (computeMethod == "basic") {
         NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            ProbabilityData data = ProbabilityData(); 
+            ProbabilityData data = ProbabilityData();
             if (!useAlternative) {
                 for (aDDMTrial trial : trials) {
                     double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
+                    data.likelihood += prob;
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
             } else {
                 for (aDDMTrial trial : trials) {
                     double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
-                    data.likelihood += prob; 
+                    data.likelihood += prob;
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
             }
-            return data; 
+            return data;
         };
     }
     else if (computeMethod == "thread") {
         NLLcomputer = [
-            trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+        trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
             return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
         };
     }
 }
 
+
 MLEinfo<aDDM> aDDM::fitModelCSV(
-    std::vector<aDDMTrial> trials, 
-    std::string filename, 
-    std::string computeMethod, 
-    bool normalizePosteriors, 
-    float barrier, 
-    unsigned int nonDecisionTime, 
-    int timeStep, 
-    float approxStateStep, 
+    std::vector<aDDMTrial> trials,
+    std::string filename,
+    std::string computeMethod,
+    bool normalizePosteriors,
+    float barrier,
+    unsigned int nonDecisionTime,
+    int timeStep,
+    float approxStateStep,
     bool useAlternative) {
 
     checkComputeMethod(computeMethod);
@@ -815,30 +820,32 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
 
     // read in the headers
     std::ifstream paramsFile(filename);
-    string paramNames; 
+    string paramNames;
     std::getline(paramsFile, paramNames);
-    std::stringstream ss(paramNames);    
-    
+    std::stringstream ss(paramNames);
+
     // convert headers to an array and check if they are implemented
     vector<string> headers;
-    vector<bool> isBuiltInParam; 
+    vector<bool> isBuiltInParam;
     while(ss.good()) {
         string curr;
         getline(ss, curr, ',');
         ltrim(curr);
-        rtrim(curr);        
+        rtrim(curr);
         if (std::find(
-            headers.begin(), headers.end(), curr) != headers.end()) {
+                    headers.begin(), headers.end(), curr) != headers.end()) {
             throw std::invalid_argument(
                 string("Duplicate parameter found: ") + curr
             );
         }
-        headers.push_back(curr);      
+        headers.push_back(curr);
 
         std::transform(curr.begin(), curr.end(), curr.begin(),
-            [](unsigned char c){ return std::tolower(c); });
+        [](unsigned char c) {
+            return std::tolower(c);
+        });
         if (std::find(
-            validParams.begin(), validParams.end(), curr) != validParams.end()) {
+                    validParams.begin(), validParams.end(), curr) != validParams.end()) {
             isBuiltInParam.push_back(true);
         }
         else {
@@ -846,21 +853,24 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
         }
     }
 
-    string line; 
-    vector<float> currParams; 
-    vector<aDDM> potentialModels; 
+    string line;
+    vector<float> currParams;
+    vector<aDDM> potentialModels;
     while (std::getline(paramsFile, line)) { // Read each line in the CSV
-        ss.clear(); 
+        if (line == "") {
+            continue; 
+        }
+        ss.clear();
         ss.str(line);
         aDDM addm = aDDM(0, 0, 0, 0, barrier, nonDecisionTime, 0, 0);
 
-        int col = 0; 
+        int col = 0;
         while (ss.good()) {
-            string curr; 
-            float curr_f; 
+            string curr;
+            float curr_f;
             getline(ss, curr, ',');
             try {
-               curr_f = stof(curr);
+                curr_f = stof(curr);
             }
             catch (invalid_argument &e) {
                 throw std::invalid_argument(
@@ -878,34 +888,36 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
                 } else if (currHeader == "theta") {
                     addm.theta = curr_f;
                 } else if (currHeader == "k") {
-                    addm.k = curr_f; 
+                    addm.k = curr_f;
                 } else if (currHeader == "bias") {
                     addm.bias = curr_f;
                 } else if (currHeader == "decay") {
                     addm.decay = curr_f;
+                } else {
+                    throw std::invalid_argument(string("False built-in: ") + currHeader);
                 }
             } else {
-                addm.optionalParams[headers[col]] = curr_f; 
+                addm.optionalParams[headers[col]] = curr_f;
             }
-            col++; 
+            col++;
         }
         potentialModels.push_back(addm);
         if (col != headers.size()) {
-            throw std::invalid_argument("Row with insufficient entries provided");            
+            throw std::invalid_argument("Row with insufficient entries provided");
         }
     }
 
     // for (string head : headers) {
     //     std::cout << head << " ";
     // }
-    // std::cout << std::endl; 
+    // std::cout << std::endl;
     // for (bool f : isBuiltInParam) {
     //     std::cout << f << " ";
     // }
-    // std::cout << std::endl; 
+    // std::cout << std::endl;
 
     // for (aDDM addm : potentialModels) {
-    //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl; 
+    //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl;
     // }
 
     setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
@@ -913,48 +925,48 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
 }
 
 MLEinfo<aDDM> aDDM::fitModelMLE(
-    std::vector<aDDMTrial> trials, 
-    std::vector<float> rangeD, 
-    std::vector<float> rangeSigma, 
-    std::vector<float> rangeTheta, 
+    std::vector<aDDMTrial> trials,
+    std::vector<float> rangeD,
+    std::vector<float> rangeSigma,
+    std::vector<float> rangeTheta,
     std::vector<float> rangeK,
-    std::string computeMethod, 
+    std::string computeMethod,
     bool normalizePosteriors,
     float barrier,
     unsigned int nonDecisionTime,
-    int timeStep, 
+    int timeStep,
     float approxStateStep,
-    std::vector<float> bias, 
+    std::vector<float> bias,
     std::vector<float> decay,
-    bool useAlternative, 
+    bool useAlternative,
     map<string, vector<float>>rangeOptional) {
 
     checkComputeMethod(computeMethod);
 
-    std::function<void(int)> generate; 
+    std::function<void(int)> generate;
 
     sort(rangeD.begin(), rangeD.end());
     sort(rangeSigma.begin(), rangeSigma.end());
-    sort(rangeTheta.begin(), rangeTheta.end()); 
+    sort(rangeTheta.begin(), rangeTheta.end());
     sort(rangeK.begin(), rangeK.end());
     sort(bias.begin(), bias.end());
     sort(decay.begin(), decay.end());
 
     std::vector<std::vector<float>> allParams = {
-        rangeD, 
-        rangeSigma, 
-        rangeTheta, 
-        rangeK, 
-        bias, 
+        rangeD,
+        rangeSigma,
+        rangeTheta,
+        rangeK,
+        bias,
         decay
     };
 
-    /** On every combination of default parameters, 
-     * iterate through a list of all combinations for each parameter value. 
-     * {"A":{1, 2, 3}, "B":{4, 5, 6}} ==> {{1, 4}, {1, 5}, {1, 6}, 
-     *                                     {2, 4}, {2, 5}, {2, 6}, 
+    /** On every combination of default parameters,
+     * iterate through a list of all combinations for each parameter value.
+     * {"A":{1, 2, 3}, "B":{4, 5, 6}} ==> {{1, 4}, {1, 5}, {1, 6},
+     *                                     {2, 4}, {2, 5}, {2, 6},
      *                                     {3, 4}, {3, 5}, {3, 6}}
-     */    
+     */
     std::vector<string> optionalKeys; // {"A", "B"}
     std::vector<std::vector<float>> optionalUnlabeledRanges; // {{1, 2, 3}, {4, 5, 6}}
     std::vector<std::vector<float>> optionalCombinations; // {{1, 4}, {1, 5}, ...}
@@ -969,38 +981,38 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
                 optionalCombinations.push_back(currentOpt);
             } else {
                 for (float element : optionalUnlabeledRanges[index]) {
-                    currentOpt[index] = element; 
+                    currentOpt[index] = element;
                     generate(index + 1);
                 }
             }
         };
         generate(0);
-        
+
         for (auto combination : optionalCombinations) {
             assert(combination.size() == optionalKeys.size());
-        }  
-    } 
+        }
+    }
 
     // generate all possible parameter combinations
     std::vector<float> current(allParams.size(), 0);
     std::vector<std::vector<float>> paramCombinations;
     generate = [&](int index) {
         if (index == allParams.size()) {
-            paramCombinations.push_back(current); 
+            paramCombinations.push_back(current);
         } else {
             for (float element : allParams[index]) {
-                current[index] = element; 
+                current[index] = element;
                 generate(index + 1);
             }
         }
-    }; 
+    };
     generate(0);
 
     // create all potential models
-    std::vector<aDDM> potentialModels; 
+    std::vector<aDDM> potentialModels;
     for (std::vector<float> combination : paramCombinations) {
         assert(combination.size() == 6);
-        float d = combination[0]; 
+        float d = combination[0];
         float sigma = combination[1];
         float theta = combination[2];
         float k = combination[3];
@@ -1011,8 +1023,8 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
             aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
             potentialModels.push_back(addm);
         } else {
-            // Iterate through each possible combination of parameters. 
-            // Create a new aDDM for each combination. 
+            // Iterate through each possible combination of parameters.
+            // Create a new aDDM for each combination.
             for (auto combination : optionalCombinations) {
                 aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
                 for (int i = 0; i < combination.size(); i++) {
@@ -1020,7 +1032,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
                 }
                 potentialModels.push_back(addm);
             }
-        }        
+        }
     }
 
     setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);

@@ -1,5 +1,5 @@
-#ifndef ADDM_TOOLBOX_GPU_H
-#define ADDM_TOOLBOX_GPU_H
+#ifndef ADDM_TOOLBOX_CPP_H
+#define ADDM_TOOLBOX_CPP_H
 
 #include "ddm.h"
 #include "addm.h"
