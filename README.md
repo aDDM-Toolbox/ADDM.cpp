@@ -466,6 +466,7 @@ A set of data analysis and visualization tools are provided in the __analysis__ 
 * Posterior Pair Plots.
 * Time vs RDV for individual trial.
 * Value Differences against Response Time Frequencies. 
+* N most optimal models. 
 
 See the individual file documentation for usage instructions. 
 
