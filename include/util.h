@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <iostream>
 #include <BS_thread_pool.hpp>
 #include <nlohmann/json.hpp>
 #include "addm.h"

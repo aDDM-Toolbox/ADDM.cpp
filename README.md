@@ -115,7 +115,7 @@ theta: 0.5
 
 ## Tutorial ##
 
-In the [data](data/) directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains sample experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in [tutorial.cpp](sample/tutorial.cpp). An executable version of this script can be built using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in [tutorial.cpp](sample/tutorial.cpp).
+In the data directory, we have included two test files to demonstrate how to use the toolbox. [expdata.csv](data/expdata.csv) contains sample experimental data and [fixations.csv](data/fixations.csv) contains the corresponding fixation data. A description of how to fit models corresponding to these subjects is located in `sample/tutorial.cpp`. An executable version of this script can be built using the `make run` target. The contents of the tutorial are listed below, but can be found __verbatim__ in `sample/tutorial.cpp`.
 
 `sample/tutorial.cpp`
 ```cpp
@@ -166,6 +166,8 @@ __Experimental Data__
 | 0       | 1     |873 | 1      | -15       | 5          |  
 | 0       | 2     |1345| 1      | 10        | -5         |  
 
+Parcode is required for the program to run. Reaction time is measured in milliseconds.
+
 __Fixation Data__
 
 | parcode | trial | fixItem | fixTime |
@@ -205,10 +207,10 @@ std::cout << "theta: " << info.optimal.theta << std::endl;
 Perform model fitting via Maximum Likelihood Estimation (MLE) to find the optimal parameters for each subject. The arguments for this function are as follows: 
 
 * `trials` - The list of trials for the given subjectID. 
-* `{0.001, 0.002, 0.003}` - Range to test for the drift rate (d).
-* `{0.0875, 0.09, 0.0925}` - Range to test for noise (sigma).
-* `{0.1, 0.3, 0.5}` - Range to test for the fixation discount (theta).
-* `{0}` - Range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
+* `{0.001, 0.002, 0.003}` - Parameter range to test for the drift rate (d).
+* `{0.0875, 0.09, 0.0925}` - Parameter range to test for noise (sigma).
+* `{0.1, 0.3, 0.5}` - Parameter range to test for the fixation discount (theta).
+* `{0}` - Parameter range to test for additive fixation factor (k). The default aDDM model assumes no additive scalar for fixations. 
 * `"thread"` - indicates whether to use the standard or multithreaded implementation. Must be selected between `"basic"` and `"thread"`. 
 
 When building the tutorial with `make run`, an executable will be created at `bin/tutorial`. Running this executable should print the model parameters for each subject. At first, it may seem like most subjects report similar parameters. This is to be expected given the small parameter space the grid search is testing; however, there should be a slight variance among parameters for some subjects. The expected output is described below: 
@@ -221,9 +223,13 @@ When building the tutorial with `make run`, an executable will be created at `bi
 ⋮
 ```
 
+## Loading Parameter Combinations From a CSV ##
+
+We can also load parameter combinations from a CSV file. This can be done using the `fitModelCSV` function in the aDDM class. This functions almost identically to the model fitting process as described above, but all parameter combinations to test for should be described in a CSV file. See `sample/addm_csv_fit.cpp` for example usage and `data/params_sample.csv` for example parameter combinations. 
+
 ## Testing ##
 
-A set of basic correctnesss tests are located in the [tests](tests/) directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
+A set of basic correctnesss tests are located in the tests directory. These tests may be updated as more features are (potentially) added. Most importantly, these tests check that (1) the toolbox can be installed without error and (2) the installed toolbox performs trial simulation, likelihood estimation, and MLE correctly. To run the tests: 
 
 ```shell
 $ make test
@@ -268,7 +274,7 @@ When redesigning this segment of code, the minimum requirement is that some `aDD
 
 ### Adding Parameters and Alternative Likelihood Calculators ###
 
-Some users may want to fit models that have different parameters than those built into the standard model. Steps to use this toolbox with these modifications are described below. An example using a custom toolbox design is described in [custom.cpp](sample/custom.cpp) as well.  
+Some users may want to fit models that have different parameters than those built into the standard model. Steps to use this toolbox with these modifications are described below. An example using a custom toolbox design is described in `custom.cpp` as well.  
 
 __Adding New Parameters__: The `aDDM` class has a built-in field `optionalParameters` that allows users to easily add different parameters to a model. This field is a mapping from strings to floats, so named parameters can be mapped to their specific values. See example below: 
 
@@ -335,6 +341,7 @@ std::map<string, vector<float>> rangeOptional = {
 ```
 3. Load trials as usual and call `aDDM::fitModelMLE` to perform model fitting and retrieve the most optimal model. Be sure to toggle the last two arguments of the function as necessary, which specify if `getLikelihoodAlternative` should be used and if there exist potential values for custom parameters to test all combinations of. (These parameters should be __true__ and __rangeOptional__ if the custom parameter space is non-empty). 
 ```cpp
+const std::string SIMS = "(Path to data on aDDM trials)";
 std::vector<aDDMTrial> trials = aDDMTrial::loadTrialsFromCSV(SIMS);
 MLEinfo info = aDDM::fitModelMLE(
     trials, {0.005}, {0.07}, {0.5}, {0}, "thread", false, 1, 0, 10, 0.1, {0}, {0}, true, rangeOptional);
@@ -346,7 +353,7 @@ Note that C++ requires positional arguments, so there is no way to get around fi
 
 ## Python Bindings ## 
 
-Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in [lib/bindings.cpp](lib/bindings.cpp). Note that [pybind11](https://github.com/pybind/pybind11) and Python version 3.10 (at a minimum) are __strict__ prerequisites for installation and usage of the Python code. These are installed in the Docker image. For local installation on a Linux OS they can be installed with 
+Python bindings are also provided for users who prefer to work with a Python codebase over C++. The provided bindings are located in `lib/bindings.cpp`. Note that [pybind11](https://github.com/pybind/pybind11) and Python version 3.10 (at a minimum) are __strict__ prerequisites for installation and usage of the Python code. These are installed in the Docker image. For local installation on a Linux OS they can be installed with 
 
 ```shell
 $ apt-get install python3.10
@@ -390,7 +397,7 @@ RT = 850
 choice = 1
 ```
 
-Model fitting for the aDDM is largely analgous to the original C++ code. We provide a Python model of [sample/tutorial.cpp](sample/tutorial.cpp) below: 
+Model fitting for the aDDM is largely analgous to the original C++ code. We provide a Python model of `sample/tutorial.cpp` below: 
 
 `tutorial.py`
 ```Python
@@ -430,7 +437,7 @@ Expected output:
 ⋮
 ```
 
-Note that when executing any Python files using the `addm_toolbox_cpp` module, the compiled shared libary (`.so`) should be either: 
+Note that when executing any Python files using the `addm_toolbox_cpp` module, the compiled shared libary (i.e. `addm_toolbox_cpp.cpython-310-x86_64-linux-gnu.so`) should be either: 
 
 * Placed in the same directory as the Python executable. 
 * Placed in some directory in the `PYTHONPATH` environmental variable. (i.e. `usr/lib/python3.10` for Linux).
@@ -452,13 +459,14 @@ $ stubgen -m addm_toolbox_cpp -o .
 
 ## Data Analysis Scripts ##
 
-A set of data analysis and visualization tools are provided in the [analysis](analysis/) directory. Current provided scripts include: 
+A set of data analysis and visualization tools are provided in the __analysis__ directory. Current provided scripts include: 
 
 * DDM Heatmaps for MLE. 
 * aDDM Heatmap for MLE. 
 * Posterior Pair Plots.
 * Time vs RDV for individual trial.
 * Value Differences against Response Time Frequencies. 
+* N most optimal models. 
 
 See the individual file documentation for usage instructions. 
 

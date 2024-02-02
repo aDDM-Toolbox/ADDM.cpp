@@ -1,5 +1,5 @@
-#ifndef DDM_CUH
-#define DDM_CUH
+#ifndef DDM_H
+#define DDM_H
 
 #include <vector> 
 #include <string> 

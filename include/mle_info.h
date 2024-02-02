@@ -40,8 +40,7 @@ class ProbabilityData {
          * @param likelihood Initial likelihood.
          * @param NLL Initial negative log likelihood; 
          */
-        ProbabilityData(double likelihood=0, double NLL=0) {
-            this->likelihood = likelihood; 
+        ProbabilityData(double NLL=0) {
             this->NLL = NLL;
         };
 };

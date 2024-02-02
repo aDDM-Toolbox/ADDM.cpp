@@ -1,7 +1,7 @@
 CXX := g++
 
 SIM_EXECS := addm_simulate
-MLE_EXECS := addm_mle 
+MLE_EXECS := addm_mle addm_csv_fit
 TEST_EXECS := addm_test 
 RUN_EXECS := tutorial custom 
 
@@ -61,6 +61,8 @@ install: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	@echo Installing for $(UNAME_S) in $(INSTALL_INC_DIR)
 	cp -TRv $(INC_DIR) $(INSTALL_INC_DIR)/addm
 
+uninstall: 
+	rm -rf $(INSTALL_INC_DIR)/addm	
 
 sim: $(OBJ_DIR) $(BUILD_DIR) $(CPP_OBJ_FILES) $(CU_OBJ_FILES)
 	$(foreach source, $(SIM_EXECS), $(call compile_target, $(source));)

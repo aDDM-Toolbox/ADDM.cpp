@@ -1,5 +1,5 @@
-#ifndef ADDM_CUH
-#define ADDM_CUH
+#ifndef ADDM_H
+#define ADDM_H
 
 #include <string>
 #include <vector>
@@ -127,6 +127,9 @@ class aDDMTrial: public DDMTrial {
  */
 class aDDM: public DDM {
     private:
+        static MLEinfo<aDDM> computeFitAndPosteriors(
+            std::vector<aDDM> potentialModels, bool normalizePosteriors, int numTrials);
+
     public: 
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
@@ -224,6 +227,14 @@ class aDDM: public DDM {
         );
 
         /**
+         * @brief Alternative simulator for users who want  custom model.
+        */
+        aDDMTrial simulateTrialAlternative(
+            int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
+            int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
+        );
+
+        /**
          * @brief Compute the total Negative Log Likelihood (NLL) for a vector of aDDMTrials. Use CPU
          * multithreading to maximize the number of blocks of trials that can have their respective 
          * NLLs computed in parallel. 
@@ -239,6 +250,17 @@ class aDDM: public DDM {
             vector<aDDMTrial> trials, int timeStep=10, 
             float approxStateStep=0.1, bool useAlternative=false
         );
+
+        static MLEinfo<aDDM> fitModelCSV(
+            std::vector<aDDMTrial> trials, 
+            std::string filename, 
+            std::string computeMethod="basic", 
+            bool normalizePosteriors=false, 
+            float barrier=1, 
+            unsigned int nonDecisionTime=0, 
+            int timeStep=10, 
+            float approxStateStep=0.1,
+            bool useAlternative=false);
 
         /**
          * @brief Complete a grid-search based Maximum Likelihood Estimation of all possible parameter 
