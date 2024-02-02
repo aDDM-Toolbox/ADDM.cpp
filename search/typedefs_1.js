@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fixdists_0',['fixDists',['../addm_8h.html#ac73e0abca434ac872480feb6a7cf4c56',1,'addm.h']]]
+  ['fixdists_0',['fixDists',['../addm_8h.html#a04856a5a5f3cdb660bac28b172b8b600',1,'addm.h']]]
 ];

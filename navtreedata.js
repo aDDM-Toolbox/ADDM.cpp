@@ -33,17 +33,25 @@ var NAVTREE =
     ] ],
     [ "Basic Usage", "index.html#autotoc_md6", null ],
     [ "Tutorial", "index.html#autotoc_md7", null ],
-    [ "Testing", "index.html#autotoc_md8", null ],
-    [ "Modifying the Toolbox", "index.html#autotoc_md9", [
-      [ "Alternative Optimization Algorithms", "index.html#autotoc_md10", null ],
-      [ "Adding Parameters and Alternative Likelihood Calculators", "index.html#autotoc_md11", null ]
+    [ "Loading Parameter Combinations From a CSV", "index.html#autotoc_md8", null ],
+    [ "Testing", "index.html#autotoc_md9", null ],
+    [ "Modifying the Toolbox", "index.html#autotoc_md10", [
+      [ "Alternative Optimization Algorithms", "index.html#autotoc_md11", null ],
+      [ "Adding Parameters and Alternative Likelihood Calculators", "index.html#autotoc_md12", null ]
     ] ],
-    [ "Python Bindings", "index.html#autotoc_md12", [
-      [ "Optional: Python Syntax Highlighting", "index.html#autotoc_md13", null ]
+    [ "Python Bindings", "index.html#autotoc_md13", [
+      [ "Optional: Python Syntax Highlighting", "index.html#autotoc_md14", null ]
     ] ],
-    [ "Data Analysis Scripts", "index.html#autotoc_md14", null ],
-    [ "Authors", "index.html#autotoc_md15", null ],
-    [ "Acknowledgements", "index.html#autotoc_md16", null ],
+    [ "Data Analysis Scripts", "index.html#autotoc_md15", null ],
+    [ "Authors", "index.html#autotoc_md16", null ],
+    [ "Acknowledgements", "index.html#autotoc_md17", null ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
+      ] ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['item_5fleft_0',['item_left',['../structexpEntry.html#a867aee603b08d427606a0f23a3a207d3',1,'expEntry']]],
-  ['item_5fright_1',['item_right',['../structexpEntry.html#a4a36515b50dafd94cef71ae9d847f324',1,'expEntry']]]
+  ['ha_0',['ha',['../namespacen__optimal.html#a4eda01b792fbff7a055a6b529392cfd6',1,'n_optimal']]],
+  ['header_5fparams_1',['header_params',['../namespacen__optimal.html#ac9fc5fae0f7380dfe4b91efb74f7b866',1,'n_optimal']]],
+  ['height_5fdelta_2',['height_delta',['../namespacen__optimal.html#ab79ef793d463aa95d9ee49449d0b22c4',1,'n_optimal']]],
+  ['hp_5fstring_3',['hp_string',['../namespacen__optimal.html#a7981d5c64c31d53bf186827f44853d06',1,'n_optimal']]]
 ];
