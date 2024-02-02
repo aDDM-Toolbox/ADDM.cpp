@@ -561,25 +561,23 @@ aDDMTrial aDDM::simulateTrial(
 
 
 ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int timeStep, float approxStateStep, bool useAlternative) {
-    ProbabilityData datasetTotals = ProbabilityData(0, 0);
+    ProbabilityData datasetTotals = ProbabilityData(0);
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
-    BS::multi_future<ProbabilityData> futs = pool.parallelize_loop(
+    BS::multi_future<ProbabilityData> futs = pool.submit_blocks<int>(
                 0, trials.size(),
     [this, &trials, timeStep, approxStateStep, &trialLikelihoods, useAlternative](const int a, const int b) {
-        ProbabilityData aux = ProbabilityData(0, 0);
+        ProbabilityData aux = ProbabilityData(0);
         if (!useAlternative) {
             for (int i = a; i < b; ++i) {
                 double prob = this->getTrialLikelihood(trials[i], timeStep, approxStateStep);
                 trialLikelihoods[i] = prob;
-                aux.likelihood += prob;
                 aux.NLL += -log(prob);
             }
         } else {
             for (int i = a; i < b; ++i) {
                 double prob = this->getLikelihoodAlternative(trials[i], timeStep, approxStateStep);
                 trialLikelihoods[i] = prob;
-                aux.likelihood += prob;
                 aux.NLL += -log(prob);
             }
         }
@@ -589,7 +587,6 @@ ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int time
     std::vector<ProbabilityData> totals = futs.get();
     for (const ProbabilityData t : totals) {
         datasetTotals.NLL += t.NLL;
-        datasetTotals.likelihood += t.likelihood;
     }
     datasetTotals.trialLikelihoods = trialLikelihoods;
     return datasetTotals;
@@ -766,14 +763,12 @@ void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateS
             if (!useAlternative) {
                 for (aDDMTrial trial : trials) {
                     double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
-                    data.likelihood += prob;
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
             } else {
                 for (aDDMTrial trial : trials) {
                     double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
-                    data.likelihood += prob;
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }

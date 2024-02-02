@@ -367,17 +367,16 @@ DDMTrial DDM::simulateTrial(int valueLeft, int valueRight, int timeStep, int see
 
 
 ProbabilityData DDM::computeParallelNLL(std::vector<DDMTrial> trials, bool debug, int timeStep, float approxStateStep) {
-    ProbabilityData datasetTotals = ProbabilityData(0, 0);
+    ProbabilityData datasetTotals = ProbabilityData(0);
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
-    BS::multi_future<ProbabilityData> futs = pool.parallelize_loop(
+    BS::multi_future<ProbabilityData> futs = pool.submit_blocks<int>(
                 0, trials.size(),
     [this, &trials, debug, timeStep, approxStateStep, &trialLikelihoods](const int a, const int b) {
-        ProbabilityData aux = ProbabilityData(0, 0);
+        ProbabilityData aux = ProbabilityData(0);
         for (int i = a; i < b; ++i) {
             double prob = this->getTrialLikelihood(trials[i], debug, timeStep, approxStateStep);
             trialLikelihoods[i] = prob;
-            aux.likelihood += prob;
             aux.NLL += -log(prob);
         }
         return aux;
@@ -386,7 +385,6 @@ ProbabilityData DDM::computeParallelNLL(std::vector<DDMTrial> trials, bool debug
     std::vector<ProbabilityData> totals = futs.get();
     for (const ProbabilityData t : totals) {
         datasetTotals.NLL += t.NLL;
-        datasetTotals.likelihood += t.likelihood;
     }
     datasetTotals.trialLikelihoods = trialLikelihoods;
     return datasetTotals;
