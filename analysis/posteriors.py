@@ -32,7 +32,7 @@ import sys
 from datetime import datetime
 
 PROB_LABEL = 'p'
-FILE_PATH = 'results/addm_posteriors.csv'
+FILE_PATH = 'results/scaling_std.csv'
 
 
 # _MapData class is defined to store information for heatmaps
@@ -142,7 +142,6 @@ for i in range(N):
 plt.tight_layout()
 
 if (len(sys.argv) > 1 and "save" in sys.argv):
-    currTime = datetime.now().strftime(u"%Y-%m-%d_%H:%M:%S")
-    plt.savefig("imgs/posteriors_" + currTime + ".png")
-
-plt.show()
+    currTime = datetime.now().strftime(u"%Y-%m-%d")
+    plt.suptitle("aDDM Posteriors: Standard VD")
+    plt.savefig("imgs/fixed_posteriors_std_" + currTime + ".png")
