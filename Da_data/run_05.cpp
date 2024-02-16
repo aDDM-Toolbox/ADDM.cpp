@@ -56,10 +56,10 @@ void printRange(const std::vector<float>& range, const std::string& name) {
 
 int main() {
     std::vector<std::string> dataPairs = {
-       // "data/b_compE05.csv", "data/f_compE05.csv",
-       // "data/b_compH05.csv", "data/f_compH05.csv",
-        "data/b_encC05.csv", "data/f_encC05.csv",
-        "data/b_encF05.csv", "data/f_encF05.csv"
+       "data/b_compE05.csv", "data/f_compE05.csv",
+       "data/b_compH05.csv", "data/f_compH05.csv"
+        // "data/b_encC05.csv", "data/f_encC05.csv",
+        // "data/b_encF05.csv", "data/f_encF05.csv"
 
     };
 
@@ -96,7 +96,7 @@ int main() {
         }
 
         // Save output to CSV with a specific filename
-        std::string outputFileName = "output_" + prefix + ".csv";
+        std::string outputFileName = "out/output_" + prefix + ".csv";
         saveToCSV(outputFileName, outputData);
     }
 
