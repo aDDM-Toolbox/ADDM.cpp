@@ -61,7 +61,7 @@ int main() {
         "data/b_compE2.csv", "data/f_compE2.csv",
         "data/b_compH2.csv", "data/f_compH2.csv"
 //         "data/b_encC2.csv", "data/f_encC2.csv",
-        "data/b_encF2.csv", "data/f_encF2.csv"
+        // "data/b_encF2.csv", "data/f_encF2.csv"
     };
 
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
