@@ -58,8 +58,8 @@ int main() {
     std::vector<std::string> dataPairs = {
         //"data/b_encC.csv", "data/f_encC.csv",
         //"data/b_encF.csv", "data/f_encF.csv",
-        "data/b_compE.csv", "data/f_compE.csv",
-        "data/b_compH.csv", "data/f_compH.csv"
+        "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/b_compE.csv", "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/f_compE.csv",
+        "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/b_compH.csv", "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/f_compH.csv"
     };
 
     std::cout << "hello" << std::endl; 

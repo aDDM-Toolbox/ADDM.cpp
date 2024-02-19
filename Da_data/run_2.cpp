@@ -58,8 +58,8 @@ void printRange(const std::vector<float>& range, const std::string& name) {
 
 int main() {
     std::vector<std::string> dataPairs = {
-        "data/b_compE2.csv", "data/f_compE2.csv",
-        "data/b_compH2.csv", "data/f_compH2.csv"
+        "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/b_compE2.csv", "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/f_compE2.csv",
+        "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/b_compH2.csv", "/central/groups/rnl/jgoldman/ADDM.cpp/Da_data/data/f_compH2.csv"
 //         "data/b_encC2.csv", "data/f_encC2.csv",
         // "data/b_encF2.csv", "data/f_encF2.csv"
     };
