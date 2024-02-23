@@ -96,7 +96,7 @@ int main() {
         }
 
         // Save output to CSV with a specific filename
-        std::string outputFileName = "/central/groups/rnl/jgoldman/output_" + prefix + ".csv";
+        std::string outputFileName = "/central/groups/rnl/jgoldman/out/output_" + prefix + ".csv";
         saveToCSV(outputFileName, outputData);
     }
 
