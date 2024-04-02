@@ -66,10 +66,11 @@ int main() {
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
         // Generate sets of values
     	std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
-        std::vector<float> range_d = generateRange(0.001f, 0.03f, 0.001f);
+        std::vector<float> range_d = generateRange(0.001f, 0.03f, 0.0005f);
         std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
 
         // Print the generated ranges
+        std::cout << "RUN 05" << std::endl; 
         printRange(range_d, "Range_d");
         printRange(range_s, "Range_s");
         printRange(range_theta, "Range_theta");

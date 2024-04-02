@@ -71,6 +71,7 @@ int main() {
         std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
 
         // Print the generated ranges
+        std::cout << "RUN 4 CONDI" << std::endl; 
         printRange(range_d, "Range_d");
         printRange(range_s, "Range_s");
         printRange(range_theta, "Range_theta");
@@ -97,7 +98,7 @@ int main() {
         }
 
         // Save output to CSV with a specific filename
-        std::string outputFileName = "central/groups/rnl/jgoldman/out/output_" + prefix + ".csv";
+        std::string outputFileName = "/central/groups/rnl/jgoldman/out/output_" + prefix + ".csv";
         saveToCSV(outputFileName, outputData);
     }
 
