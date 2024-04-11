@@ -40,3 +40,31 @@ plt.text(30, 5, "high VD")
 plt.legend()
 plt.title("Comparison of step miscalculation")
 plt.savefig("step_error_comparison.png")
+
+d2_err_lowVD = d2_steps_err[:len(d2_steps_err) // 2]
+d2_err_highVD = d2_steps_err[len(d2_steps_err) // 2:]
+
+d05_err_lowVD = d05_steps_err[:len(d05_steps_err) // 2]
+d05_err_highVD = d05_steps_err[len(d05_steps_err) // 2:]
+
+
+with open("step_error_stats.txt", "w") as fp: 
+    fp.write("Doubled Value Difference number of steps off\n")
+    fp.write(f"low VD range: [{np.min(d2_err_lowVD)}, {np.max(d2_err_lowVD)}]\n")
+    fp.write(f"low VD mean: {np.mean(d2_err_lowVD)}\n")
+    fp.write(f"low VD standard deviation: {np.std(d2_err_lowVD)}\n")
+
+    fp.write(f"high VD range: [{np.min(d2_err_highVD)}, {np.max(d2_err_highVD)}]\n")
+    fp.write(f"high VD mean: {np.mean(d2_err_highVD)}\n")
+    fp.write(f"high VD standard deviation: {np.std(d2_err_highVD)}\n")
+
+    fp.write("\n")
+
+    fp.write("Halved Value Difference number of steps off\n")
+    fp.write(f"low VD range: [{np.min(d05_err_lowVD)}, {np.max(d05_err_lowVD)}]\n")
+    fp.write(f"low VD mean: {np.mean(d05_err_lowVD)}\n")
+    fp.write(f"low VD standard deviation: {np.std(d05_err_lowVD)}\n")
+
+    fp.write(f"high VD range: [{np.min(d05_err_highVD)}, {np.max(d05_err_highVD)}]\n")
+    fp.write(f"high VD mean: {np.mean(d05_err_highVD)}\n")
+    fp.write(f"high VD standard deviation: {np.std(d05_err_highVD)}\n")
