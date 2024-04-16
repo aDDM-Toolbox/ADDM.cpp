@@ -1,0 +1,1 @@
+d fixed to 0.0005 for all trials. 

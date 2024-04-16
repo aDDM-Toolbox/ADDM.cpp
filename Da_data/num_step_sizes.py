@@ -3,12 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-pd1 = pd.read_csv("run_4condi.csv")
-pd2 = pd.read_csv("run_2.csv")
-pd05 = pd.read_csv("run_05.csv")
+pd1 = pd.read_csv("run_4condi_fixed.csv")
+pd2 = pd.read_csv("run_2_fixed.csv")
+pd05 = pd.read_csv("run_05_fixed.csv")
 
-STEP_SIZE2 = 0.0001
-STEP_SIZE05 = 0.001
+STEP_SIZE2 = 0.0005
+STEP_SIZE05 = 0.0005
 
 subjects = []
 d2_steps_err = []
@@ -38,8 +38,8 @@ plt.text(15, 5, "low VD")
 plt.text(30, 5, "high VD")
 
 plt.legend()
-plt.title("Comparison of step miscalculation")
-plt.savefig("step_error_comparison.png")
+plt.title("Comparison of step miscalculation (Fixed)")
+plt.savefig("step_error_comparison_fixed.png")
 
 d2_err_lowVD = d2_steps_err[:len(d2_steps_err) // 2]
 d2_err_highVD = d2_steps_err[len(d2_steps_err) // 2:]
@@ -48,7 +48,7 @@ d05_err_lowVD = d05_steps_err[:len(d05_steps_err) // 2]
 d05_err_highVD = d05_steps_err[len(d05_steps_err) // 2:]
 
 
-with open("step_error_stats.txt", "w") as fp: 
+with open("step_error_stats_fixed.txt", "w") as fp: 
     fp.write("Doubled Value Difference number of steps off\n")
     fp.write(f"low VD range: [{np.min(d2_err_lowVD)}, {np.max(d2_err_lowVD)}]\n")
     fp.write(f"low VD mean: {np.mean(d2_err_lowVD)}\n")

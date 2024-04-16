@@ -4,8 +4,8 @@ import sys
 name = sys.argv[1]
 
 # Define the input and output file paths
-input_file = name + ".txt"
-output_file = name + ".csv"
+input_file = name + "_fixed.txt"
+output_file = name + "_fixed.csv"
 
 # Open the input and output files
 with open(input_file, "r") as file_in, open(output_file, "w", newline="") as file_out:

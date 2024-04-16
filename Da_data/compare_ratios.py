@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-PARAM = "theta"
+PARAM = "d"
 
 
-pd1 = pd.read_csv("run_4condi.csv")
-pd2 = pd.read_csv("run_2.csv")
-pd05 = pd.read_csv("run_05.csv")
+pd1 = pd.read_csv("run_4condi_fixed.csv")
+pd2 = pd.read_csv("run_2_fixed.csv")
+pd05 = pd.read_csv("run_05_fixed.csv")
 
 subjects = []
 d1_to_d2 = []
@@ -41,5 +41,5 @@ plt.text(30, 1.25, "high VD")
 
 
 plt.legend()
-plt.title(f"Comparison of {PARAM} ratios for value difference scaling")
-plt.savefig(f"{PARAM}_comparison.png")
+plt.title(f"Comparison of {PARAM} ratios for value difference scaling (Fixed)")
+plt.savefig(f"{PARAM}_comparison_fixed.png")

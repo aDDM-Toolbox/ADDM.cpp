@@ -6,9 +6,9 @@ high_vd = "o"
 low_vd = "x"
 
 
-pd1 = pd.read_csv("run_4condi.csv")
-pd2 = pd.read_csv("run_2.csv")
-pd05 = pd.read_csv("run_05.csv")
+pd1 = pd.read_csv("run_4condi_fixed.csv")
+pd2 = pd.read_csv("run_2_fixed.csv")
+pd05 = pd.read_csv("run_05_fixed.csv")
 plt.figure(figsize=(8, 8))
 
 bases = pd1["d"].to_numpy()
@@ -28,9 +28,9 @@ plt.plot(x, 2 * x, color="silver", zorder=0)
 plt.plot(x, x / 2, color="silver", zorder=1)
 
 plt.legend()
-plt.title("Comparison of Expected Drift Rate to Recovered")
+plt.title("Comparison of Expected Drift Rate to Recovered (Fixed)")
 
 plt.xlabel("Baseline Drift Rate")
 plt.ylabel("Recovered Drift Rate for VD Change")
 
-plt.savefig("scatter_params.png")
+plt.savefig("scatter_params_fixed.png")

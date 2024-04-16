@@ -65,15 +65,15 @@ int main() {
 
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
         // Generate sets of values
-    	std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
+    	// std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
         std::vector<float> range_d = generateRange(0.001f, 0.03f, 0.0005f);
-        std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
+        // std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
 
         // Print the generated ranges
         std::cout << "RUN 05" << std::endl; 
         printRange(range_d, "Range_d");
-        printRange(range_s, "Range_s");
-        printRange(range_theta, "Range_theta");
+        // printRange(range_s, "Range_s");
+        // printRange(range_theta, "Range_theta");
 
         std::vector<std::tuple<int, double, double, double, double>> outputData;
 
@@ -87,7 +87,7 @@ int main() {
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
             // Compute the most optimal parameters to generate
-            MLEinfo info = aDDM::fitModelMLE(trials, range_d, range_s, range_theta, {0}, "thread");
+            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, {0.05}, {0.5}, {0}, "thread", false, 1, 0, 5);
 
             std::cout << "d: " << info.optimal.d << " ";
             std::cout << "sigma: " << info.optimal.sigma << " ";
