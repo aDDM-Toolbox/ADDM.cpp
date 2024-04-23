@@ -1,1 +1,1 @@
-d fixed to 0.0005 for all trials. 
+d change fixed to 0.0005 for each model fitting 

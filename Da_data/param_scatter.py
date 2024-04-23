@@ -9,7 +9,11 @@ high_vd = "o"
 low_vd = "x"
 
 version = sys.argv[1]
-suffix = sys.argv[2]
+labelPos = sys.argv[2]
+try: 
+    suffix = sys.argv[3]
+except IndexError: 
+    suffix = ""
 
 
 pd1 = pd.read_csv(f"v{version}_output/run_4condi{suffix}.csv")
@@ -30,11 +34,21 @@ plt.scatter(bases[:m], hlvs[:m], label="VD/2 High", zorder=12, color="red", mark
 plt.scatter(bases[m:], hlvs[m:], label="VD/2 Low", zorder=13, color="red", marker=low_vd)
 
 x = np.linspace(0, np.max(bases), 100)
-plt.plot(x, 2 * x, color="darkgrey", zorder=0, label="y=2x")
-plt.plot(x, x / 2, color="darkgrey", zorder=1, label="y=x/2")
+plt.plot(x, 2 * x, color="darkgrey", zorder=0, label="y=2x", lw=3)
+plt.plot(x, x / 2, color="darkgrey", zorder=1, label="y=x/2", lw=3)
+
+zh = np.polyfit(bases[:m], hlvs[:m], 1)
+ph = np.poly1d(zh)
+plt.plot(x, ph(x), color="gainsboro", label=f"y≈{round(ph.coef[0], 2)}x")
+
+zl = np.polyfit(bases[m:], hlvs[m:], 1)
+pl = np.poly1d(zl)
+plt.plot(x, pl(x), color="gainsboro", label=f"y≈{round(pl.coef[0], 2)}x")
 
 lines = plt.gca().get_lines()
-labelLines(lines, align=True, xvals=[0.0044, 0.0044], drop_label=True, color="k")
+labelLines(lines, align=True, xvals=[0.0085] * len(lines), drop_label=True, color='k')
+
+
 
 plt.legend()
 add = ""

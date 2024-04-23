@@ -4,14 +4,18 @@ import matplotlib.pyplot as plt
 import sys
 
 version = sys.argv[1]
-suffix = sys.argv[2]
+
+STEP_SIZE2 = float(sys.argv[2])
+STEP_SIZE05 = float(sys.argv[3])
+
+try: 
+    suffix = sys.argv[4]
+except IndexError: 
+    suffix = ""
 
 pd1 = pd.read_csv(f"v{version}_output/run_4condi{suffix}.csv")
 pd2 = pd.read_csv(f"v{version}_output/run_2{suffix}.csv")
 pd05 = pd.read_csv(f"v{version}_output/run_05{suffix}.csv")
-
-STEP_SIZE2 = float(sys.argv[3])
-STEP_SIZE05 = float(sys.argv[4])
 
 subjects = []
 d2_steps_err = []
@@ -31,7 +35,8 @@ for (i, row), (j, row2), (k, row05) in zip(pd1.iterrows(), pd2.iterrows(), pd05.
         round((row05["d"] - expected_d05) / STEP_SIZE05)
     )
 
-plt.vlines(len(subjects) / 2, -40, 10, "gainsboro")
+plt.vlines(len(subjects) / 2, 1.2 * min(min(d2_steps_err), min(d05_steps_err)), \
+           1.2 * max(max(d2_steps_err), max(d05_steps_err)), "gainsboro")
 plt.plot(subjects, [0] * len(subjects), '--', color="gainsboro")
 
 plt.plot(subjects, d2_steps_err, label="VD*2")

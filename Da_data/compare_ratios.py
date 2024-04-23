@@ -8,7 +8,11 @@ PARAM = sys.argv[1]
 assert PARAM in ["d", "sigma", "theta"]
 
 version = sys.argv[2]
-suffix = sys.argv[3]
+try: 
+    suffix = sys.argv[3]
+except IndexError: 
+    suffix = ""
+
 
 pd1 = pd.read_csv(f"v{version}_output/run_4condi{suffix}.csv")
 pd2 = pd.read_csv(f"v{version}_output/run_2{suffix}.csv")

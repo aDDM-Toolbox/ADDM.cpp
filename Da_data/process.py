@@ -3,7 +3,11 @@ import sys
 
 name = sys.argv[1]
 version = sys.argv[2]
-suffix = sys.argv[3]
+try: 
+    suffix = sys.argv[3]
+except IndexError: 
+    suffix = ""
+
 
 # Define the input and output file paths
 input_file = f"v{version}_output/{name}{suffix}.txt"
