@@ -2,10 +2,12 @@ import csv
 import sys
 
 name = sys.argv[1]
+version = sys.argv[2]
+suffix = sys.argv[3]
 
 # Define the input and output file paths
-input_file = name + "_fixed_st.txt"
-output_file = name + "_fixed_st.csv"
+input_file = f"v{version}_output/{name}{suffix}.txt"
+output_file = f"v{version}_output/{name}{suffix}.csv"
 
 # Open the input and output files
 with open(input_file, "r") as file_in, open(output_file, "w", newline="") as file_out:

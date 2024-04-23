@@ -1,13 +1,18 @@
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-PARAM = "d"
+PARAM = sys.argv[1]
 
+assert PARAM in ["d", "sigma", "theta"]
 
-pd1 = pd.read_csv("run_4condi_fixed_st.csv")
-pd2 = pd.read_csv("run_2_fixed_st.csv")
-pd05 = pd.read_csv("run_05_fixed_st.csv")
+version = sys.argv[2]
+suffix = sys.argv[3]
+
+pd1 = pd.read_csv(f"v{version}_output/run_4condi{suffix}.csv")
+pd2 = pd.read_csv(f"v{version}_output/run_2{suffix}.csv")
+pd05 = pd.read_csv(f"v{version}_output/run_05{suffix}.csv")
 
 subjects = []
 d1_to_d2 = []
@@ -28,23 +33,32 @@ for (i, row), (j, row2), (k, row05) in zip(pd1.iterrows(), pd2.iterrows(), pd05.
             row05[PARAM] = 0.1
         d1_to_d05.append(row[PARAM] / row05[PARAM])
 
-
 plt.vlines(len(subjects) / 2, 0.25, 2.25, "gainsboro")
-plt.plot(subjects, [0.5] * len(subjects), '--', color="gainsboro")
-plt.plot(subjects, [2] * len(subjects), '--', color="gainsboro")
+if PARAM == "d": 
+    plt.plot(subjects, [0.5] * len(subjects), '--', color="gainsboro")
+    plt.plot(subjects, [2] * len(subjects), '--', color="gainsboro")
+else: 
+    plt.plot(subjects, [1] * len(subjects), '--', color="gainsboro")
 
 plt.plot(subjects, d1_to_d2, label="baseline : doubled")
 plt.plot(subjects, d1_to_d05, label="baseline : half")
 
-plt.text(15, 1.25, "low VD")
-plt.text(30, 1.25, "high VD")
+plt.text(15, 1.25, "high VD")
+plt.text(30, 1.25, "low VD")
 
 plt.ylim(top=2.5)
 
-plt.xlabel("Trial No.")
+plt.xlabel("Subject ID")
 plt.ylabel("Ratio")
 
 
 plt.legend()
-plt.title(f"Comparison of {PARAM} ratios for value difference scaling (fixed Sigma & Theta)")
-plt.savefig(f"{PARAM}_comparison_fixed_st.png")
+
+add = ""
+if suffix == "_fixed_st":
+    add = "(Fixed Sigma & Theta)"
+elif suffix == "_fixed": 
+    add = "(Fixed parameter space)"
+
+plt.title(f"Comparison of {PARAM} ratios for value difference scaling {add}")
+plt.savefig(f"v{version}_output/{PARAM}_comparison{suffix}.png")
