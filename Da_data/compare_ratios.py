@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 PARAM = "d"
 
 
-pd1 = pd.read_csv("run_4condi_fixed.csv")
-pd2 = pd.read_csv("run_2_fixed.csv")
-pd05 = pd.read_csv("run_05_fixed.csv")
+pd1 = pd.read_csv("run_4condi_fixed_st.csv")
+pd2 = pd.read_csv("run_2_fixed_st.csv")
+pd05 = pd.read_csv("run_05_fixed_st.csv")
 
 subjects = []
 d1_to_d2 = []
@@ -39,7 +39,12 @@ plt.plot(subjects, d1_to_d05, label="baseline : half")
 plt.text(15, 1.25, "low VD")
 plt.text(30, 1.25, "high VD")
 
+plt.ylim(top=2.5)
+
+plt.xlabel("Trial No.")
+plt.ylabel("Ratio")
+
 
 plt.legend()
-plt.title(f"Comparison of {PARAM} ratios for value difference scaling (Fixed)")
-plt.savefig(f"{PARAM}_comparison_fixed.png")
+plt.title(f"Comparison of {PARAM} ratios for value difference scaling (fixed Sigma & Theta)")
+plt.savefig(f"{PARAM}_comparison_fixed_st.png")

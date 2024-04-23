@@ -1,0 +1,15 @@
+Doubled Value Difference number of steps off
+low VD range: [-1, 1]
+low VD mean: 0.08
+low VD standard deviation: 0.39191835884530857
+high VD range: [-1, 1]
+high VD mean: 0.12
+high VD standard deviation: 0.5878775382679627
+
+Halved Value Difference number of steps off
+low VD range: [2, 10]
+low VD mean: 6.12
+low VD standard deviation: 2.250688783461632
+high VD range: [-39, -2]
+high VD mean: -20.04
+high VD standard deviation: 9.480421931538702

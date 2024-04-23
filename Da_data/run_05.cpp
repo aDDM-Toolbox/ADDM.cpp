@@ -87,7 +87,7 @@ int main() {
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
             // Compute the most optimal parameters to generate
-            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, {0.05}, {0.5}, {0}, "thread", false, 1, 0, 5);
+            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, {0.05}, {0.5}, {0}, "thread", false, 1, 0, 5, 0.01);
 
             std::cout << "d: " << info.optimal.d << " ";
             std::cout << "sigma: " << info.optimal.sigma << " ";
