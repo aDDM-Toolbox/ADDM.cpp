@@ -1,14 +1,31 @@
 #!/bin/bash
 set -x
 
-VERSION=3
-SUFFIX="_fixed_st"
-SS2=0.0001
-SS05=0.0001
-
-LABEL_POS=0.0044
-# version 1+2 0.0085
-# version 3 0.0044
+VERSION=$1
+case $VERSION in
+    1)
+        SUFFIX=""
+        SS2=0.0001
+        SS05=0.001
+        LABEL_POS=0.0085
+        ;;
+    2)
+        SUFFIX="_fixed"
+        SS2=0.0005
+        SS05=0.0005
+        LABEL_POS=0.0085
+        ;;
+    3)
+        SUFFIX="_fixed_st"
+        SS2=0.0001
+        SS05=0.0001
+        LABEL_POS=0.0044
+        ;;
+    *)
+        echo "Invalid version provided."
+        exit 1
+        ;;
+esac
 
 python3 process.py run_4condi $VERSION $SUFFIX
 python3 process.py run_2 $VERSION $SUFFIX

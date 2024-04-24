@@ -29,13 +29,13 @@ for (i, row), (j, row2), (k, row05) in zip(pd1.iterrows(), pd2.iterrows(), pd05.
     if row[PARAM] - row2[PARAM]== 0: 
         d1_to_d2.append(1)
     else:
-        d1_to_d2.append(row[PARAM] / row2[PARAM])
+        d1_to_d2.append(row2[PARAM]/ row[PARAM])
     if row[PARAM] - row05[PARAM] == 0: 
         d1_to_d05.append(1)
     else: 
         if row05[PARAM] == 0: 
             row05[PARAM] = 0.1
-        d1_to_d05.append(row[PARAM] / row05[PARAM])
+        d1_to_d05.append(row05[PARAM]/ row[PARAM] )
 
 plt.vlines(len(subjects) / 2, 0.25, 2.25, "gainsboro")
 if PARAM == "d": 
@@ -44,8 +44,8 @@ if PARAM == "d":
 else: 
     plt.plot(subjects, [1] * len(subjects), '--', color="gainsboro")
 
-plt.plot(subjects, d1_to_d2, label="baseline : doubled")
-plt.plot(subjects, d1_to_d05, label="baseline : half")
+plt.plot(subjects, d1_to_d2, label="doubled: baseline", color="blue")
+plt.plot(subjects, d1_to_d05, label="half : baseline", color="red")
 
 plt.text(15, 1.25, "high VD")
 plt.text(30, 1.25, "low VD")
