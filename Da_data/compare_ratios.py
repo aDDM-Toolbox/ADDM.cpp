@@ -37,7 +37,7 @@ for (i, row), (j, row2), (k, row05) in zip(pd1.iterrows(), pd2.iterrows(), pd05.
             row05[PARAM] = 0.1
         d1_to_d05.append(row05[PARAM]/ row[PARAM] )
 
-plt.vlines(len(subjects) / 2, 0.25, 2.25, "gainsboro")
+plt.vlines(len(subjects) / 2, 0, max(max(d1_to_d05), max(d1_to_d2)), "gainsboro")
 if PARAM == "d": 
     plt.plot(subjects, [0.5] * len(subjects), '--', color="gainsboro")
     plt.plot(subjects, [2] * len(subjects), '--', color="gainsboro")
@@ -50,7 +50,7 @@ plt.plot(subjects, d1_to_d05, label="half : baseline", color="red")
 plt.text(15, 1.25, "high VD")
 plt.text(30, 1.25, "low VD")
 
-plt.ylim(top=2.5)
+# plt.ylim(top=2.5)
 
 plt.xlabel("Subject ID")
 plt.ylabel("Ratio")
