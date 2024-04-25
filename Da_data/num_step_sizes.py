@@ -39,8 +39,8 @@ plt.vlines(len(subjects) / 2, 1.2 * min(min(d2_steps_err), min(d05_steps_err)), 
            1.2 * max(max(d2_steps_err), max(d05_steps_err)), "gainsboro")
 plt.plot(subjects, [0] * len(subjects), '--', color="gainsboro")
 
-plt.plot(subjects, d2_steps_err, label="VD*2")
-plt.plot(subjects, d05_steps_err, label="VD*0.5")
+plt.plot(subjects, d2_steps_err, label="VD*2", color="blue")
+plt.plot(subjects, d05_steps_err, label="VD*0.5", color="red")
 
 plt.xlabel("Subject ID")
 plt.ylabel("Number of Steps off of Expected Parameter")
