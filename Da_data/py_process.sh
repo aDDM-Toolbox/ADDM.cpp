@@ -21,6 +21,12 @@ case $VERSION in
         SS05=0.0001
         LABEL_POS=0.0044
         ;;
+    4) 
+        SUFFIX=""
+        SS2=0.0001
+        SS05=0.0001
+        LABEL_POS=0.0044
+        ;;
     *)
         echo "Invalid version provided."
         exit 1
