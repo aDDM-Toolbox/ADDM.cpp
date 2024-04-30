@@ -40,4 +40,5 @@ python3 num_step_sizes.py $VERSION $SS2 $SS05 $SUFFIX
 python3 compare_ratios.py d $VERSION $SUFFIX
 python3 compare_ratios.py sigma $VERSION $SUFFIX
 python3 compare_ratios.py theta $VERSION $SUFFIX
+python3 compare_avg_ratios.py d $VERSION $SUFFIX
 python3 param_scatter.py $VERSION $LABEL_POS $SUFFIX

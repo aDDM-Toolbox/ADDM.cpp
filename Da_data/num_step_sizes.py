@@ -35,8 +35,15 @@ for (i, row), (j, row2), (k, row05) in zip(pd1.iterrows(), pd2.iterrows(), pd05.
         round((row05["d"] - expected_d05) / STEP_SIZE05)
     )
 
-plt.vlines(len(subjects) / 2, 1.2 * min(min(d2_steps_err), min(d05_steps_err)), \
-           1.2 * max(max(d2_steps_err), max(d05_steps_err)), "gainsboro")
+if int(version) in (1, 2): 
+    y_max = 10
+    y_min = -10
+else: 
+    y_max = max(max(d2_steps_err), max(d05_steps_err))
+    y_min = min(min(d2_steps_err), min(d05_steps_err))
+
+plt.vlines(len(subjects) / 2, 1.2 * y_min, \
+           1.2 * y_max, "gainsboro")
 plt.plot(subjects, [0] * len(subjects), '--', color="gainsboro")
 
 plt.plot(subjects, d2_steps_err, label="VD*2", color="blue")
