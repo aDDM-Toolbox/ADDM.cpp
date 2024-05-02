@@ -66,9 +66,9 @@ int main() {
 
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
         // Generate sets of values
-        // std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
+        std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
         std::vector<float> range_d = generateRange(0.0001f, 0.01f, 0.0001f);
-        // std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
+        std::vector<float> range_s = generateRange(0.01f, 0.1f, 0.005f);
 
         // Print the generated ranges
         std::cout << "RUN 4 CONDI" << std::endl; 
