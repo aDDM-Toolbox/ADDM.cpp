@@ -96,7 +96,7 @@ int main() {
     }
 
 
-
+    int j = 0;
     for (size_t i = 0; i < dataPairs2.size(); i += 2) {
         // Print the generated ranges
         std::cout << "RUN 2" << std::endl; 
@@ -105,7 +105,6 @@ int main() {
         std::vector<std::tuple<int, double, double, double, double>> outputData;
         std::map<int, std::vector<aDDMTrial>> data = loadDataFromCSV(dataPairs2[i], dataPairs2[i + 1]);
         std::string prefix = dataPairs2[i].substr(7, dataPairs2[i].find(".")-dataPairs2[i].find("_")-1);
-        int j = 0; 
 
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
@@ -125,7 +124,7 @@ int main() {
     }
 
 
-
+    j = 0;  
     for (size_t i = 0; i < dataPairs05.size(); i += 2) {
         // Print the generated ranges
         std::cout << "RUN 05" << std::endl; 
