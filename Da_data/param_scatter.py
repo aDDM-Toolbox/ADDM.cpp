@@ -9,11 +9,13 @@ high_vd = "o"
 low_vd = "x"
 
 version = sys.argv[1]
-labelPos = sys.argv[2]
+labelPos = float(sys.argv[2])
 try: 
     suffix = sys.argv[3]
 except IndexError: 
     suffix = ""
+
+BEST_FIT_MARGIN = 0.01
 
 
 pd1 = pd.read_csv(f"v{version}_output/run_4condi{suffix}.csv")
@@ -39,14 +41,16 @@ plt.plot(x, x / 2, color="darkgrey", zorder=1, label="y=x/2", lw=3)
 
 zh = np.polyfit(bases[:m], hlvs[:m], 1)
 ph = np.poly1d(zh)
-plt.plot(x, ph(x), color="gainsboro", label=f"y≈{round(ph.coef[0], 2)}x")
+if (abs(2 - ph.coef[0]) > BEST_FIT_MARGIN):
+    plt.plot(x, ph(x), color="gainsboro", label=f"y≈{round(ph.coef[0], 2)}x")
 
 zl = np.polyfit(bases[m:], hlvs[m:], 1)
 pl = np.poly1d(zl)
-plt.plot(x, pl(x), color="gainsboro", label=f"y≈{round(pl.coef[0], 2)}x")
+if (abs(2 - pl.coef[0]) > BEST_FIT_MARGIN): 
+    plt.plot(x, pl(x), color="gainsboro", label=f"y≈{round(pl.coef[0], 2)}x")
 
 lines = plt.gca().get_lines()
-labelLines(lines, align=True, xvals=[0.0085] * len(lines), drop_label=True, color='k')
+labelLines(lines, align=True, xvals=[labelPos] * len(lines), drop_label=True, color='k')
 
 
 

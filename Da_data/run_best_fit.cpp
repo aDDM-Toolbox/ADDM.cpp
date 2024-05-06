@@ -133,7 +133,6 @@ int main() {
         std::vector<std::tuple<int, double, double, double, double>> outputData;
         std::map<int, std::vector<aDDMTrial>> data = loadDataFromCSV(dataPairs05[i], dataPairs05[i + 1]);
         std::string prefix = dataPairs05[i].substr(7, dataPairs05[i].find(".")-dataPairs05[i].find("_")-1);
-        int j = 0; 
 
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";

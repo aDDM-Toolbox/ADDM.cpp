@@ -25,13 +25,13 @@ case $VERSION in
         SUFFIX=""
         SS2=0.0001
         SS05=0.0001
-        LABEL_POS=0.0044
+        LABEL_POS=0.0047
         ;;
     5)
         SUFFIX="_best_fit"
         SS2=0.0001
         SS05=0.0001
-        LABEL_POS=0.0044
+        LABEL_POS=0.0085
         ;;
     *)
         echo "Invalid version provided."
