@@ -62,7 +62,7 @@ int main() {
 
     std::vector<float>optimal_s = {}; 
     std::vector<float>optimal_theta = {}; 
-    std::vector<float> range_d = generateRange(0.0001f, 0.01f, 0.0001f);
+    std::vector<float> range_d = generateRange(0.0001f, 0.025f, 0.0001f);
 
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
         std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
@@ -150,8 +150,6 @@ int main() {
         std::string outputFileName = "/central/groups/rnl/jgoldman/out/output2_" + prefix + ".csv";
         saveToCSV(outputFileName, outputData);
     }
-
-
 
     return 0;
 }

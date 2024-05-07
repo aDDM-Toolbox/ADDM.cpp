@@ -39,15 +39,17 @@ x = np.linspace(0, np.max(bases), 100)
 plt.plot(x, 2 * x, color="darkgrey", zorder=0, label="y=2x", lw=3)
 plt.plot(x, x / 2, color="darkgrey", zorder=1, label="y=x/2", lw=3)
 
-zh = np.polyfit(bases[:m], hlvs[:m], 1)
-ph = np.poly1d(zh)
-if (abs(2 - ph.coef[0]) > BEST_FIT_MARGIN):
-    plt.plot(x, ph(x), color="gainsboro", label=f"y≈{round(ph.coef[0], 2)}x")
+b1 = bases[:m]
+h1 = hlvs[:m]
+b1 = b1[: ,np.newaxis]
+a1, _, _, _ = np.linalg.lstsq(b1, h1, rcond=None)
+plt.plot(x, a1[0]*x, color="gainsboro", label=f"y={round(a1[0], 2)}x")
 
-zl = np.polyfit(bases[m:], hlvs[m:], 1)
-pl = np.poly1d(zl)
-if (abs(2 - pl.coef[0]) > BEST_FIT_MARGIN): 
-    plt.plot(x, pl(x), color="gainsboro", label=f"y≈{round(pl.coef[0], 2)}x")
+b2 = bases[m:]
+h2 = hlvs[m:]
+b2 = b2[: ,np.newaxis]
+a2, _, _, _ = np.linalg.lstsq(b2, h2, rcond=None)
+plt.plot(x, a2[0]*x, color="gainsboro", label=f"y={round(a2[0], 2)}x")
 
 lines = plt.gca().get_lines()
 labelLines(lines, align=True, xvals=[labelPos] * len(lines), drop_label=True, color='k')
