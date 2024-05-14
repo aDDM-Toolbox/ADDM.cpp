@@ -62,7 +62,8 @@ int main() {
 
     std::vector<float>optimal_s = {}; 
     std::vector<float>optimal_theta = {}; 
-    std::vector<float> range_d = generateRange(0.0001f, 0.025f, 0.0001f);
+    std::vector<float> range_d1 = generateRange(0.0001f, 0.01f, 0.0001f);
+    std::vector<float> range_d2 = generateRange(0.0001f, 0.03f, 0.0001f);
 
     for (size_t i = 0; i < dataPairs.size(); i += 2) {
         std::vector<float> range_theta = generateRange(0.0f, 1.0f, 0.05f);
@@ -70,7 +71,7 @@ int main() {
 
         // Print the generated ranges
         std::cout << "RUN 4CONDI" << std::endl; 
-        printRange(range_d, "Range_d");
+        printRange(range_d1, "Range_d");
         printRange(range_s, "Range_s");
         printRange(range_theta, "Range_theta");
 
@@ -79,7 +80,7 @@ int main() {
         std::string prefix = dataPairs[i].substr(7, dataPairs[i].find(".")-dataPairs[i].find("_")-1);
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
-            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, range_s, range_theta, {0}, "thread", false);
+            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d1, range_s, range_theta, {0}, "thread", false);
 
             std::cout << "d: " << info.optimal.d << " ";
             std::cout << "sigma: " << info.optimal.sigma << " ";
@@ -100,7 +101,7 @@ int main() {
     for (size_t i = 0; i < dataPairs2.size(); i += 2) {
         // Print the generated ranges
         std::cout << "RUN 2" << std::endl; 
-        printRange(range_d, "Range_d");
+        printRange(range_d1, "Range_d");
 
         std::vector<std::tuple<int, double, double, double, double>> outputData;
         std::map<int, std::vector<aDDMTrial>> data = loadDataFromCSV(dataPairs2[i], dataPairs2[i + 1]);
@@ -108,7 +109,7 @@ int main() {
 
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
-            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, {optimal_s[j]}, {optimal_theta[j]}, {0}, "thread", false);
+            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d1, {optimal_s[j]}, {optimal_theta[j]}, {0}, "thread", false);
 
             std::cout << "d: " << info.optimal.d << " ";
             std::cout << "sigma: " << info.optimal.sigma << " ";
@@ -128,7 +129,7 @@ int main() {
     for (size_t i = 0; i < dataPairs05.size(); i += 2) {
         // Print the generated ranges
         std::cout << "RUN 05" << std::endl; 
-        printRange(range_d, "Range_d");
+        printRange(range_d2, "Range_d");
 
         std::vector<std::tuple<int, double, double, double, double>> outputData;
         std::map<int, std::vector<aDDMTrial>> data = loadDataFromCSV(dataPairs05[i], dataPairs05[i + 1]);
@@ -136,7 +137,7 @@ int main() {
 
         for (const auto& [subjectID, trials] : data) {
             std::cout << subjectID << ": ";
-            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d, {optimal_s[j]}, {optimal_theta[j]}, {0}, "thread", false);
+            MLEinfo<aDDM> info = aDDM::fitModelMLE(trials, range_d2, {optimal_s[j]}, {optimal_theta[j]}, {0}, "thread", false);
 
             std::cout << "d: " << info.optimal.d << " ";
             std::cout << "sigma: " << info.optimal.sigma << " ";
