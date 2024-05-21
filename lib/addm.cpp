@@ -763,6 +763,7 @@ void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateS
             if (!useAlternative) {
                 for (aDDMTrial trial : trials) {
                     double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
+                    // cout << prob << " (" << addm.d << ", " << addm.sigma << ", " << addm.theta << ")" << endl; 
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
@@ -901,19 +902,6 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
             throw std::invalid_argument("Row with insufficient entries provided");
         }
     }
-
-    // for (string head : headers) {
-    //     std::cout << head << " ";
-    // }
-    // std::cout << std::endl;
-    // for (bool f : isBuiltInParam) {
-    //     std::cout << f << " ";
-    // }
-    // std::cout << std::endl;
-
-    // for (aDDM addm : potentialModels) {
-    //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl;
-    // }
 
     setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
     return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());

@@ -19,3 +19,5 @@ include/macros.h
 addm_code_and_data
 # node modules can be dynamically generated
 node_modules
+
+Da_data/rbfl.txt
