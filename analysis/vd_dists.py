@@ -14,9 +14,13 @@ import numpy as np
 from typing import Dict, List
 from datetime import datetime
 import sys
+import itertools
 
 DDM_FILE_PATH = "results/ddm_simulations.csv"
-ADDM_FILE_PATH = "results/addm_simulations.csv"
+ADDM_FILE_PATH = "results/addm_std_trials.csv"
+
+VALUE_DIFF_BINS = 2
+NUM_GRAPHS = 8
 
 
 val_diff_to_rts: Dict[int, List[int]] = {}
@@ -31,8 +35,9 @@ df = df.reset_index()
 
 for _, row in df.iterrows():
     choice = row['choice']
-    rt = row['RT']
-    val_diff = row['valueLeft'] - row['valueRight']
+    rt = row['rt']
+    vd_raw = abs(row['valueLeft'] - row['valueRight'])
+    val_diff = VALUE_DIFF_BINS * round(vd_raw / 2)
     if val_diff in val_diff_to_rts:
         val_diff_to_rts[val_diff].append(rt)
     else:
@@ -41,6 +46,9 @@ for _, row in df.iterrows():
         choice_to_rts[choice].append(rt)
     else:
         choice_to_rts[choice] = [rt]
+
+        
+val_diff_to_rts = dict(itertools.islice(val_diff_to_rts.items(), NUM_GRAPHS))
 
 keys = list(val_diff_to_rts.keys())
 keys.sort()
@@ -52,7 +60,7 @@ plt.rcParams['axes.titlepad'] = -14
 i = 0
 for vd, rts in val_diff_to_rts.items():
     mean = np.mean(rts)
-    axs[i].hist(rts, label=vd, bins=range(0, 5000, 100))
+    axs[i].hist(rts, label=vd, bins=range(0, 15000, 100))
     axs[i].set_title(f"value difference={vd}")
     axs[i].set_ylim([0, 30])
     axs[i].axvline(mean, color="red")
@@ -62,11 +70,12 @@ axs[3].set_ylabel('Count')
 fig.set_figwidth(18)
 fig.set_figheight(15)
 
+
 if (len(sys.argv) > 1 and "save" in sys.argv):
     currTime = datetime.now().strftime(u"%Y-%m-%d_%H:%M:%S")
     if addm:
-        plt.suptitle("aDDM Reaction Time Distribution for Value Differences")   
-        plt.savefig("imgs/addm_rt_dist_" + currTime + ".png")
+        plt.suptitle("aDDM Reaction Time Distribution for Value Differences: Standard VD")   
+        plt.savefig("imgs/addm_rt_dist_STD_" + currTime + ".png")
     else:
         plt.suptitle("DDM Reaction Time Distribution for Value Differences")  
         plt.savefig("imgs/ddm_rt_dist_" + currTime + ".png")

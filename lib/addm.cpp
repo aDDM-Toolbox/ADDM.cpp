@@ -28,7 +28,7 @@ FixationData::FixationData(float probFixLeftFirst, std::vector<int> latencies,
 
 
 aDDMTrial::aDDMTrial(
-    unsigned int RT, int choice, int valueLeft, int valueRight,
+    unsigned int RT, int choice, float valueLeft, float valueRight,
     std::vector<int> fixItem, std::vector<int> fixTime,
     std::vector<float> fixRDV, float uninterruptedLastFixTime) :
     DDMTrial(RT, choice, valueLeft, valueRight) {
@@ -39,11 +39,11 @@ aDDMTrial::aDDMTrial(
 }
 
 
-aDDM::aDDM(float d, float sigma, float theta, float k, float barrier,
+aDDM::aDDM(float d, float sigma, float theta, float eta, float barrier,
            unsigned int nonDecisionTime, float bias, float decay) :
     DDM(d, sigma, barrier, nonDecisionTime, bias, decay) {
     this->theta = theta;
-    this->k = k;
+    this->eta = eta;
 }
 
 
@@ -53,7 +53,7 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
     j["d"] = d;
     j["sigma"] = sigma;
     j["theta"] = theta;
-    j["k"] = k;
+    j["eta"] = eta;
     j["barrier"] = barrier;
     j["NDT"] = nonDecisionTime;
     j["bias"] = bias;
@@ -69,7 +69,7 @@ void aDDM::exportTrial(aDDMTrial adt, std::string filename) {
 }
 
 
-double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxStateStep) {
+double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float stateStep) {
     bool debug = false;
     if (debug) {
         std::cout << std::setprecision(6) << std::fixed;
@@ -133,10 +133,10 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
     }
 
     // Obtain the correct state step
-    int halfNumStateBins = ceil(this->barrier / approxStateStep);
-    float stateStep = this->barrier / (halfNumStateBins + 0.5);
+    int halfNumStateBins = ceil(this->barrier / stateStep);
+    float realStateStep = this->barrier / (halfNumStateBins + 0.5);
     std::vector<float> states;
-    for (float ss = barrierDown.at(0) + (stateStep / 2); ss <= barrierUp.at(0) - (stateStep / 2); ss += stateStep) {
+    for (float ss = barrierDown.at(0) + (realStateStep / 2); ss <= barrierUp.at(0) - (realStateStep / 2); ss += realStateStep) {
         states.push_back(ss);
     }
 
@@ -230,10 +230,10 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
 
         float mean;
         if (fItem == 1) {
-            mean = this->d * ((trial.valueLeft + this->k) - (this->theta * trial.valueRight));
+            mean = this->d * ((trial.valueLeft) - (this->theta * trial.valueRight)) + this->eta;
         }
         else if (fItem == 2) {
-            mean = this->d * ((this->theta * trial.valueLeft) - (trial.valueRight + this->k));
+            mean = this->d * ((this->theta * trial.valueLeft) - (trial.valueRight)) - this->eta;
         }
         else {
             mean = 0;
@@ -291,7 +291,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
             for (size_t i = 0; i < states.size(); i++) {
                 double row_sum = 0;
                 for (size_t j = 0; j < states.size(); j++) {
-                    row_sum += stateStep * probDistChangeMatrix[i][j] * prTimeSlice[j];
+                    row_sum += realStateStep * probDistChangeMatrix[i][j] * prTimeSlice[j];
                 }
                 prStatesNew[i] = row_sum;
             }
@@ -385,7 +385,7 @@ double aDDM::getTrialLikelihood(aDDMTrial trial, int timeStep, float approxState
 
 
 aDDMTrial aDDM::simulateTrial(
-    int valueLeft, int valueRight, FixationData fixationData, int timeStep,
+    float valueLeft, float valueRight, FixationData fixationData, int timeStep,
     int numFixDists, fixDists fixationDist, vector<int> timeBins, int seed) {
 
     std::vector<int> fixItem;
@@ -514,9 +514,9 @@ aDDMTrial aDDM::simulateTrial(
             if (currFixLocation == 0) {
                 mean = 0;
             } else if (currFixLocation == 1) {
-                mean = this->d * ((valueLeft + this->k) - (this->theta * valueRight));
+                mean = this->d * ((valueLeft) - (this->theta * valueRight)) + this->eta;
             } else if (currFixLocation == 2) {
-                mean = this->d * ((this->theta * valueLeft) - (valueRight + this->k));
+                mean = this->d * ((this->theta * valueLeft) - (valueRight)) - this->eta;
             }
             std::normal_distribution<float> ndist(mean, this->sigma);
             float inc = ndist(gen);
@@ -560,23 +560,23 @@ aDDMTrial aDDM::simulateTrial(
 }
 
 
-ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int timeStep, float approxStateStep, bool useAlternative) {
+ProbabilityData aDDM::computeParallelNLL(std::vector<aDDMTrial> trials, int timeStep, float stateStep, bool useAlternative) {
     ProbabilityData datasetTotals = ProbabilityData(0);
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
     BS::multi_future<ProbabilityData> futs = pool.submit_blocks<int>(
                 0, trials.size(),
-    [this, &trials, timeStep, approxStateStep, &trialLikelihoods, useAlternative](const int a, const int b) {
+    [this, &trials, timeStep, stateStep, &trialLikelihoods, useAlternative](const int a, const int b) {
         ProbabilityData aux = ProbabilityData(0);
         if (!useAlternative) {
             for (int i = a; i < b; ++i) {
-                double prob = this->getTrialLikelihood(trials[i], timeStep, approxStateStep);
+                double prob = this->getTrialLikelihood(trials[i], timeStep, stateStep);
                 trialLikelihoods[i] = prob;
                 aux.NLL += -log(prob);
             }
         } else {
             for (int i = a; i < b; ++i) {
-                double prob = this->getLikelihoodAlternative(trials[i], timeStep, approxStateStep);
+                double prob = this->getLikelihoodAlternative(trials[i], timeStep, stateStep);
                 trialLikelihoods[i] = prob;
                 aux.NLL += -log(prob);
             }
@@ -622,8 +622,8 @@ vector<aDDMTrial> aDDMTrial::loadTrialsFromCSV(string filename) {
     int ID;
     int choice;
     int RT;
-    int valueLeft;
-    int valueRight;
+    float valueLeft;
+    float valueRight;
     int prevID;
     int fItem;
     int fTime;
@@ -755,20 +755,20 @@ void checkComputeMethod(std::string computeMethod) {
 }
 
 
-void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateStep, bool useAlternative, string computeMethod) {
+void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float stateStep, bool useAlternative, string computeMethod) {
     // select method for computing likelihoods
     if (computeMethod == "basic") {
-        NLLcomputer = [trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
+        NLLcomputer = [trials, timeStep, stateStep, useAlternative](aDDM addm) -> ProbabilityData {
             ProbabilityData data = ProbabilityData();
             if (!useAlternative) {
                 for (aDDMTrial trial : trials) {
-                    double prob = addm.getTrialLikelihood(trial, timeStep, approxStateStep);
+                    double prob = addm.getTrialLikelihood(trial, timeStep, stateStep);
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
             } else {
                 for (aDDMTrial trial : trials) {
-                    double prob = addm.getLikelihoodAlternative(trial, timeStep, approxStateStep);
+                    double prob = addm.getLikelihoodAlternative(trial, timeStep, stateStep);
                     data.trialLikelihoods.push_back(prob);
                     data.NLL += -log(prob);
                 }
@@ -778,8 +778,8 @@ void setComputeMethod(vector<aDDMTrial> trials, int timeStep, float approxStateS
     }
     else if (computeMethod == "thread") {
         NLLcomputer = [
-        trials, timeStep, approxStateStep, useAlternative](aDDM addm) -> ProbabilityData {
-            return addm.computeParallelNLL(trials, timeStep, approxStateStep, useAlternative);
+        trials, timeStep, stateStep, useAlternative](aDDM addm) -> ProbabilityData {
+            return addm.computeParallelNLL(trials, timeStep, stateStep, useAlternative);
         };
     }
 }
@@ -793,13 +793,13 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
     float barrier,
     unsigned int nonDecisionTime,
     int timeStep,
-    float approxStateStep,
+    float stateStep,
     bool useAlternative) {
 
     checkComputeMethod(computeMethod);
 
     // default parameters handled in built-in aDDM implementation
-    vector<string> validParams = {"d", "sigma", "theta", "k", "bias", "decay"};
+    vector<string> validParams = {"d", "sigma", "theta", "eta", "bias", "decay"};
 
     // trim whitespace from headers
     auto ltrim = [](string &str) {
@@ -882,8 +882,8 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
                     addm.sigma = curr_f;
                 } else if (currHeader == "theta") {
                     addm.theta = curr_f;
-                } else if (currHeader == "k") {
-                    addm.k = curr_f;
+                } else if (currHeader == "eta") {
+                    addm.eta = curr_f;
                 } else if (currHeader == "bias") {
                     addm.bias = curr_f;
                 } else if (currHeader == "decay") {
@@ -902,20 +902,7 @@ MLEinfo<aDDM> aDDM::fitModelCSV(
         }
     }
 
-    // for (string head : headers) {
-    //     std::cout << head << " ";
-    // }
-    // std::cout << std::endl;
-    // for (bool f : isBuiltInParam) {
-    //     std::cout << f << " ";
-    // }
-    // std::cout << std::endl;
-
-    // for (aDDM addm : potentialModels) {
-    //     std::cout << "d " << addm.d << " sigma " << addm.sigma << " theta " << addm.theta << " k " << addm.k << " decay " << addm.decay << " bias " << addm.bias << " W " << addm["W"] << std::endl;
-    // }
-
-    setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
+    setComputeMethod(trials, timeStep, stateStep, useAlternative, computeMethod);
     return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
 }
 
@@ -924,13 +911,13 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     std::vector<float> rangeD,
     std::vector<float> rangeSigma,
     std::vector<float> rangeTheta,
-    std::vector<float> rangeK,
+    std::vector<float> rangeEta,
     std::string computeMethod,
     bool normalizePosteriors,
     float barrier,
     unsigned int nonDecisionTime,
     int timeStep,
-    float approxStateStep,
+    float stateStep,
     std::vector<float> bias,
     std::vector<float> decay,
     bool useAlternative,
@@ -943,7 +930,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
     sort(rangeD.begin(), rangeD.end());
     sort(rangeSigma.begin(), rangeSigma.end());
     sort(rangeTheta.begin(), rangeTheta.end());
-    sort(rangeK.begin(), rangeK.end());
+    sort(rangeEta.begin(), rangeEta.end());
     sort(bias.begin(), bias.end());
     sort(decay.begin(), decay.end());
 
@@ -951,7 +938,7 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         rangeD,
         rangeSigma,
         rangeTheta,
-        rangeK,
+        rangeEta,
         bias,
         decay
     };
@@ -1010,18 +997,18 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         float d = combination[0];
         float sigma = combination[1];
         float theta = combination[2];
-        float k = combination[3];
+        float eta = combination[3];
         float b = combination[4];
         float dec = combination[5];
 
         if (optionalCombinations.empty()) {
-            aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
+            aDDM addm = aDDM(d, sigma, theta, eta, barrier, nonDecisionTime, b, dec);
             potentialModels.push_back(addm);
         } else {
             // Iterate through each possible combination of parameters.
             // Create a new aDDM for each combination.
             for (auto combination : optionalCombinations) {
-                aDDM addm = aDDM(d, sigma, theta, k, barrier, nonDecisionTime, b, dec);
+                aDDM addm = aDDM(d, sigma, theta, eta, barrier, nonDecisionTime, b, dec);
                 for (int i = 0; i < combination.size(); i++) {
                     addm.addParameter(optionalKeys[i], combination[i]);
                 }
@@ -1030,6 +1017,6 @@ MLEinfo<aDDM> aDDM::fitModelMLE(
         }
     }
 
-    setComputeMethod(trials, timeStep, approxStateStep, useAlternative, computeMethod);
+    setComputeMethod(trials, timeStep, stateStep, useAlternative, computeMethod);
     return computeFitAndPosteriors(potentialModels, normalizePosteriors, trials.size());
 }

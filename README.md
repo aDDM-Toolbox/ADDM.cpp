@@ -297,7 +297,7 @@ __Alternative Likelihood Calculators__: The `aDDM` class also contains a starter
 
 `alternative.cpp`:
 ```cpp
-double aDDM::getLikelihoodAlternative(aDDMTrial trial, int timeStep, float approxStateStep) {
+double aDDM::getLikelihoodAlternative(aDDMTrial trial, int timeStep, float stateStep) {
     // EXAMPLE CODE! 
     try {
         return 1 / this->optionalParams["W"];
@@ -327,7 +327,7 @@ __Custom Model Fitting__: These two features can be combined to fit models using
 
 1. Fill in `getLikelihoodAlternative` in `alternative.cpp`. It may be useful to start by copying `getTrialLikelihood` and modifying it as needed. 
 ```cpp
-double aDDM::getLikelihoodAlternative(aDDMTrial trial, int timeStep, float approxStateStep) {
+double aDDM::getLikelihoodAlternative(aDDMTrial trial, int timeStep, float stateStep) {
     return (this->optionalParams["A"] + this->optionalParams["B"] + this->optionalParams["C"]) / 10;
 }
 ```

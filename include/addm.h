@@ -85,7 +85,7 @@ class aDDMTrial: public DDMTrial {
          * decision had been made. 
          */
         aDDMTrial(
-            unsigned int RT, int choice, int valueLeft, int valueRight, 
+            unsigned int RT, int choice, float valueLeft, float valueRight, 
             vector<int> fixItem={}, vector<int> fixTime={}, 
             vector<float> fixRDV={}, float uninterruptedLastFixTime=0);
 
@@ -133,7 +133,7 @@ class aDDM: public DDM {
     public: 
         float theta; /**< Float between 0 and 1, parameter of the model which 
             controls the attentional bias.*/
-        float k; /**< Float that controls the additive bias for the fixated item. */
+        float eta; /**< Float that controls the additive bias for the fixated item. */
         map<string, float> optionalParams; 
 
         bool operator <( const aDDM &rhs ) const { 
@@ -153,7 +153,7 @@ class aDDM: public DDM {
          * @param d Drift rate.
          * @param sigma Noise or standard deviation for the normal distribution.
          * @param theta Ranges on [0,1] and indicates level of attentional bias.
-         * @param k Controls additive attentional bias. 
+         * @param eta Controls additive attentional bias. 
          * @param barrier Positive magnitude of the signal thresholds. 
          * @param nonDecisionTime Amount of time in milliseconds in which only noise 
          * is added to the decision variable. 
@@ -162,7 +162,7 @@ class aDDM: public DDM {
          * @param decay Controls the decay of the barriers over time. 
          */
         aDDM(
-            float d, float sigma, float theta, float k=0, float barrier=1, 
+            float d, float sigma, float theta, float eta=0, float barrier=1, 
             unsigned int nonDecisionTime=0, float bias=0, float decay=0
         );
 
@@ -193,11 +193,11 @@ class aDDM: public DDM {
          * 
          * @param trial aDDMTrial object.
          * @param timeStep Value in milliseconds used for binning the time axis.
-         * @param approxstateStep Used for binning the RDV axis.
+         * @param stateStep Used for binning the RDV axis.
          * @return double representing the likelihood for the given trial. 
          */
         double getTrialLikelihood(aDDMTrial trial,
-            int timeStep=10, float approxStateStep=0.1);
+            int timeStep=10, float stateStep=0.01);
 
 
         /**
@@ -205,7 +205,7 @@ class aDDM: public DDM {
          * 
          */
         double getLikelihoodAlternative(aDDMTrial trial, 
-            int timeStep=10, float approxStateStep=0.1);
+            int timeStep=10, float stateStep=0.01);
 
 
         /**
@@ -222,7 +222,7 @@ class aDDM: public DDM {
          * @return aDDMTrial resulting from the simulation. 
          */
         aDDMTrial simulateTrial(
-            int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
+            float valueLeft, float valueRight, FixationData fixationData, int timeStep=10, 
             int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
         );
 
@@ -230,7 +230,7 @@ class aDDM: public DDM {
          * @brief Alternative simulator for users who want  custom model.
         */
         aDDMTrial simulateTrialAlternative(
-            int valueLeft, int valueRight, FixationData fixationData, int timeStep=10, 
+            float valueLeft, float valueRight, FixationData fixationData, int timeStep=10, 
             int numFixDists=3, fixDists fixationDist={}, vector<int> timeBins={}, int seed=-1
         );
 
@@ -241,14 +241,14 @@ class aDDM: public DDM {
          * 
          * @param trials Vector of aDDMTrials that the model should calculcate the NLL for.
          * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis.
+         * @param stateStep Used for binning the RDV axis.
          * @param useAlternative Boolean specifying if getLikelihoodAlternative should be used.
          * @return ProbabilityData containing NLL, sum of likelihoods, and a list of all computed 
          * likelihoods. 
          */
         ProbabilityData computeParallelNLL(
             vector<aDDMTrial> trials, int timeStep=10, 
-            float approxStateStep=0.1, bool useAlternative=false
+            float stateStep=0.01, bool useAlternative=false
         );
 
         static MLEinfo<aDDM> fitModelCSV(
@@ -259,7 +259,7 @@ class aDDM: public DDM {
             float barrier=1, 
             unsigned int nonDecisionTime=0, 
             int timeStep=10, 
-            float approxStateStep=0.1,
+            float stateStep=0.01,
             bool useAlternative=false);
 
         /**
@@ -272,7 +272,7 @@ class aDDM: public DDM {
          * @param rangeD Vector of floats representing possible values of d to test for. 
          * @param rangeSigma Vector of floats representing possible values of sigma to test for. 
          * @param rangeTheta Vector of floats representing possible values of theta to test for. 
-         * @param rangeK Vector of floats representing possible values of k to test for. 
+         * @param rangeEta Vector of floats representing possible values of eta to test for. 
          * @param computeMethod Computation method to calculate the NLL for each possible model. 
          * Allowed values are {basic, thread, gpu}. "basic" will compute each trial likelihood 
          * sequentially and compute the NLL as the sum of all negative log likelihoods. "thread" will
@@ -286,7 +286,7 @@ class aDDM: public DDM {
          * @param nonDecisionTime Amount of time in milliseconds in which only noise is added to 
          * the decision variable. 
          * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis.
+         * @param stateStep Used for binning the RDV axis.
          * @param bias Corresponds to the initial RDV. Must be smaller than the barrier. Possible 
          * input forms are: (1) No input - the standard bias of 0 is assumed for all potential 
          * DDM models to check. (2) Single input (vector with one element) - i.e. {0.03} - the 
@@ -307,9 +307,9 @@ class aDDM: public DDM {
          */
         static MLEinfo<aDDM> fitModelMLE(
             vector<aDDMTrial> trials, vector<float> rangeD, vector<float> rangeSigma, 
-            vector<float> rangeTheta, vector<float> rangeK={0},string computeMethod="basic", 
+            vector<float> rangeTheta, vector<float> rangeEta={0},string computeMethod="basic", 
             bool normalizePosteriors=false, float barrier=1, unsigned int nonDecisionTime=0, 
-            int timeStep=10, float approxStateStep=0.1, vector<float> bias={0}, vector<float> decay={0}, 
+            int timeStep=10, float stateStep=0.01, vector<float> bias={0}, vector<float> decay={0}, 
             bool useAlternative=false, map<string, vector<float>>rangeOptional={}
         );
 };
