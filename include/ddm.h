@@ -24,8 +24,8 @@ class DDMTrial {
     public:
         unsigned int RT; /**< Response time in milliseconds. */
         int choice; /**< Either -1 for the left item or +1 for the right item. */
-        int valueLeft; /**< Value of the left item. */
-        int valueRight; /**< Value of the right items. */
+        float valueLeft; /**< Value of the left item. */
+        float valueRight; /**< Value of the right items. */
         vector<float>RDVs; /**< The RDV signal recorded at each timestep. */
         int timeStep; /**< The length of each timestep in milliseconds. */
 
@@ -37,7 +37,7 @@ class DDMTrial {
          * @param valueLeft Value of the left item.
          * @param valueRight Value of the right item. 
          */
-        DDMTrial(unsigned int RT, int choice, int valueLeft, int valueRight);
+        DDMTrial(unsigned int RT, int choice, float valueLeft, float valueRight);
 
         /**
          * @brief Construct an empty DDMTrial object. 
@@ -132,11 +132,11 @@ class DDM {
          * @param debug Boolean specifying if state variables should be printed for debugging 
          * purposes. 
          * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis. 
+         * @param stateStep Used for binning the RDV axis. 
          * @return double representing the likelihood for the given trial. 
          */
         double getTrialLikelihood(
-            DDMTrial trial, bool debug=false, int timeStep=10, float approxStateStep=0.1);
+            DDMTrial trial, bool debug=false, int timeStep=10, float stateStep=0.01);
 
         /**
          * @brief Generate a simulated DDM trial provided item values. 
@@ -147,7 +147,7 @@ class DDM {
          * @param seed used for standardizing any random number generators. 
          * @return DDMTrial resulting from the simulation. 
          */
-        DDMTrial simulateTrial(int valueLeft, int valueRight, int timeStep=10, int seed=-1);
+        DDMTrial simulateTrial(float valueLeft, float valueRight, int timeStep=10, int seed=-1);
 
         /**
          * @brief Compute the total Negative Log Likelihood (NLL) for a vector of DDMTrials. Use 
@@ -158,12 +158,12 @@ class DDM {
          * @param debug Boolean specifying if state variables should be printed for debugging 
          * purposes. 
          * @param timeStep Value in milliseconds used for binning the time axis. 
-         * @param approxStateStep Used for binning the RDV axis. 
+         * @param stateStep Used for binning the RDV axis. 
          * @return ProbabilityData containing NLL, sum of likelihoods, and a list  of all computed 
          * likelihood. 
          */
         ProbabilityData computeParallelNLL(
-            vector<DDMTrial> trials, bool debug=false, int timeStep=10, float approxStateStep=0.1);
+            vector<DDMTrial> trials, bool debug=false, int timeStep=10, float stateStep=0.01);
 
         /**
          * @brief Copmlete a grid-search based Maximum Likelihood Estimation of all possible 

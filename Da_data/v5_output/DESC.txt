@@ -1,2 +1,0 @@
-d change fixed to 0.0001 for each model fitting 
-sigma and theta fixed at optimal values computed in unchanged VDs. 

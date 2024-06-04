@@ -17,5 +17,5 @@ int main() {
     "d      : " << info.optimal.d << "\n" << 
     "sigma  : " << info.optimal.sigma << "\n" << 
     "theta  : " << info.optimal.theta << "\n" << 
-    "k      : " << info.optimal.k << std::endl;
+    "eta      : " << info.optimal.eta << std::endl;
 }

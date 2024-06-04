@@ -29,7 +29,6 @@ struct MLEinfo {
 class ProbabilityData {
     private:
     public: 
-        double likelihood; /**< Sum of likelihoods for all trials. */
         double NLL; /**< Sum of negative log likelihoods for all trials. */
         std::vector<double> trialLikelihoods; /**< Vector containing all trial likelihoods in the 
             order of the input trials. */
@@ -37,7 +36,6 @@ class ProbabilityData {
         /**
          * @brief Construct a new Probability Data object. 
          * 
-         * @param likelihood Initial likelihood.
          * @param NLL Initial negative log likelihood; 
          */
         ProbabilityData(double NLL=0) {

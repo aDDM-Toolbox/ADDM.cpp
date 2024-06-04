@@ -1,4 +1,0 @@
-d change fixed to 0.0001 for each model fitting 
-sigma and theta fixed at 0.05 and 0.5 respectively 
-timestep of 5 
-approxStateStep of 0.01
