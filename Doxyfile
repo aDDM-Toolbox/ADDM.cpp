@@ -984,7 +984,8 @@ EXCLUDE_SYMBOLS        = addm_mle \
                          example \ 
                          posteriors \ 
                          rdv_time \ 
-                         vd_dists
+                         vd_dists \
+                         n_optimal
 
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
