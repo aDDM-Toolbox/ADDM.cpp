@@ -12,7 +12,7 @@
 #include "ddm.h"
 #include "stats.h"
 
-DDMTrial::DDMTrial(unsigned int RT, int choice, int valueLeft, int valueRight) {
+DDMTrial::DDMTrial(unsigned int RT, int choice, float valueLeft, float valueRight) {
     this->RT = RT;
     this->choice = choice;
     this->valueLeft = valueLeft;
@@ -51,7 +51,7 @@ void DDM::exportTrial(DDMTrial dt, std::string filename) {
     o << std::setw(4) << j << std::endl;
 }
 
-double DDM::getTrialLikelihood(DDMTrial trial, bool debug, int timeStep, float approxStateStep) {
+double DDM::getTrialLikelihood(DDMTrial trial, bool debug, int timeStep, float stateStep) {
     int numTimeSteps = trial.RT / timeStep;
     if (numTimeSteps < 1) {
         throw std::invalid_argument("trial response time is smaller than time step.");
@@ -71,10 +71,10 @@ double DDM::getTrialLikelihood(DDMTrial trial, bool debug, int timeStep, float a
         }
     }
 
-    int halfNumStateBins = ceil(this->barrier / approxStateStep);
-    float stateStep = this->barrier / (halfNumStateBins + 0.5);
+    int halfNumStateBins = ceil(this->barrier / stateStep);
+    float realStateStep = this->barrier / (halfNumStateBins + 0.5);
     std::vector<float> states;
-    for (float ss = barrierDown.at(0) + (stateStep / 2); ss <= barrierUp.at(0) - (stateStep / 2); ss += stateStep) {
+    for (float ss = barrierDown.at(0) + (realStateStep / 2); ss <= barrierUp.at(0) - (realStateStep / 2); ss += realStateStep) {
         states.push_back(ss);
     }
 
@@ -214,7 +214,7 @@ double DDM::getTrialLikelihood(DDMTrial trial, bool debug, int timeStep, float a
         for (size_t i = 0; i < states.size(); i++) {
             double row_sum = 0;
             for (size_t j = 0; j < states.size(); j++) {
-                row_sum += stateStep * probDistChangeMatrix[i][j] * prTimeSlice[j];
+                row_sum += realStateStep * probDistChangeMatrix[i][j] * prTimeSlice[j];
             }
             prStatesNew[i] = row_sum;
         }
@@ -324,7 +324,7 @@ double DDM::getTrialLikelihood(DDMTrial trial, bool debug, int timeStep, float a
 }
 
 
-DDMTrial DDM::simulateTrial(int valueLeft, int valueRight, int timeStep, int seed) {
+DDMTrial DDM::simulateTrial(float valueLeft, float valueRight, int timeStep, int seed) {
     float RDV = this->bias;
     int time = 0;
     int elapsedNDT = 0;
@@ -366,16 +366,16 @@ DDMTrial DDM::simulateTrial(int valueLeft, int valueRight, int timeStep, int see
 }
 
 
-ProbabilityData DDM::computeParallelNLL(std::vector<DDMTrial> trials, bool debug, int timeStep, float approxStateStep) {
+ProbabilityData DDM::computeParallelNLL(std::vector<DDMTrial> trials, bool debug, int timeStep, float stateStep) {
     ProbabilityData datasetTotals = ProbabilityData(0);
     BS::thread_pool pool;
     std::vector<double> trialLikelihoods(trials.size());
     BS::multi_future<ProbabilityData> futs = pool.submit_blocks<int>(
                 0, trials.size(),
-    [this, &trials, debug, timeStep, approxStateStep, &trialLikelihoods](const int a, const int b) {
+    [this, &trials, debug, timeStep, stateStep, &trialLikelihoods](const int a, const int b) {
         ProbabilityData aux = ProbabilityData(0);
         for (int i = a; i < b; ++i) {
-            double prob = this->getTrialLikelihood(trials[i], debug, timeStep, approxStateStep);
+            double prob = this->getTrialLikelihood(trials[i], debug, timeStep, stateStep);
             trialLikelihoods[i] = prob;
             aux.NLL += -log(prob);
         }
@@ -408,8 +408,8 @@ std::vector<DDMTrial> DDMTrial::loadTrialsFromCSV(std::string filename) {
     int choice;
     int RT;
     int valDiff;
-    int valueLeft;
-    int valueRight;
+    float valueLeft;
+    float valueRight;
 
     while (std::getline(file, line)) {
         std::stringstream ss(line);
@@ -468,7 +468,6 @@ MLEinfo<DDM> DDM::fitModelMLE(
             ProbabilityData data = ProbabilityData();
             for (DDMTrial trial : trials) {
                 double prob = ddm.getTrialLikelihood(trial);
-                data.likelihood += prob;
                 data.trialLikelihoods.push_back(prob);
                 data.NLL += -log(prob);
             }

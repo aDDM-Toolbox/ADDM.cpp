@@ -10,7 +10,7 @@ const std::string FIX_DATA = "data/fixations.csv";
 // Location to save the aDDM trials. 
 const std::string SAVE = "results/addm_simulations.csv";
 // Sample value differences. Change if deisred. 
-const std::vector<int> valDiffs = {-3, -2, -1, 0, 1, 2, 3};
+const std::vector<float> valDiffs = {-3, -2, -1, 0, 1, 2, 3};
 
 /**
  * Example Usage: 
@@ -76,8 +76,8 @@ int main(int argc, char** argv) {
         int rIDX = distribution(generator);
 
         int valDiff = valDiffs.at(rIDX);
-        int valueLeft = 3;
-        int valueRight = valueLeft - valDiff;
+        float valueLeft = 3;
+        float valueRight = valueLeft - valDiff;
         aDDMTrial adt = addm.simulateTrial(valueLeft, valueRight, fixationData);
         trials.push_back(adt);
     }

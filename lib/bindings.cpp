@@ -22,10 +22,8 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
     declareMLEinfo<DDM>(m, "DDM");
     declareMLEinfo<aDDM>(m, "aDDM");
     py::class_<ProbabilityData>(m, "ProbabilityData")
-    .def(py::init<double, double>(),
-         Arg("likelihood")=0,
+    .def(py::init<double>(),
          Arg("NLL")=0)
-    .def_readonly("likelihood", &ProbabilityData::likelihood)
     .def_readonly("NLL", &ProbabilityData::NLL)
     .def_readonly("trialLikelihoods", &ProbabilityData::trialLikelihoods);
     py::class_<FixationData>(m, "FixationData")
@@ -39,7 +37,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
     .def_readonly("transitions", &FixationData::transitions)
     .def_readonly("fixations", &FixationData::fixations);
     py::class_<DDMTrial>(m, "DDMTrial")
-    .def(py::init<int, int, int, int>(),
+    .def(py::init<int, int, float, float>(),
          Arg("RT"),
          Arg("choice"),
          Arg("valueLeft"),
@@ -76,7 +74,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
          Arg("trial"),
          Arg("debug")=false,
          Arg("timeStep")=10,
-         Arg("approxStateStep")=0.1)
+         Arg("stateStep")=0.1)
     .def("simulateTrial", &DDM::simulateTrial,
          Arg("valueLeft"),
          Arg("valueRight"),
@@ -86,7 +84,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
          Arg("trials"),
          Arg("debug")=false,
          Arg("timeStep")=10,
-         Arg("approxStateStep")=0.1)
+         Arg("stateStep")=0.1)
     .def_static("fitModelMLE", &DDM::fitModelMLE,
                 Arg("trials"),
                 Arg("rangeD"),
@@ -98,7 +96,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
                 Arg("bias")=vector<float> {0},
                 Arg("decay")=vector<float> {0});
     py::class_<aDDMTrial, DDMTrial>(m, "aDDMTrial")
-    .def(py::init<unsigned int, int, int, int, vector<int>, vector<int>, vector<float>, float>(),
+    .def(py::init<unsigned int, int, float, float, vector<int>, vector<int>, vector<float>, float>(),
          Arg("RT"),
          Arg("choice"),
          Arg("valueLeft"),
@@ -121,13 +119,13 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
          Arg("d"),
          Arg("sigma"),
          Arg("theta"),
-         Arg("k")=0,
+         Arg("eta")=0,
          Arg("barrier")=1,
          Arg("nonDecisionTime")=0,
          Arg("bias")=0,
          Arg("decay")=0)
     .def_readonly("theta", &aDDM::theta)
-    .def_readonly("k", &aDDM::k)
+    .def_readonly("eta", &aDDM::eta)
     .def_readonly("optionalParams", &aDDM::optionalParams)
     .def("exportTrial", &aDDM::exportTrial,
          Arg("adt"),
@@ -135,7 +133,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
     .def("getTrialLikelihood", &aDDM::getTrialLikelihood,
          Arg("trial"),
          Arg("timeStep")=10,
-         Arg("approxStateStep")=0.1)
+         Arg("stateStep")=0.1)
     .def("simulateTrial", &aDDM::simulateTrial,
          Arg("valueLeft"),
          Arg("valueRight"),
@@ -148,20 +146,20 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
     .def("computeParallelNLL", &aDDM::computeParallelNLL,
          Arg("trials"),
          Arg("timeStep")=10,
-         Arg("approxStateStep")=0.1,
+         Arg("stateStep")=0.1,
          Arg("useAlternative")=false)
     .def_static("fitModelMLE", &aDDM::fitModelMLE,
                 Arg("trials"),
                 Arg("rangeD"),
                 Arg("rangeSigma"),
                 Arg("rangeTheta"),
-                Arg("rangeK")=vector<float> {0},
+                Arg("rangeEta")=vector<float> {0},
                 Arg("computeMethod")="basic",
                 Arg("normalizePosteriors")=false,
                 Arg("barrier")=1,
                 Arg("nonDecisionTime")=0,
                 Arg("timeStep")=10,
-                Arg("approxStateStep")=0.1,
+                Arg("stateStep")=0.1,
                 Arg("bias")=vector<float> {0},
                 Arg("decay")=vector<float> {0},
                 Arg("useAlternative")=false,
@@ -176,7 +174,7 @@ PYBIND11_MODULE(addm_toolbox_cpp, m) {
           Arg("timeStep")=10,
           Arg("maxFixTime")=3000,
           Arg("numFixDists")=3,
-          Arg("valueDiffs")=vector<int> {-3,-2,-1,0,1,2,3},
+          Arg("valueDiffs")=vector<float> {-3,-2,-1,0,1,2,3},
           Arg("subjectIDs")=vector<int>(),
           Arg("useOddTrials")=true,
           Arg("useEvenTrials")=true,

@@ -100,7 +100,7 @@ FixationData getEmpiricalDistributions(
     std::map<int, std::vector<aDDMTrial>> data, 
     int timeStep=10, int maxFixTime=3000,
     int numFixDists=3, 
-    std::vector<int> valueDiffs={-3,-2,-1,0,1,2,3},
+    std::vector<float> valueDiffs={-3,-2,-1,0,1,2,3},
     std::vector<int> subjectIDs={},
     bool useOddTrials=true, 
     bool useEvenTrials=true, 

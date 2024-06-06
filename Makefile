@@ -1,6 +1,6 @@
 CXX := g++
 
-SIM_EXECS := addm_simulate
+SIM_EXECS := addm_simulate single_llh
 MLE_EXECS := addm_mle addm_csv_fit
 TEST_EXECS := addm_test 
 RUN_EXECS := tutorial custom 
