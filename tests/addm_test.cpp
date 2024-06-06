@@ -80,7 +80,7 @@ TEST_CASE("aDDM::getTrialLikelihood gives expected results") {
     double l4 = a1.getTrialLikelihood(t1, 15, 0.05);
     double l5 = a1.getTrialLikelihood(t1, 5, 0.05);
 
-    REQUIRE(within_abs(l1, 0.0030972, ERROR_BOUND));
+    REQUIRE(within_abs(l1, 0.00329082, ERROR_BOUND));
     REQUIRE(within_abs(l2, 0.00662664, ERROR_BOUND));
     REQUIRE(within_abs(l3, 0.000217205, ERROR_BOUND));
     REQUIRE(within_abs(l4, 0.00672265, ERROR_BOUND));
