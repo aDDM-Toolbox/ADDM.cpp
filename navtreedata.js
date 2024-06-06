@@ -45,13 +45,6 @@ var NAVTREE =
     [ "Data Analysis Scripts", "index.html#autotoc_md15", null ],
     [ "Authors", "index.html#autotoc_md16", null ],
     [ "Acknowledgements", "index.html#autotoc_md17", null ],
-    [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
-      [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
-        [ "Variables", "namespacemembers_vars.html", null ]
-      ] ]
-    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['optimal_0',['optimal',['../structMLEinfo.html#a054f10abde01843cc1db0b07135edb0e',1,'MLEinfo']]],
-  ['optionalparams_1',['optionalParams',['../classaDDM.html#a9197abe5f4e99d97cbc6c77cc28f3406',1,'aDDM']]]
+  ['parcode_0',['parcode',['../structexpEntry.html#a752d9b847d09a6270e3ae8c27e77f405',1,'expEntry::parcode'],['../structfixEntry.html#a60459c61aba89b56e6cbbea3e815619a',1,'fixEntry::parcode']]],
+  ['probfixleftfirst_1',['probFixLeftFirst',['../classFixationData.html#ac94f66e2c75130b416982631f76580b8',1,'FixationData']]]
 ];

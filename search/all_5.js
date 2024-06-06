@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['fitmodelcsv_0',['fitModelCSV',['../classaDDM.html#a56995263cf51af3ac4ec0cfd7fa71da0',1,'aDDM']]],
-  ['fitmodelmle_1',['fitModelMLE',['../classaDDM.html#ae5b5990caf7b472475c994a0a4ee8c2d',1,'aDDM::fitModelMLE()'],['../classDDM.html#af6f4cab6e2175c4864222709f0d6bad4',1,'DDM::fitModelMLE()']]],
-  ['fix_5fdata_2',['FIX_DATA',['../addm__simulate_8cpp.html#a14544cf817cfc90eec9a440eefde3a6d',1,'FIX_DATA:&#160;addm_simulate.cpp'],['../addm__test_8cpp.html#a14544cf817cfc90eec9a440eefde3a6d',1,'FIX_DATA:&#160;addm_test.cpp']]],
+  ['fitmodelcsv_0',['fitModelCSV',['../classaDDM.html#aa3c6c9a818721f9d8a91643a8e6e8d40',1,'aDDM']]],
+  ['fitmodelmle_1',['fitModelMLE',['../classaDDM.html#ab2450080f16a43ad7290a0b7baad83d6',1,'aDDM::fitModelMLE()'],['../classDDM.html#af6f4cab6e2175c4864222709f0d6bad4',1,'DDM::fitModelMLE()']]],
+  ['fix_5fdata_2',['FIX_DATA',['../addm__simulate_8cpp.html#a14544cf817cfc90eec9a440eefde3a6d',1,'FIX_DATA:&#160;addm_simulate.cpp'],['../single__llh_8cpp.html#a14544cf817cfc90eec9a440eefde3a6d',1,'FIX_DATA:&#160;single_llh.cpp'],['../addm__test_8cpp.html#a14544cf817cfc90eec9a440eefde3a6d',1,'FIX_DATA:&#160;addm_test.cpp']]],
   ['fix_5fitem_3',['fix_item',['../structfixEntry.html#a81e149d3d656f3f497fc5448c479a74d',1,'fixEntry']]],
   ['fix_5ftime_4',['fix_time',['../structfixEntry.html#a3703d827a274c347ba5616d198342de9',1,'fixEntry']]],
   ['fixationdata_5',['FixationData',['../classFixationData.html',1,'FixationData'],['../classFixationData.html#a79013248039f4078807b770647c9d3c4',1,'FixationData::FixationData(float probFixLeftFirst, vector&lt; int &gt; latencies, vector&lt; int &gt; transitions, fixDists fixations)']]],

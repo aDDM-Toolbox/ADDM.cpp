@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['valdiffs_0',['valDiffs',['../addm__simulate_8cpp.html#a7e850d2075b9daa3d6b8d890d04c3a93',1,'addm_simulate.cpp']]],
-  ['validcomputemethods_1',['validComputeMethods',['../util_8h.html#a2594fe56f3198371358f16212e99e9cc',1,'validComputeMethods:&#160;util.cpp'],['../util_8cpp.html#a2594fe56f3198371358f16212e99e9cc',1,'validComputeMethods:&#160;util.cpp']]],
-  ['valueleft_2',['valueLeft',['../classDDMTrial.html#ae949e54554e10660f73878a07a95d14d',1,'DDMTrial']]],
-  ['valueright_3',['valueRight',['../classDDMTrial.html#a9e1a0900b92b8d16fb3bd49894c9dc2c',1,'DDMTrial']]],
-  ['vd_5fdists_2epy_4',['vd_dists.py',['../vd__dists_8py.html',1,'']]]
+  ['within_5fabs_0',['within_abs',['../addm__test_8cpp.html#a3df50ca849877c3f7313abda92f94ed3',1,'addm_test.cpp']]],
+  ['writetrialstocsv_1',['writeTrialsToCSV',['../classaDDMTrial.html#aa3758e27194c6ae3def6abfb5ebb722e',1,'aDDMTrial::writeTrialsToCSV()'],['../classDDMTrial.html#a8a3765f02f4f56a8504436a2c54fa01a',1,'DDMTrial::writeTrialsToCSV()']]]
 ];

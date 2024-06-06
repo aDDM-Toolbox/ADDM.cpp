@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['barrier_0',['barrier',['../classDDM.html#a0293f051d7889ee014fb55c4939e4783',1,'DDM']]],
-  ['bias_1',['bias',['../classDDM.html#a0cecc28e691846bce6dccb02f34aef07',1,'DDM']]]
+  ['ass_0',['ass',['../single__llh_8cpp.html#a5239a09a1aa4b4eae5e9a5573bf6bdd4',1,'single_llh.cpp']]]
 ];

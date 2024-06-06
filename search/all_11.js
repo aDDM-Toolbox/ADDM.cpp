@@ -1,12 +1,15 @@
 var searchData=
 [
-  ['save_0',['SAVE',['../addm__mle_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_mle.cpp'],['../addm__simulate_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_simulate.cpp']]],
-  ['scripts_1',['Data Analysis Scripts',['../index.html#autotoc_md15',1,'']]],
-  ['sigma_2',['sigma',['../classDDM.html#a17570a6c2378cdb363437f39a5fa3f00',1,'DDM']]],
-  ['sims_3',['SIMS',['../addm__csv__fit_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_csv_fit.cpp'],['../addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_mle.cpp'],['../custom_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;custom.cpp']]],
-  ['simulatetrial_4',['simulateTrial',['../classaDDM.html#a2bff97cd2823b7e44e08af34351c6676',1,'aDDM::simulateTrial()'],['../classDDM.html#aa3a9a7bb885ba0154347082eb81b3f91',1,'DDM::simulateTrial()']]],
-  ['simulatetrialalternative_5',['simulateTrialAlternative',['../classaDDM.html#aa64599f43b1c23278cd12ae69d7153ab',1,'aDDM']]],
-  ['started_6',['Getting Started',['../index.html#autotoc_md1',1,'']]],
-  ['stats_2eh_7',['stats.h',['../stats_8h.html',1,'']]],
-  ['syntax_20highlighting_8',['Optional: Python Syntax Highlighting',['../index.html#autotoc_md14',1,'']]]
+  ['test_5fcase_0',['TEST_CASE',['../addm__test_8cpp.html#a4a7af86239a4857933c08464a4abc9fe',1,'TEST_CASE(&quot;aDDM::simulateTrial gives expected Results&quot;):&#160;addm_test.cpp'],['../addm__test_8cpp.html#ac698cf339b38193c63c746557d4dfddf',1,'TEST_CASE(&quot;aDDM::getTrialLikelihood gives expected results&quot;):&#160;addm_test.cpp'],['../addm__test_8cpp.html#a7563ce3380006add6175d20040d1a8cb',1,'TEST_CASE(&quot;aDDM::fitModelMLE gives expected results&quot;):&#160;addm_test.cpp']]],
+  ['testing_1',['Testing',['../index.html#autotoc_md9',1,'']]],
+  ['the_20toolbox_2',['Modifying the Toolbox',['../index.html#autotoc_md10',1,'']]],
+  ['theta_3',['theta',['../classaDDM.html#a9c6c014066b0930baaa665b06dec9bb3',1,'aDDM']]],
+  ['timestep_4',['timeStep',['../classDDMTrial.html#a6fd7d06bba895acb5cf3627343915aac',1,'DDMTrial']]],
+  ['timestep_5',['timestep',['../single__llh_8cpp.html#abb8d1b06b198d43fc9699890c4031155',1,'single_llh.cpp']]],
+  ['toolbox_6',['Modifying the Toolbox',['../index.html#autotoc_md10',1,'']]],
+  ['transitions_7',['transitions',['../classFixationData.html#a10bd0c29fb903e681b6376d832c4d55c',1,'FixationData']]],
+  ['trial_8',['trial',['../structexpEntry.html#ac6214f4aff259ff4c595a95d28697847',1,'expEntry::trial'],['../structfixEntry.html#a8b2b797d9573a6b38b7acc1eec0926b3',1,'fixEntry::trial']]],
+  ['triallikelihoods_9',['trialLikelihoods',['../classProbabilityData.html#a34574072903da22d969799d75b15c242',1,'ProbabilityData']]],
+  ['tutorial_10',['Tutorial',['../index.html#autotoc_md7',1,'']]],
+  ['tutorial_2ecpp_11',['tutorial.cpp',['../tutorial_8cpp.html',1,'']]]
 ];

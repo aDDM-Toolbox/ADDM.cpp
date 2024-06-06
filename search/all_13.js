@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['uninterruptedlastfixtime_0',['uninterruptedLastFixTime',['../classaDDMTrial.html#ae0e6788d10a1c67884727fe58b6b4953',1,'aDDMTrial']]],
-  ['usage_1',['Basic Usage',['../index.html#autotoc_md6',1,'']]],
-  ['util_2ecpp_2',['util.cpp',['../util_8cpp.html',1,'']]],
-  ['util_2eh_3',['util.h',['../util_8h.html',1,'']]]
+  ['valdiffs_0',['valDiffs',['../addm__simulate_8cpp.html#a426dfe228ebcf803fd290a2cf15e9e0f',1,'addm_simulate.cpp']]],
+  ['validcomputemethods_1',['validComputeMethods',['../util_8h.html#a2594fe56f3198371358f16212e99e9cc',1,'validComputeMethods:&#160;util.cpp'],['../util_8cpp.html#a2594fe56f3198371358f16212e99e9cc',1,'validComputeMethods:&#160;util.cpp']]],
+  ['valueleft_2',['valueLeft',['../classDDMTrial.html#adcd357d711b2b26c7484babe2438d59c',1,'DDMTrial']]],
+  ['valueright_3',['valueRight',['../classDDMTrial.html#a4666acd872d8caef3bcbf4cb05f9c180',1,'DDMTrial']]],
+  ['vd_5fdists_2epy_4',['vd_dists.py',['../vd__dists_8py.html',1,'']]]
 ];

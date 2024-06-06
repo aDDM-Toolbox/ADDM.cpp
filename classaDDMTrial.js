@@ -1,6 +1,6 @@
 var classaDDMTrial =
 [
-    [ "aDDMTrial", "classaDDMTrial.html#aa10527b5851a8395529eff1e8ad86adc", null ],
+    [ "aDDMTrial", "classaDDMTrial.html#a8dc3e8c7a68590da7340a751f6200297", null ],
     [ "aDDMTrial", "classaDDMTrial.html#ae406a1f1ae278a292421caedafda67a2", null ],
     [ "fixItem", "classaDDMTrial.html#a8b7e649ce0fded823e1191c2f9675cf2", null ],
     [ "fixRDV", "classaDDMTrial.html#abd71cbec989e9c2e08ab0c516c829283", null ],

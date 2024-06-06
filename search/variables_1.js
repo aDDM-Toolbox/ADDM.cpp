@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['choice_0',['choice',['../classDDMTrial.html#a941813496795b5c0f16d068444abf483',1,'DDMTrial::choice'],['../structexpEntry.html#a92d75fc7c9b23c1897c7036d2e6d805c',1,'expEntry::choice']]],
-  ['curr_1',['curr',['../namespacen__optimal.html#a3c59e338f3e5a69875bf3b865bd9db7e',1,'n_optimal']]],
-  ['currtime_2',['currTime',['../namespacen__optimal.html#af530cb0ce518f9f254abf1bfbe5ab755',1,'n_optimal']]]
+  ['barrier_0',['barrier',['../classDDM.html#a0293f051d7889ee014fb55c4939e4783',1,'DDM']]],
+  ['bias_1',['bias',['../classDDM.html#a0cecc28e691846bce6dccb02f34aef07',1,'DDM']]]
 ];

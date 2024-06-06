@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['save_0',['SAVE',['../addm__mle_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_mle.cpp'],['../addm__simulate_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_simulate.cpp']]],
-  ['sigma_1',['sigma',['../classDDM.html#a17570a6c2378cdb363437f39a5fa3f00',1,'DDM']]],
-  ['sims_2',['SIMS',['../addm__csv__fit_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_csv_fit.cpp'],['../addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_mle.cpp'],['../custom_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;custom.cpp']]]
+  ['theta_0',['theta',['../classaDDM.html#a9c6c014066b0930baaa665b06dec9bb3',1,'aDDM']]],
+  ['timestep_1',['timeStep',['../classDDMTrial.html#a6fd7d06bba895acb5cf3627343915aac',1,'DDMTrial']]],
+  ['timestep_2',['timestep',['../single__llh_8cpp.html#abb8d1b06b198d43fc9699890c4031155',1,'single_llh.cpp']]],
+  ['transitions_3',['transitions',['../classFixationData.html#a10bd0c29fb903e681b6376d832c4d55c',1,'FixationData']]],
+  ['trial_4',['trial',['../structexpEntry.html#ac6214f4aff259ff4c595a95d28697847',1,'expEntry::trial'],['../structfixEntry.html#a8b2b797d9573a6b38b7acc1eec0926b3',1,'fixEntry::trial']]],
+  ['triallikelihoods_5',['trialLikelihoods',['../classProbabilityData.html#a34574072903da22d969799d75b15c242',1,'ProbabilityData']]]
 ];

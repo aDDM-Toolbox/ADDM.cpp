@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['ranged_0',['rangeD',['../addm__mle_8cpp.html#af3153d45ff835a117b315bf1a5159a03',1,'addm_mle.cpp']]],
-  ['rangek_1',['rangeK',['../addm__mle_8cpp.html#abbf0bfa2883e546acc28ac81e1e7e5dc',1,'addm_mle.cpp']]],
-  ['rangesigma_2',['rangeSigma',['../addm__mle_8cpp.html#ad792ebe7df63e4421e474fbbea769e67',1,'addm_mle.cpp']]],
-  ['rangetheta_3',['rangeTheta',['../addm__mle_8cpp.html#a8e93197b123db31603861ceea3e79273',1,'addm_mle.cpp']]],
-  ['rdv_5ftime_2epy_4',['rdv_time.py',['../rdv__time_8py.html',1,'']]],
-  ['rdvs_5',['RDVs',['../classDDMTrial.html#afe24a94d0425b430c2c1e4537091f35b',1,'DDMTrial']]],
-  ['readme_2emd_6',['README.md',['../README_8md.html',1,'']]],
-  ['requirements_7',['Requirements',['../index.html#autotoc_md4',1,'']]],
-  ['rotation_8',['rotation',['../namespacen__optimal.html#accae4e86bfb3c07112e542ee25c46446',1,'n_optimal']]],
-  ['rt_9',['rt',['../structexpEntry.html#ad3e909fe83083bd306ad9a05ed28c9b4',1,'expEntry']]],
-  ['rt_10',['RT',['../classDDMTrial.html#a1fed499f6f800dcf08331b0f08d4570b',1,'DDMTrial']]]
+  ['save_0',['SAVE',['../addm__mle_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_mle.cpp'],['../addm__simulate_8cpp.html#a20a47021dda28c74acf9031481d941c7',1,'SAVE:&#160;addm_simulate.cpp']]],
+  ['scripts_1',['Data Analysis Scripts',['../index.html#autotoc_md15',1,'']]],
+  ['sigma_2',['sigma',['../classDDM.html#a17570a6c2378cdb363437f39a5fa3f00',1,'DDM']]],
+  ['sims_3',['SIMS',['../addm__csv__fit_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_csv_fit.cpp'],['../addm__mle_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;addm_mle.cpp'],['../custom_8cpp.html#a82b30bdf03d8d4f4499963ac4878b6ba',1,'SIMS:&#160;custom.cpp']]],
+  ['simulatetrial_4',['simulateTrial',['../classaDDM.html#aec02059ac5d85b523022c4cea81761c2',1,'aDDM::simulateTrial()'],['../classDDM.html#aba28c00f4bfb3ae5cf249d5a67277b3a',1,'DDM::simulateTrial()']]],
+  ['simulatetrialalternative_5',['simulateTrialAlternative',['../classaDDM.html#addf3c08497080a0c82bb8993a391cda0',1,'aDDM']]],
+  ['single_5fllh_2ecpp_6',['single_llh.cpp',['../single__llh_8cpp.html',1,'']]],
+  ['started_7',['Getting Started',['../index.html#autotoc_md1',1,'']]],
+  ['stats_2eh_8',['stats.h',['../stats_8h.html',1,'']]],
+  ['syntax_20highlighting_9',['Optional: Python Syntax Highlighting',['../index.html#autotoc_md14',1,'']]]
 ];
