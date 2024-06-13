@@ -401,7 +401,6 @@ aDDMTrial aDDM::simulateTrial(
     int choice;
     int uninterruptedLastFixTime;
     int RT;
-
     std::vector<float>RDVs = {RDV};
 
     std::uniform_int_distribution<std::size_t> ludist(0, fixationData.latencies.size() - 1);
